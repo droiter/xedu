@@ -1,0 +1,320 @@
+{
+  "categories": [
+    { "id": "code", "name": "编程开发", "icon": "code" },
+    { "id": "translate", "name": "语言学习", "icon": "translate" },
+    { "id": "calculate", "name": "数学思维", "icon": "calculate" },
+    { "id": "work", "name": "职场效率", "icon": "work" }
+  ],
+  "courses": [
+    {
+      "id": "flutter-basics",
+      "title": "Flutter 跨端 App 开发入门",
+      "subtitle": "零基础也能写出自己的手机 / 平板应用",
+      "description": "Flutter 是当前最流行的跨平台 UI 框架，一套代码同时运行在 Android、iOS 以及平板、桌面上。本课程从环境搭建讲起，用 4 节课带你理解 Widget、布局与状态管理，并完成一个真实的「待办清单」小项目，为后续深入打好地基。",
+      "categoryId": "code",
+      "teacher": "陈老师",
+      "level": "初级",
+      "coverSeed": 0,
+      "featured": true,
+      "chapters": [
+        {
+          "id": "c1-ch1",
+          "title": "第 1 章 · 认识 Flutter",
+          "lessons": [
+            {
+              "id": "c1-l1",
+              "title": "为什么选择 Flutter",
+              "durationMin": 6,
+              "blocks": [
+                { "type": "heading", "text": "一次编写，处处运行" },
+                { "type": "text", "text": "Flutter 由 Google 开发，使用 Dart 语言。与传统 Web 套壳方案不同，Flutter 直接绘制每一个像素，因此页面滑动流畅，动画与原生体验几乎无差别。" },
+                { "type": "tip", "text": "同样一套代码，既能运行在手机上，也能运行在平板上，还能自动适配不同屏幕尺寸——这正是 xEdu 选择它的原因。" },
+                { "type": "list", "items": ["性能接近原生", "一套代码覆盖多个平台", "学习曲线对新手友好", "社区与组件生态活跃"] }
+              ]
+            },
+            {
+              "id": "c1-l2",
+              "title": "搭建第一个应用",
+              "durationMin": 8,
+              "blocks": [
+                { "type": "text", "text": "安装 Flutter SDK 后，在终端执行 flutter create demo_app 创建项目，再用 flutter run 就能把应用跑起来。第一次运行会编译较久，之后每次热重载几乎秒开。" },
+                { "type": "tip", "text": "开发期间多用 Hot Reload（小写的 r）：改完代码保存，界面立刻更新，是 Flutter 学习效率的最大加成。" },
+                { "type": "list", "items": ["安装 SDK 与编辑器插件", "flutter doctor 检查环境", "flutter create 创建工程", "flutter run 真机或模拟器运行"] }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "c1-ch2",
+          "title": "第 2 章 · 界面与实战",
+          "lessons": [
+            {
+              "id": "c1-l3",
+              "title": "Widget 树与常用布局",
+              "durationMin": 10,
+              "blocks": [
+                { "type": "heading", "text": "一切皆 Widget" },
+                { "type": "text", "text": "Flutter 的界面由一棵 Widget 树构成。Column 纵向排布、Row 横向排布、Container 负责装饰，掌握了这三个基础控件，你就已经能搭出大半的应用界面。" },
+                { "type": "tip", "text": "遇到布局问题先别搜代码：想清楚这一行是要横着放还是竖着放，选 Row 还是 Column，问题就解决了一半。" }
+              ],
+              "quiz": [
+                {
+                  "stem": "想要把三个按钮纵向排成一列，应该使用哪个布局控件？",
+                  "options": ["Row", "Column", "Stack", "ListView"],
+                  "answer": 1,
+                  "explanation": "Column 让子控件沿垂直方向排列，Row 则是水平排列。"
+                },
+                {
+                  "stem": "Flutter 是使用哪种语言开发的？",
+                  "options": ["Kotlin", "Swift", "Dart", "JavaScript"],
+                  "answer": 2,
+                  "explanation": "Flutter 使用 Dart 语言，由 Google 开发维护。"
+                },
+                {
+                  "stem": "Flutter 与 Web 套壳方案相比，最大的优势是？",
+                  "options": ["可以直接画像素，性能更好", "安装包更小", "不需要联网", "代码一定更短"],
+                  "answer": 0,
+                  "explanation": "Flutter 直接绘制每个像素，避免中间层损耗，滚动与动画更流畅。"
+                }
+              ]
+            },
+            {
+              "id": "c1-l4",
+              "title": "实战：做一个待办清单",
+              "durationMin": 12,
+              "blocks": [
+                { "type": "heading", "text": "把学到的用起来" },
+                { "type": "text", "text": "本课将手把手完成一个可增删、可勾选完成的待办清单应用，并把上一节学到的布局、列表与点击交互全部串起来。" },
+                { "type": "list", "items": ["设计数据模型与状态", "用 ListView 渲染任务列表", "实现新增与删除任务", "勾选完成并持久化到本地"] },
+                { "type": "tip", "text": "做完这个小项目，你就拥有了继续学习状态管理（如 Riverpod）的完整上下文。" }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "work-english",
+      "title": "职场英语 · 实用口语",
+      "subtitle": "旅行、会议、汇报全场景开口表达",
+      "description": "背了多年单词却开不了口？本课程精选真实场景的高频表达，配合真人演示视频与跟读练习，帮助你建立开口自信，覆盖机场出行、酒店入住、会议发言等典型职场与生活场景。",
+      "categoryId": "translate",
+      "teacher": "Sarah 老师",
+      "level": "中级",
+      "coverSeed": 3,
+      "featured": true,
+      "chapters": [
+        {
+          "id": "c2-ch1",
+          "title": "第 1 章 · 旅行英语",
+          "lessons": [
+            {
+              "id": "c2-l1",
+              "title": "机场英语 · 值机与登机",
+              "durationMin": 8,
+              "videoUrl": "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4",
+              "blocks": [
+                { "type": "heading", "text": "先看一遍视频跟读" },
+                { "type": "text", "text": "值机对话中最高频的三句话：May I see your passport, please? 请出示护照；Do you have any luggage to check in? 有需要托运的行李吗；Here is your boarding pass. 这是您的登机牌。" },
+                { "type": "tip", "text": "开口前先听原声的语气与重音，再用影子跟读（shadowing）模仿，比默背单词有效得多。" }
+              ]
+            },
+            {
+              "id": "c2-l2",
+              "title": "酒店入住 · 办理 Check-in",
+              "durationMin": 7,
+              "videoUrl": "https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4",
+              "blocks": [
+                { "type": "text", "text": "入住办理常见表达：I have a reservation under the name Wang. 我用 Wang 的名字预订了房间；Could I have a room with a view? 可以有景观房吗？Breakfast is included from 7 to 10 a.m. 早餐包含在内，上午 7 点到 10 点供应。" }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "c2-ch2",
+          "title": "第 2 章 · 职场英语",
+          "lessons": [
+            {
+              "id": "c2-l3",
+              "title": "会议发言 · 万能句式",
+              "durationMin": 10,
+              "blocks": [
+                { "type": "heading", "text": "四步撑起一场发言" },
+                { "type": "text", "text": "开场：Thanks for having me. 感谢邀请；承接：Building on what Sarah said… 接着 Sarah 说的……；推进：Let me walk you through the numbers. 我带大家看一下数据；收尾：That covers everything from my side. 我这边就这些。" },
+                { "type": "list", "items": ["开场表示感谢与认同", "用连接句承接他人观点", "用数字与例子让表达可信", "清晰收尾，留出提问空间"] }
+              ],
+              "quiz": [
+                {
+                  "stem": "会议中想「接着上一位同事的观点」继续发言，最合适的说法是？",
+                  "options": ["Building on what Sarah said…", "I disagree completely.", "Let's stop here.", "No problem."],
+                  "answer": 0,
+                  "explanation": "Building on… 表示「在……基础上进一步补充」，是职场会议的高频衔接句式。"
+                },
+                {
+                  "stem": "Which phrase means 「我带大家看一下数据」？",
+                  "options": ["Thanks for having me.", "Let me walk you through the numbers.", "That covers everything.", "Have a nice day."],
+                  "answer": 1,
+                  "explanation": "walk someone through 表示「引导着讲解」，配合数据展示非常常用。"
+                },
+                {
+                  "stem": "发言收尾时，哪一句更专业得体？",
+                  "options": ["That covers everything from my side.", "OK bye.", "Whatever.", "See you."],
+                  "answer": 0,
+                  "explanation": "That covers everything from my side. 是标准、得体的收尾，并暗示可以提问。"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "math-function",
+      "title": "初中数学 · 一次函数与图像",
+      "subtitle": "把抽象的公式变成看得见的图",
+      "description": "函数是初中数学从「算术」走向「代数思维」的关键一步。本课程用直观的图像帮你理解函数概念、掌握一次函数 y = kx + b 的图像与性质，并通过生活案例感受斜率的现实意义。",
+      "categoryId": "calculate",
+      "teacher": "王老师",
+      "level": "初二",
+      "coverSeed": 5,
+      "featured": false,
+      "chapters": [
+        {
+          "id": "c3-ch1",
+          "title": "一次函数专题",
+          "lessons": [
+            {
+              "id": "c3-l1",
+              "title": "什么是函数",
+              "durationMin": 8,
+              "blocks": [
+                { "type": "heading", "text": "从「变化」理解函数" },
+                { "type": "text", "text": "函数描述的是两个量之间的对应关系：每给定一个自变量 x，都能唯一确定一个因变量 y。比如每小时骑行 15 千米，路程 y 就随骑行时间 x 变化：y = 15x。" },
+                { "type": "list", "items": ["一个 x 只对应一个 y", "用解析式、列表、图像三种方式表示", "判断标准：x 取值后 y 是否唯一确定"] }
+              ]
+            },
+            {
+              "id": "c3-l2",
+              "title": "一次函数的图像",
+              "durationMin": 12,
+              "blocks": [
+                { "type": "heading", "text": "y = kx + b 是一条直线" },
+                { "type": "text", "text": "一次函数的图像是一条直线。k 决定直线的倾斜程度（k 越大越陡，k 为负时从左向右下降），b 是直线与 y 轴的交点，称为截距。" },
+                { "type": "tip", "text": "画图只需两个点：先取 x=0 得到 (0, b)，再取一个方便的 x，比如 x=1，连线即可。" }
+              ],
+              "quiz": [
+                {
+                  "stem": "一次函数 y = 2x + 3 与 y 轴的交点坐标是？",
+                  "options": ["(3, 0)", "(0, 3)", "(2, 3)", "(0, 0)"],
+                  "answer": 1,
+                  "explanation": "令 x = 0，得到 y = 3，所以交点为 (0, 3)，也就是截距 b。"
+                },
+                {
+                  "stem": "函数 y = -x + 1 的图像从左到右是？",
+                  "options": ["上升", "下降", "水平", "无法判断"],
+                  "answer": 1,
+                  "explanation": "k = -1 为负数，直线从左到右呈下降趋势。"
+                },
+                {
+                  "stem": "下列哪个是函数？",
+                  "options": ["一个 x 对应两个 y", "每个 x 唯一确定一个 y", "y 与 x 无关", "只有 x=3 时有值"],
+                  "answer": 1,
+                  "explanation": "函数的定义要求：任意一个 x，都唯一确定一个 y。"
+                }
+              ]
+            },
+            {
+              "id": "c3-l3",
+              "title": "斜率与实际应用",
+              "durationMin": 10,
+              "blocks": [
+                { "type": "heading", "text": "k 的现实含义" },
+                { "type": "text", "text": "斜率 k 表示「y 随 x 平均变化的速度」。某次打车的起步价是 10 元，之后每公里 3 元，则车费 y = 3x + 10，这里的 3 就是每公里的单价，x 为行驶里程。" },
+                { "type": "tip", "text": "做题时先问自己：题里哪一个是固定的起步值（截距 b），哪一个是变化速率（斜率 k）？分清二者，应用题不再难。" }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "excel-work",
+      "title": "Excel 高效办公实战",
+      "subtitle": "每天少加班 1 小时的表格技巧",
+      "description": "报表汇总总拖到深夜？本课程聚焦高频办公场景：常用快捷键、脏数据清洗、数据透视表与图表美化，让你用更少的时间交付更专业的表格成果。",
+      "categoryId": "work",
+      "teacher": "李老师",
+      "level": "初级",
+      "coverSeed": 6,
+      "featured": true,
+      "chapters": [
+        {
+          "id": "c4-ch1",
+          "title": "第 1 章 · 基础提速",
+          "lessons": [
+            {
+              "id": "c4-l1",
+              "title": "告别手动：高频快捷键",
+              "durationMin": 6,
+              "blocks": [
+                { "type": "heading", "text": "效率从键盘开始" },
+                { "type": "list", "items": ["Ctrl + Shift + ↓ ：一键选中到末尾", "Ctrl + 1：快速打开单元格格式", "Ctrl + T：把区域变成超级表", "Alt + =：一键自动求和"] },
+                { "type": "tip", "text": "每天刻意用三个快捷键，两周后你的右手就离不开键盘了。" }
+              ],
+              "quiz": [
+                {
+                  "stem": "想快速给一列数据求和，最方便的操作是？",
+                  "options": ["Alt + =", "Ctrl + P", "Ctrl + S", "Alt + F4"],
+                  "answer": 0,
+                  "explanation": "光标放在空单元格按 Alt + =，Excel 会自动识别上方区域并求和。"
+                },
+                {
+                  "stem": "把一片数据区域快速变成可扩展的「超级表」，用哪个快捷键？",
+                  "options": ["Ctrl + T", "Ctrl + Z", "F2", "Ctrl + B"],
+                  "answer": 0,
+                  "explanation": "Ctrl + T 创建超级表，自动带筛选按钮与斑马纹，公式还可随行扩展。"
+                }
+              ]
+            },
+            {
+              "id": "c4-l2",
+              "title": "数据清洗三招",
+              "durationMin": 8,
+              "blocks": [
+                { "type": "heading", "text": "先清理，再分析" },
+                { "type": "text", "text": "拿到表格第一步不是做表，而是清脏数据：去掉重复项、统一文本格式、处理空格与错误值。三招下来，报表立刻「能看」。" },
+                { "type": "list", "items": ["数据 → 删除重复项", "分列整理混杂的日期与文本", "查找替换把空格与不可见字符清掉"] }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "c4-ch2",
+          "title": "第 2 章 · 分析呈现",
+          "lessons": [
+            {
+              "id": "c4-l3",
+              "title": "数据透视表 20 分钟上手",
+              "durationMin": 15,
+              "blocks": [
+                { "type": "heading", "text": "百万行也能 3 秒汇总" },
+                { "type": "text", "text": "选中数据源 → 插入数据透视表 → 把「地区」拖到行、把「销售额」拖到值，一张分区域汇总表就生成了。想换维度？直接拖拽字段即可，无需重写任何公式。" },
+                { "type": "tip", "text": "拖动字段时留意「值」字段的汇总方式：默认是求和，也可以改为平均值、计数或占比。" }
+              ]
+            },
+            {
+              "id": "c4-l4",
+              "title": "图表美化与汇报",
+              "durationMin": 10,
+              "blocks": [
+                { "type": "heading", "text": "让老板一眼看懂" },
+                { "type": "text", "text": "选对图表类型比美化更重要：趋势看折线，对比看柱状，占比看饼图。配色统一、去掉网格线、突出关键数据点，汇报页立刻专业。" },
+                { "type": "list", "items": ["按意图选图表类型", "统一品牌配色", "只保留必要的数据标签", "重点数据用高亮标注"] }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
