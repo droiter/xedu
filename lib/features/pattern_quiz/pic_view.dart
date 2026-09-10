@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import 'pattern_quiz_models.dart';
@@ -45,6 +47,57 @@ const List<List<Color>> kRampPalettes = [
   ],
 ];
 
+/// 纯色块 / 几何图形用的鲜明色板（颜色交替、颜色循环规律）。
+const List<Color> kBlockColors = [
+  Color(0xFFE53935), // 红
+  Color(0xFFFB8C00), // 橙
+  Color(0xFFFDD835), // 黄
+  Color(0xFF43A047), // 绿
+  Color(0xFF1E88E5), // 蓝
+  Color(0xFF8E24AA), // 紫
+  Color(0xFFEC407A), // 粉
+  Color(0xFF00897B), // 青绿
+  Color(0xFF6D4C41), // 棕
+  Color(0xFF546E7A), // 蓝灰
+];
+
+/// 骰子点阵布局：值为每个点的相对位置 (x, y)，范围 0..1。
+const Map<int, List<List<double>>> kDiceLayouts = {
+  1: [
+    [0.5, 0.5],
+  ],
+  2: [
+    [0.28, 0.28],
+    [0.72, 0.72],
+  ],
+  3: [
+    [0.26, 0.26],
+    [0.5, 0.5],
+    [0.74, 0.74],
+  ],
+  4: [
+    [0.28, 0.28],
+    [0.72, 0.28],
+    [0.28, 0.72],
+    [0.72, 0.72],
+  ],
+  5: [
+    [0.28, 0.28],
+    [0.72, 0.28],
+    [0.5, 0.5],
+    [0.28, 0.72],
+    [0.72, 0.72],
+  ],
+  6: [
+    [0.28, 0.26],
+    [0.72, 0.26],
+    [0.28, 0.5],
+    [0.72, 0.5],
+    [0.28, 0.74],
+    [0.72, 0.74],
+  ],
+};
+
 /// 一个 [Pic] 元素的自适应渲染：在给定的方格内居中绘制对应图片 / 图形。
 class PicView extends StatelessWidget {
   const PicView({super.key, required this.pic, this.color});
@@ -61,6 +114,7 @@ class PicView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final accent = color ?? Theme.of(context).colorScheme.primary;
+    final scheme = Theme.of(context).colorScheme;
     return LayoutBuilder(
       builder: (context, constraints) {
         final w = constraints.maxWidth.isFinite ? constraints.maxWidth : 96.0;
@@ -77,6 +131,12 @@ class PicView extends StatelessWidget {
             _text(box, pic.emoji, scale: _sizeScale(_level01(pic.level))),
           PicKind.arrowQuarter => _arrow(box, accent),
           PicKind.colorRamp => _ramp(box),
+          PicKind.number => _number(box, accent),
+          PicKind.shape => _shape(box, accent),
+          PicKind.shapeCount => _shapeCount(box),
+          PicKind.dice => _dice(box, scheme),
+          PicKind.colorBlock => _colorBlock(box),
+          PicKind.bar => _bar(box, accent, scheme),
           PicKind.asset => _asset(box),
         };
         return Center(child: art);
@@ -150,6 +210,156 @@ class PicView extends StatelessWidget {
     );
   }
 
+  Widget _number(double box, Color accent) {
+    return SizedBox(
+      width: box,
+      height: box,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Text(
+          '${pic.n}',
+          style: TextStyle(
+            fontSize: box * 0.68,
+            fontWeight: FontWeight.w800,
+            color: accent,
+            height: 1.0,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _shape(double box, Color accent) {
+    final color = kBlockColors[_mod(pic.base + 4, kBlockColors.length)];
+    return SizedBox(
+      width: box,
+      height: box,
+      child: CustomPaint(
+        painter: _ShapePainter(
+          shape: pic.base,
+          color: color,
+          turns: _mod(pic.level, 4),
+        ),
+      ),
+    );
+  }
+
+  Widget _shapeCount(double box) {
+    final color = kBlockColors[_mod(pic.level, kBlockColors.length)];
+    final count = pic.n > 0 ? pic.n : 1;
+    return SizedBox(
+      width: box,
+      height: box,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (var i = 0; i < count; i++)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 3),
+                child: SizedBox(
+                  width: 44,
+                  height: 44,
+                  child: CustomPaint(
+                    painter:
+                        _ShapePainter(shape: pic.base, color: color, turns: 0),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _dice(double box, ColorScheme scheme) {
+    final n = pic.n.clamp(1, 6);
+    final layout = kDiceLayouts[n]!;
+    final fill = scheme.brightness == Brightness.dark
+        ? scheme.surfaceContainerHighest
+        : Colors.white;
+    return SizedBox(
+      width: box,
+      height: box,
+      child: Container(
+        decoration: BoxDecoration(
+          color: fill,
+          border: Border.all(color: kDotColors[0], width: 2),
+          borderRadius: BorderRadius.circular(box * 0.18),
+        ),
+        child: LayoutBuilder(
+          builder: (context, c) {
+            final d = math.min(c.maxWidth, c.maxHeight) * 0.2;
+            return Stack(
+              children: [
+                for (final p in layout)
+                  Positioned(
+                    left: p[0] * (c.maxWidth - d),
+                    top: p[1] * (c.maxHeight - d),
+                    child: Container(
+                      width: d,
+                      height: d,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Color(0xFF3D7BFF),
+                      ),
+                    ),
+                  ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _colorBlock(double box) {
+    final color = kBlockColors[_mod(pic.base, kBlockColors.length)];
+    return Container(
+      width: box,
+      height: box,
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(box * 0.2),
+      ),
+    );
+  }
+
+  Widget _bar(double box, Color accent, ColorScheme scheme) {
+    const maxUnits = 5;
+    final units = pic.n.clamp(1, maxUnits);
+    final frac = units / maxUnits;
+    final track = scheme.brightness == Brightness.dark
+        ? scheme.surfaceContainerHighest
+        : Colors.black.withOpacity(0.06);
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Container(
+        width: box * 0.66,
+        height: box,
+        padding: EdgeInsets.all(box * 0.05),
+        decoration: BoxDecoration(
+          color: track,
+          borderRadius: BorderRadius.circular(box * 0.12),
+        ),
+        child: Align(
+          alignment: Alignment.bottomCenter,
+          child: FractionallySizedBox(
+            heightFactor: frac,
+            child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: accent,
+                borderRadius: BorderRadius.circular(box * 0.09),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _asset(double box) {
     return Container(
       width: box,
@@ -162,4 +372,113 @@ class PicView extends StatelessWidget {
       child: Icon(Icons.image_outlined, size: box * 0.45, color: Colors.black38),
     );
   }
+}
+
+/// 绘制内置几何图形，可绕中心旋转 90° 的整数倍。
+class _ShapePainter extends CustomPainter {
+  _ShapePainter({required this.shape, required this.color, required this.turns});
+
+  final int shape;
+  final Color color;
+  final int turns;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final s = size.shortestSide;
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.fill
+      ..isAntiAlias = true;
+
+    canvas.save();
+    canvas.translate(size.width / 2, size.height / 2);
+    if (turns != 0) canvas.rotate(turns * math.pi / 2);
+    canvas.drawPath(_pathFor(shape % 9, s), paint);
+    canvas.restore();
+  }
+
+  Path _pathFor(int shape, double s) {
+    final h = s / 2;
+    switch (shape) {
+      case 0: // 圆形
+        return Path()
+          ..addOval(Rect.fromCircle(center: Offset.zero, radius: h));
+      case 1: // 正方形（圆角）
+        return Path()
+          ..addRRect(RRect.fromRectAndRadius(
+            Rect.fromCenter(center: Offset.zero, width: s, height: s),
+            Radius.circular(s * 0.14),
+          ));
+      case 2: // 三角形（尖朝上）
+        return Path()
+          ..moveTo(0, -h)
+          ..lineTo(h * 0.92, h * 0.78)
+          ..lineTo(-h * 0.92, h * 0.78)
+          ..close();
+      case 3: // 五角星
+        return _star(h, h * 0.44);
+      case 4: // 爱心
+        return _heart(s);
+      case 5: // 菱形
+        return Path()
+          ..moveTo(0, -h)
+          ..lineTo(h, 0)
+          ..lineTo(0, h)
+          ..lineTo(-h, 0)
+          ..close();
+      case 6: // 五边形
+        return _regular(h, 5);
+      case 7: // 六边形
+        return _regular(h, 6);
+      default: // 十字
+        final t = s * 0.17;
+        return Path()
+          ..fillType = PathFillType.nonZero
+          ..addRect(Rect.fromLTRB(-t, -h, t, h))
+          ..addRect(Rect.fromLTRB(-h, -t, h, t));
+    }
+  }
+
+  Path _star(double outer, double inner) {
+    final p = Path();
+    for (var i = 0; i < 10; i++) {
+      final r = i.isEven ? outer : inner;
+      final a = -math.pi / 2 + i * math.pi / 5;
+      final x = math.cos(a) * r;
+      final y = math.sin(a) * r;
+      if (i == 0) {
+        p.moveTo(x, y);
+      } else {
+        p.lineTo(x, y);
+      }
+    }
+    return p..close();
+  }
+
+  Path _heart(double s) {
+    return Path()
+      ..moveTo(0, s * 0.4)
+      ..cubicTo(-s * 0.78, -s * 0.08, -s * 0.42, -s * 0.66, 0, -s * 0.22)
+      ..cubicTo(s * 0.42, -s * 0.66, s * 0.78, -s * 0.08, 0, s * 0.4)
+      ..close();
+  }
+
+  Path _regular(double r, int sides) {
+    final p = Path();
+    for (var i = 0; i < sides; i++) {
+      final a = -math.pi / 2 + i * 2 * math.pi / sides;
+      final x = math.cos(a) * r;
+      final y = math.sin(a) * r;
+      if (i == 0) {
+        p.moveTo(x, y);
+      } else {
+        p.lineTo(x, y);
+      }
+    }
+    return p..close();
+  }
+
+  @override
+  bool shouldRepaint(_ShapePainter old) =>
+      old.shape != shape || old.color != color || old.turns != turns;
 }

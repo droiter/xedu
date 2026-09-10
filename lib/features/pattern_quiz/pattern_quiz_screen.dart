@@ -8,11 +8,15 @@ import 'pattern_quiz_models.dart';
 import 'pic_view.dart';
 
 /// 「看图找规律」闯关：
-/// - 每题 4 格图遵循一个规律，随机挖空一格；
+/// - 按 [ages] 年龄档位取题库，可同时选多个年龄段一起出题；
+/// - 每题 4 格图遵循一个规律，在允许的位置里随机挖空一格；
 /// - 从多个备选中选出被挖掉的那张图；
 /// - 答对进下一题；答错会重打乱备选顺序、并替换部分干扰项，可再试，直到答对为止。
 class PatternQuizScreen extends StatefulWidget {
-  const PatternQuizScreen({super.key});
+  const PatternQuizScreen({super.key, required this.ages});
+
+  /// 本局使用的年龄档位（可多个，取合并题库）。
+  final Set<PatternAgeGroup> ages;
 
   @override
   State<PatternQuizScreen> createState() => _PatternQuizScreenState();
@@ -45,6 +49,18 @@ class _PatternQuizScreenState extends State<PatternQuizScreen> {
   int get _total => _order.length;
   bool get _isLast => _qi >= _total - 1;
 
+  /// 标题里的年龄段文案：单个直接显示，多个显示混合档位。
+  String get _agesLabel {
+    final picked = [
+      for (final g in PatternAgeGroup.values)
+        if (widget.ages.contains(g)) g.ageText,
+    ];
+    if (picked.isEmpty) return '看图找规律';
+    if (picked.length == 1) return picked.first;
+    if (picked.length == 2) return '${picked[0]} + ${picked[1]}';
+    return '混龄 · ${picked.length} 个年龄段';
+  }
+
   @override
   void initState() {
     super.initState();
@@ -58,18 +74,20 @@ class _PatternQuizScreenState extends State<PatternQuizScreen> {
   }
 
   void _restart() {
-    _order = [...kPatternQuestions]..shuffle(_rng);
+    _order = [...patternBankForAges(widget.ages)]..shuffle(_rng);
     _qi = 0;
     _right = 0;
     _wrongTotal = 0;
-    _finished = false;
+    _finished = _order.isEmpty;
+    if (_order.isEmpty) return;
     _begin();
   }
 
-  /// 进入当前索引题目：随机挖空一格并生成备选。
+  /// 进入当前索引题目：在允许的位置里随机挖空一格并生成备选。
   void _begin() {
     final q = _order[_qi];
-    _blank = _rng.nextInt(q.items.length);
+    final blanks = q.blankables;
+    _blank = blanks[_rng.nextInt(blanks.length)];
     _correct = q.items[_blank];
     _options = _shuffleDisplay(_makeWrongs(keepShown: 0));
     _resolved = false;
@@ -175,7 +193,7 @@ class _PatternQuizScreenState extends State<PatternQuizScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('看图找规律'),
+        title: Text('看图找规律 · $_agesLabel'),
         actions: [
           IconButton(
             tooltip: '重新开始',
@@ -205,20 +223,33 @@ class _PatternQuizScreenState extends State<PatternQuizScreen> {
             children: [
               _progressBar(context),
               const SizedBox(height: 14),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: scheme.primaryContainer,
-                    borderRadius: BorderRadius.circular(20),
+              Row(
+                children: [
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: scheme.primaryContainer,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text('第 ${_qi + 1} / $_total 题',
+                        style: TextStyle(
+                            fontSize: 12.5,
+                            fontWeight: FontWeight.w700,
+                            color: scheme.onPrimaryContainer)),
                   ),
-                  child: Text('第 ${_qi + 1} / $_total 题',
-                      style: TextStyle(
-                          fontSize: 12.5,
-                          fontWeight: FontWeight.w700,
-                          color: scheme.onPrimaryContainer)),
-                ),
+                  const Spacer(),
+                  for (var i = 0; i < 3; i++)
+                    Icon(
+                      q.difficulty > i
+                          ? Icons.star_rounded
+                          : Icons.star_outline_rounded,
+                      size: 18,
+                      color: q.difficulty > i
+                          ? const Color(0xFFF59E0B)
+                          : scheme.outlineVariant,
+                    ),
+                ],
               ),
               const SizedBox(height: 12),
               Text(q.title,
@@ -446,6 +477,12 @@ class _PatternQuizScreenState extends State<PatternQuizScreen> {
   // ---------- 结果 ----------
   Widget _resultView(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    if (_total == 0) {
+      return Center(
+        child: Text('这个年龄还没有题目，先看看别的年龄吧',
+            style: TextStyle(color: scheme.onSurfaceVariant)),
+      );
+    }
     final percent = (_right * 100 / _total).round();
     final (headline, sub) = switch (percent) {
       >= 90 => ('太棒了！', '规律题全掌握，逻辑力满分'),
@@ -503,9 +540,10 @@ class _PatternQuizScreenState extends State<PatternQuizScreen> {
               SizedBox(
                 width: double.infinity,
                 height: 50,
-                child: OutlinedButton(
+                child: OutlinedButton.icon(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('返回首页'),
+                  icon: const Icon(Icons.child_care_rounded),
+                  label: const Text('换个年龄'),
                 ),
               ),
             ],

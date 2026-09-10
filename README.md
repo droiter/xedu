@@ -126,6 +126,10 @@ assets/data/courses.json        # 演示课程目录（新增课程只需改这�
 渲染（无需图片资源）。换真实图片时，把题目里的元素换成 `Pic.asset(path)`
 并把文件声明到 `pubspec.yaml` 的 `assets:` 即可。
 
+题库按 `PatternAgeGroup` 分 5 档：2–3 岁（16 题）/ 3–4 岁（34 题）/
+5–6 岁（27 题）/ 7–8 岁（26 题）/ 9–10 岁（26 题），共 129 题。
+进入时**可多选年龄段**，`patternBankForAges()` 会把选中的题库合并出题。
+
 **主要扩展点**
 - `lib/state/auth.dart`：把假认证换成真实登录接口
 - `lib/state/catalog.dart`：把 `courses.json` 换成后端课程列表 API
@@ -142,7 +146,8 @@ flutter test
 - `models_test.dart`：课程 JSON 解析与进度算法
 - `study_flow_test.dart`：注册 / 登录 / 学习进度 / 测验最高分（持久化）
 - `app_smoke_test.dart`：引导 → 登录 → 注册 → 进入主界面的冒烟测试
-- `pattern_quiz_bank_test.dart`：规律题库数据一致性（4 格 / 干扰项 / id 唯一）
+- `pattern_quiz_bank_test.dart`：规律题库数据一致性（4 格 / 干扰项 / id 唯一 / 合并题库）
+- `pattern_quiz_widget_test.dart`：元素渲染 + 年龄多选与答题流程
 
 ## 七、Roadmap 建议
 

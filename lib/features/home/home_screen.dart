@@ -6,7 +6,7 @@ import '../../shared/widgets/content_viewer.dart';
 import '../../shared/widgets/course_card.dart';
 import '../../state/providers.dart';
 import '../course/course_detail_screen.dart';
-import '../pattern_quiz/pattern_quiz_screen.dart';
+import '../pattern_quiz/pattern_age_select_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key, required this.onOpenTab});
@@ -154,7 +154,7 @@ class HomeScreen extends ConsumerWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const PatternQuizScreen()),
+                MaterialPageRoute(builder: (_) => const PatternAgeSelectScreen()),
               ),
           child: Ink(
             height: 86,
@@ -191,7 +191,7 @@ class HomeScreen extends ConsumerWidget {
                                 fontSize: 16,
                                 fontWeight: FontWeight.w800)),
                         const SizedBox(height: 3),
-                        Text('补全 4 格图 · 找规律逻辑闯关',
+                        Text('选年龄（可多选） · 补全 4 格图找规律',
                             style: TextStyle(
                                 color: Colors.white.withOpacity(0.85),
                                 fontSize: 12.5)),

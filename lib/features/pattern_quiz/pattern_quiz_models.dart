@@ -2,8 +2,9 @@ import 'package:flutter/foundation.dart';
 
 /// 图片 / 动画元素的渲染类型。
 ///
-/// 演示内容全部用 Flutter 内置矢量绘制（圆点 / emoji / 色块），无需任何图片资源。
-/// 若之后要换成自己的真实图片，新增元素使用 [Pic.asset] 并把文件放进 `assets/`。
+/// 演示内容全部用 Flutter 内置矢量绘制（圆点 / emoji / 色块 / 几何图形），
+/// 无需任何图片资源。若之后要换成自己的真实图片，新增元素使用 [Pic.asset]
+/// 并把文件放进 `assets/`。
 enum PicKind {
   /// 一排「●」圆点，数量变化形成规律（数量递增 / 递减）。
   dots,
@@ -23,9 +24,32 @@ enum PicKind {
   /// 同一色系的色块深浅变化（颜色由浅到深 / 由深到浅）。
   colorRamp,
 
+  /// 阿拉伯数字（数列找规律，例如 2 4 6 8）。
+  number,
+
+  /// 单个几何图形。[Pic.base] 是图形编号，[Pic.level] 是旋转的 90° 格数。
+  shape,
+
+  /// n 个同一几何图形。[Pic.base] 是图形编号，[Pic.level] 是颜色编号。
+  shapeCount,
+
+  /// 骰子点数（1..6），点阵布局体现数量 / 点数规律。
+  dice,
+
+  /// 纯色块（颜色交替、颜色循环规律）。
+  colorBlock,
+
+  /// 柱状条，[Pic.n] 为高度档数（阶梯 / 生长规律）。
+  bar,
+
   /// 外部图片资源（预留，需要配合 pubspec.yaml 的 assets 目录）。
   asset,
 }
+
+/// 几何图形的中文名，下标与 [Pic.shape] / [Pic.shapeCount] 的 base 对应。
+const List<String> kShapeNames = [
+  '圆形', '正方形', '三角形', '五角星', '爱心', '菱形', '五边形', '六边形', '十字',
+];
 
 /// 一个可显示的「图片 / 动画」元素。
 ///
@@ -49,13 +73,15 @@ class Pic {
   /// emoji 字面量（emojiCount / emojiSingle / emojiSize 用）。
   final String emoji;
 
-  /// 数量（dots / emojiCount 用）。
+  /// 数量（dots / emojiCount / shapeCount / dice / bar 用）。
   final int n;
 
-  /// 档位：emojiSize 的大小档、arrowQuarter 的朝向(0上 1右 2下 3左)、colorRamp 的深浅档。
+  /// 档位：emojiSize 的大小档、arrowQuarter 的朝向(0上 1右 2下 3左)、
+  /// colorRamp 的深浅档、shape 的旋转格数、shapeCount 的颜色编号。
   final int level;
 
-  /// 颜色底座下标：dots / colorRamp 的调色板编号。
+  /// 底座下标：dots / colorRamp 的调色板编号、shape/shapeCount 的图形编号、
+  /// colorBlock 的颜色编号。
   final int base;
 
   /// 资源路径（asset 类型用）。
@@ -97,7 +123,7 @@ class Pic {
         kind: PicKind.arrowQuarter,
         id: 'arrow:$quarter',
         level: quarter,
-        label: const ['朝上', '朝右', '朝下', '朝左'][quarter],
+        label: const ['朝上', '朝右', '朝下', '朝左'][quarter & 3],
       );
 
   static Pic colorRamp(int base, int level) => Pic(
@@ -108,12 +134,119 @@ class Pic {
         label: '颜色',
       );
 
+  /// 阿拉伯数字（数列题）。
+  static Pic number(int value) => Pic(
+        kind: PicKind.number,
+        id: 'num:$value',
+        n: value,
+        label: '$value',
+      );
+
+  /// 单个几何图形。[quarter] 是顺时针 90° 的格数。
+  static Pic shape(int shape, {int quarter = 0}) => Pic(
+        kind: PicKind.shape,
+        id: 'shp:$shape@$quarter',
+        base: shape,
+        level: quarter,
+        label: kShapeNames[shape % kShapeNames.length],
+      );
+
+  /// [count] 个同一几何图形。
+  static Pic shapeCount(int shape, int count, {int color = 0}) => Pic(
+        kind: PicKind.shapeCount,
+        id: 'shc:$shape@$count:$color',
+        base: shape,
+        n: count,
+        level: color,
+        label: '$count 个${kShapeNames[shape % kShapeNames.length]}',
+      );
+
+  /// 骰子点数 1..6。
+  static Pic dice(int count) => Pic(
+        kind: PicKind.dice,
+        id: 'dice:$count',
+        n: count,
+        label: '$count 点',
+      );
+
+  /// 纯色块。
+  static Pic colorBlock(int color) => Pic(
+        kind: PicKind.colorBlock,
+        id: 'blk:$color',
+        base: color,
+        label: '色块',
+      );
+
+  /// 柱状条，[units] 为高度档数。
+  static Pic bar(int units) => Pic(
+        kind: PicKind.bar,
+        id: 'bar:$units',
+        n: units,
+        label: '高度 $units',
+      );
+
   static Pic asset(String path, {String? label}) => Pic(
         kind: PicKind.asset,
         id: 'asset:$path',
         path: path,
         label: label ?? '图片',
       );
+}
+
+/// 题库按年龄分层：每个年龄档位提供难度合适的题型。
+enum PatternAgeGroup {
+  /// 2–3 岁：找一样、认颜色、最大最简单的交替。
+  baby,
+
+  /// 3–4 岁：大小、颜色、简单交替。
+  toddler,
+
+  /// 5–6 岁：数量增减、方向、阶梯、深浅。
+  preschool,
+
+  /// 7–8 岁：数列、图形旋转、组合规律。
+  lowerGrade,
+
+  /// 9–10 岁：等差 / 等比数列、二维规律。
+  upperGrade,
+}
+
+extension PatternAgeGroupX on PatternAgeGroup {
+  /// 年龄区间文案。
+  String get ageText => switch (this) {
+        PatternAgeGroup.baby => '2–3 岁',
+        PatternAgeGroup.toddler => '3–4 岁',
+        PatternAgeGroup.preschool => '5–6 岁',
+        PatternAgeGroup.lowerGrade => '7–8 岁',
+        PatternAgeGroup.upperGrade => '9–10 岁',
+      };
+
+  /// 学段名称。
+  String get stageName => switch (this) {
+        PatternAgeGroup.baby => '亲子启蒙',
+        PatternAgeGroup.toddler => '幼儿启蒙',
+        PatternAgeGroup.preschool => '学前预备',
+        PatternAgeGroup.lowerGrade => '小学低年级',
+        PatternAgeGroup.upperGrade => '小学高年级',
+      };
+
+  /// 一句话说明题库侧重。
+  String get blurb => switch (this) {
+        PatternAgeGroup.baby => '找一样 · 认颜色 · 最简单交替',
+        PatternAgeGroup.toddler => '大小 · 颜色 · 简单交替',
+        PatternAgeGroup.preschool => '数量 · 方向 · 阶梯 · 深浅',
+        PatternAgeGroup.lowerGrade => '数列 · 旋转 · 组合',
+        PatternAgeGroup.upperGrade => '等差等比 · 二维规律',
+      };
+
+  /// 卡片上的装饰 emoji。
+  String get emoji => switch (this) {
+        PatternAgeGroup.baby => '🍼',
+        PatternAgeGroup.toddler => '🧸',
+        PatternAgeGroup.preschool => '🎈',
+        PatternAgeGroup.lowerGrade => '✏️',
+        PatternAgeGroup.upperGrade => '🔢',
+      };
 }
 
 /// 一道规律题：完整 4 格图 + 干扰项池。
@@ -124,6 +257,9 @@ class PatternQuestion {
     required this.title,
     required this.items,
     required this.distractors,
+    required this.age,
+    this.difficulty = 1,
+    this.blankable,
   });
 
   final String id;
@@ -136,4 +272,20 @@ class PatternQuestion {
 
   /// 干扰项池：正确答案之外的备选项都从这里取（池中会避开正确答案）。
   final List<Pic> distractors;
+
+  /// 该题所属的年龄档位。
+  final PatternAgeGroup age;
+
+  /// 难度星级 1..3。
+  final int difficulty;
+
+  /// 允许被挖空的下标。为空表示任意一格都可挖。
+  ///
+  /// 对周期性规律（ABAB / AABB 等），挖掉最前面的一格可能让答案不唯一，
+  /// 此时用本字段把可挖位置限定为「由前文可唯一推断」的格子。
+  final List<int>? blankable;
+
+  /// 实际可挖空的格子下标（[blankable] 为空时取全部格子）。
+  List<int> get blankables =>
+      blankable ?? [for (var i = 0; i < items.length; i++) i];
 }
