@@ -3,11 +3,15 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'celebration.dart';
 import 'pattern_quiz_bank.dart';
 import 'pattern_quiz_models.dart';
+import 'pattern_stats.dart';
+import 'pattern_stats_screen.dart';
 import 'pic_view.dart';
+import 'question_taxonomy.dart';
 import 'quiz_sfx.dart';
 
 /// 「看图找规律」闯关：
@@ -18,7 +22,7 @@ import 'quiz_sfx.dart';
 /// - **答对**：音效 + 震动 + 炫光爆发，稍作停留后自动进入下一题；
 /// - **答错**：轻音提示并重打乱备选、替换部分干扰项，可以再试，直到答对为止。
 ///   成绩按「一次答对」的题数计算。
-class PatternQuizScreen extends StatefulWidget {
+class PatternQuizScreen extends ConsumerStatefulWidget {
   const PatternQuizScreen({super.key, required this.ages});
 
   /// 本局使用的年龄档位（可多个，取合并题库）。
@@ -28,10 +32,10 @@ class PatternQuizScreen extends StatefulWidget {
   static const int sessionSize = 10;
 
   @override
-  State<PatternQuizScreen> createState() => _PatternQuizScreenState();
+  ConsumerState<PatternQuizScreen> createState() => _PatternQuizScreenState();
 }
 
-class _PatternQuizScreenState extends State<PatternQuizScreen>
+class _PatternQuizScreenState extends ConsumerState<PatternQuizScreen>
     with SingleTickerProviderStateMixin {
   static const int _optionCount = 4; // 1 个正确 + 3 个干扰项
   static const int _wrongSlots = _optionCount - 1;
@@ -183,6 +187,11 @@ class _PatternQuizScreenState extends State<PatternQuizScreen>
     final isRight = picked.id == _correct.id;
 
     if (isRight) {
+      // 记录这一题的成绩：这次首答是否正确 + 这次答错几次。
+      ref.read(patternStatsProvider.notifier).record(
+            qid: qidOf(_order[_qi]),
+            wrong: _missedThis,
+          );
       setState(() {
         _resolved = true;
         _picked = i;
@@ -244,6 +253,11 @@ class _PatternQuizScreenState extends State<PatternQuizScreen>
         title: Text('看图找规律 · $_agesLabel'),
         actions: [
           IconButton(
+            tooltip: '学习统计',
+            icon: const Icon(Icons.insights_rounded),
+            onPressed: () => _openStats(context),
+          ),
+          IconButton(
             tooltip: '重新开始',
             icon: const Icon(Icons.refresh_rounded),
             onPressed: () => setState(_restart),
@@ -298,15 +312,14 @@ class _PatternQuizScreenState extends State<PatternQuizScreen>
                 ],
               ),
               const SizedBox(height: 12),
-              Text(q.title,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.w800)),
+              _hintLine(context, q),
               const SizedBox(height: 4),
               Text('找出规律，选出空白处缺少的那张图',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       fontSize: 12.5, color: scheme.onSurfaceVariant)),
+              const SizedBox(height: 10),
+              _idBadge(context, q),
               const SizedBox(height: 14),
               _slotRow(context),
               const SizedBox(height: 20),
@@ -333,6 +346,113 @@ class _PatternQuizScreenState extends State<PatternQuizScreen>
         value: (_qi + (_resolved ? 1 : 0)) / _total,
         minHeight: 5,
       ),
+    );
+  }
+
+  /// 规律提示：**答错一次之前不显示**，做错后才亮出来帮孩子找规律。
+  Widget _hintLine(BuildContext context, PatternQuestion q) {
+    final shown = _missedThis > 0;
+    return AnimatedSize(
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.easeOut,
+      child: shown
+          ? Row(
+              key: const ValueKey('hint'),
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.lightbulb_outline_rounded,
+                    size: 16, color: Color(0xFFF59E0B)),
+                const SizedBox(width: 5),
+                Flexible(
+                  child: Text(q.title,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.w800)),
+                ),
+              ],
+            )
+          : const SizedBox(key: ValueKey('no-hint'), height: 0),
+    );
+  }
+
+  /// 题号徽标：展示题目唯一 id（含多级分类）+ 中文分类；
+  /// id 旁的复制图标（整块徽标也可点）把 id 拷到剪贴板。
+  Widget _idBadge(BuildContext context, PatternQuestion q) {
+    final scheme = Theme.of(context).colorScheme;
+    final qid = qidOf(q);
+
+    void copyId() {
+      Clipboard.setData(ClipboardData(text: qid));
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text('已复制题号 $qid'),
+            duration: const Duration(seconds: 1),
+          ),
+        );
+    }
+
+    return Center(
+      child: Material(
+        color: scheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(8),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(8),
+          onTap: copyId,
+          child: Container(
+            padding: const EdgeInsets.fromLTRB(10, 3, 8, 3),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              border:
+                  Border.all(color: scheme.outlineVariant.withOpacity(0.6)),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Flexible(
+                  child: Text(
+                    qid,
+                    style: TextStyle(
+                      fontSize: 11,
+                      height: 1.3,
+                      fontFamily: 'monospace',
+                      color: scheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 2),
+                IconButton(
+                  onPressed: copyId,
+                  tooltip: '复制题号',
+                  icon: const Icon(Icons.copy_rounded),
+                  iconSize: 15,
+                  padding: EdgeInsets.zero,
+                  visualDensity: VisualDensity.compact,
+                  constraints:
+                      const BoxConstraints.tightFor(width: 26, height: 24),
+                  color: scheme.primary,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  categoryLabelOf(q),
+                  style: TextStyle(
+                    fontSize: 11,
+                    height: 1.3,
+                    color: scheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _openStats(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const PatternStatsScreen()),
     );
   }
 
@@ -665,6 +785,16 @@ class _PatternQuizScreenState extends State<PatternQuizScreen>
                       onPressed: () => Navigator.of(context).pop(),
                       icon: const Icon(Icons.child_care_rounded),
                       label: const Text('换个年龄'),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: TextButton.icon(
+                      onPressed: () => _openStats(context),
+                      icon: const Icon(Icons.insights_rounded),
+                      label: const Text('查看学习统计'),
                     ),
                   ),
                 ],

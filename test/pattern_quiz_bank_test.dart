@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:xedu/features/pattern_quiz/pattern_quiz_bank.dart';
 import 'package:xedu/features/pattern_quiz/pattern_quiz_models.dart';
+import 'package:xedu/features/pattern_quiz/question_taxonomy.dart';
 
 void main() {
   group('规律题库', () {
@@ -105,6 +106,43 @@ void main() {
         expect(kinds.length, greaterThanOrEqualTo(3),
             reason: '${g.ageText} 的题型偏单一');
       }
+    });
+  });
+
+  group('题目 id 与多级分类', () {
+    test('每道题都有全局唯一的多级分类 id', () {
+      final qids = kPatternQuestions.map(qidOf).toList();
+      expect(qids.toSet().length, kPatternQuestions.length);
+    });
+
+    test('id 由 5 段组成并体现分类：题库.年龄.大类.类型.实例', () {
+      for (final q in kPatternQuestions) {
+        final parts = qidOf(q).split('.');
+        expect(parts.length, 5, reason: qidOf(q));
+        expect(parts[0], 'PT');
+        expect(parts[2], familyOf(q).code, reason: qidOf(q));
+        expect(parts[3], typeOf(q).code, reason: qidOf(q));
+        expect(parts[4], isNotEmpty, reason: qidOf(q));
+      }
+    });
+
+    test('每个题目短名里的题型 token 都能映射到已登记的类型', () {
+      for (final q in kPatternQuestions) {
+        expect(typeOf(q), isNot(PatternType.other),
+            reason: '${q.id} 的题型 token 未登记，请补进 _tokenType');
+      }
+    });
+
+    test('同一道题永远得到同一个 id（可用于持久化）', () {
+      for (final q in kPatternQuestions) {
+        expect(qidOf(q), qidOf(q));
+        expect(questionByQid(qidOf(q)), same(q));
+      }
+    });
+
+    test('六大规律大类都有题目', () {
+      final families = kPatternQuestions.map(familyOf).toSet();
+      expect(families.length, PatternFamily.values.length);
     });
   });
 }

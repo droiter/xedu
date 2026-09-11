@@ -90,6 +90,22 @@ List<Pic> _blocks(List<int> colors) =>
 
 List<Pic> _bars(List<int> units) => [for (final u in units) Pic.bar(u)];
 
+// ---------- 属性规律（长短 / 厚薄 / 粗细 / 胖瘦 / 远近） ----------
+List<Pic> _lenBars(int base, List<int> levels) =>
+    [for (final l in levels) Pic.lengthBar(l, base: base)];
+
+List<Pic> _thickBars(int base, List<int> levels) =>
+    [for (final l in levels) Pic.thickness(l, base: base)];
+
+List<Pic> _widthBars(int base, List<int> levels) =>
+    [for (final l in levels) Pic.widthBar(l, base: base)];
+
+List<Pic> _blobs(int base, List<int> levels) =>
+    [for (final l in levels) Pic.blob(l, base: base)];
+
+List<Pic> _dists(int base, List<int> levels) =>
+    [for (final l in levels) Pic.distance(l, base: base)];
+
 List<Pic> _singles(List<String> emoji) =>
     [for (final e in emoji) Pic.emojiSingle(e)];
 
@@ -139,6 +155,58 @@ List<Pic> _blockPool([int n = 6]) =>
     [for (var c = 0; c < n; c++) Pic.colorBlock(c)];
 
 List<Pic> _barPool() => _bars([1, 2, 3, 4, 5]);
+
+/// 属性规律的干扰项池：同色系下 0..4 五个档位。
+List<Pic> _lenPool(int base) => _lenBars(base, [0, 1, 2, 3, 4]);
+List<Pic> _thickPool(int base) => _thickBars(base, [0, 1, 2, 3, 4]);
+List<Pic> _widthPool(int base) => _widthBars(base, [0, 1, 2, 3, 4]);
+List<Pic> _blobPool(int base) => _blobs(base, [0, 1, 2, 3, 4]);
+List<Pic> _distPool(int base) => _dists(base, [0, 1, 2, 3, 4]);
+
+/// 「属性 + 颜色」二维题的干扰项池：[bases] 种颜色 × [levels] 个档位。
+List<Pic> _lenPool2(int bases, int levels) => [
+      for (var b = 0; b < bases; b++)
+        for (var l = 0; l < levels; l++) Pic.lengthBar(l, base: b),
+    ];
+
+List<Pic> _thickPool2(int bases, int levels) => [
+      for (var b = 0; b < bases; b++)
+        for (var l = 0; l < levels; l++) Pic.thickness(l, base: b),
+    ];
+
+List<Pic> _widthPool2(int bases, int levels) => [
+      for (var b = 0; b < bases; b++)
+        for (var l = 0; l < levels; l++) Pic.widthBar(l, base: b),
+    ];
+
+List<Pic> _blobPool2(int bases, int levels) => [
+      for (var b = 0; b < bases; b++)
+        for (var l = 0; l < levels; l++) Pic.blob(l, base: b),
+    ];
+
+/// 「数字 ↔ 数量」配对题的干扰项池：数字 1..max 与对应数量的圆点。
+List<Pic> _numDotsPool(int max) => [
+      for (var i = 1; i <= max; i++) Pic.number(i),
+      for (var i = 1; i <= max; i++) Pic.dots(i),
+    ];
+
+/// 「数字 ↔ 骰子」配对题的干扰项池：数字 1..6 与骰子点数 1..6。
+List<Pic> _numDicePool() => [
+      for (var i = 1; i <= 6; i++) Pic.number(i),
+      for (var i = 1; i <= 6; i++) Pic.dice(i),
+    ];
+
+/// 「数字 ↔ 图形个数」配对题的干扰项池：数字 1..max 与对应个数的图形。
+List<Pic> _numShcountPool(int shape, int max) => [
+      for (var i = 1; i <= max; i++) Pic.number(i),
+      for (var i = 1; i <= max; i++) Pic.shapeCount(shape, i),
+    ];
+
+/// 「图形 + 颜色」二维循环题的干扰项池：4 种图形 × 前 4 种颜色，各 1 个。
+List<Pic> _shapeColorPoolAll() => [
+      for (var s = 0; s < 4; s++)
+        for (var col = 0; col < 4; col++) Pic.shapeCount(s, 1, color: col),
+    ];
 
 /// 从其它类别挑 emoji 作为干扰项池（排除 [exclude] 里的同类项）。
 List<Pic> _catPool(List<String> exclude) => [
@@ -278,6 +346,27 @@ List<PatternQuestion> _buildBank() {
         _singles(['🐱', '🐟', '🐱', '🐟']), _altPool(['🐱', '🐟']), b,
         blankable: _p2),
 
+    // —— 补充：更多「找一样」和「两两交替」 ——
+    _q('b-same-moon', '都是月亮，找出缺少的那张',
+        _singles(['🌙', '🌙', '🌙', '🌙']), _altPool(['🌙']), b),
+    _q('b-same-purple', '四块都是紫色，找出缺少的那块',
+        _blocks([5, 5, 5, 5]), _blockPool(), b),
+    _q('b-same-triangle', '都是三角形，找出缺少的那张',
+        _shapes(2, [0, 0, 0, 0]), _shapePool(), b),
+    _q('b-alt-train-plane', '小火车、飞机一个隔一个',
+        _singles(['🚂', '✈️', '🚂', '✈️']), _altPool(['🚂', '✈️']), b,
+        blankable: _p2),
+    _q('b-alt-blue-green', '蓝色、绿色一个隔一个', _blocks([4, 3, 4, 3]),
+        _blockPool(), b, blankable: _p2),
+    _q('b-alt-heart-star', '爱心、五角星一个隔一个',
+        [Pic.shape(4), Pic.shape(3), Pic.shape(4), Pic.shape(3)], _shapePool(),
+        b, blankable: _p2),
+    _q('b-alt-size-star2', '星星一会儿小、一会儿大',
+        _esize('⭐', [0, 3, 0, 3]), _esizePool('⭐'), b, blankable: _p2),
+    _q('b-alt-count-balloon', '气球一会儿 1 个、一会儿 2 个',
+        _ecount('🎈', [1, 2, 1, 2]), _ecountPool('🎈', 4), b,
+        diff: 2, blankable: _p2),
+
     // ============================================================
     // 3–4 岁 · 幼儿启蒙：大小 / 颜色 / 简单交替 / 同类辨认
     // ============================================================
@@ -379,6 +468,40 @@ List<PatternQuestion> _buildBank() {
         _singles(['🐶', '🐱', '🐰', '🐶']), _altPool(['🐶', '🐱', '🐰']), t,
         diff: 3, blankable: _p2),
 
+    // —— 找同类：补充更多类别 ——
+    _q('t-cat-food', '找同类：这些全是好吃的',
+        _singles(_foods.take(4).toList()), _catPool(_foods), t),
+    _q('t-cat-clothes', '找同类：这些全是衣物',
+        _singles(_clothes.take(4).toList()), _catPool(_clothes), t, diff: 2),
+    _q('t-cat-music', '找同类：这些全是乐器',
+        _singles(_musical.take(4).toList()), _catPool(_musical), t, diff: 2),
+    _q('t-cat-sport', '找同类：这些全是运动器材',
+        _singles(_sports.take(4).toList()), _catPool(_sports), t, diff: 2),
+    _q('t-cat-weather', '找同类：这些全是天气',
+        _singles(_weather.take(4).toList()), _catPool(_weather), t, diff: 3),
+
+    // —— 三个一循环 / 大小三步 ——
+    _q('t-cycle3-block2', '红、蓝、黄轮流出现', _blocks([0, 4, 2, 0]),
+        _blockPool(), t, diff: 3, blankable: _p2),
+    _q('t-cycle3-shape', '圆、方、三角轮流出现',
+        [Pic.shape(0), Pic.shape(1), Pic.shape(2), Pic.shape(0)], _shapePool(),
+        t, diff: 3, blankable: _p2),
+    _q('t-size3-star', '星星一个一个变大', _esize('⭐', [0, 1, 2, 3]),
+        _esizePool('⭐'), t, diff: 3),
+
+    // —— 数量的增减（小步） ——
+    _q('t-cnt-asc', '苹果从 1 个慢慢变多', _ecount('🍎', [1, 2, 3, 4]),
+        _ecountPool('🍎', 6), t, diff: 3),
+    _q('t-cnt-desc', '气球从 4 个慢慢变少', _ecount('🎈', [4, 3, 2, 1]),
+        _ecountPool('🎈', 6), t, diff: 3),
+
+    // —— 两两交替：再换主题 ——
+    _q('t-alt-shape-sh', '正方形、爱心轮流出现',
+        [Pic.shape(1), Pic.shape(4), Pic.shape(1), Pic.shape(4)], _shapePool(),
+        t, blankable: _p2),
+    _q('t-alt-block-ob', '橙色、蓝色轮流出现', _blocks([1, 4, 1, 4]),
+        _blockPool(), t, blankable: _p2),
+
     // ============================================================
     // 5–6 岁 · 学前预备：数量增减 / 方向 / 深浅 / 阶梯 / 点数
     // ============================================================
@@ -464,6 +587,37 @@ List<PatternQuestion> _buildBank() {
         _dicePool(), p, diff: 2, blankable: _p2),
     _q('p-bar-alt', '柱子一会儿矮、一会儿高', _bars([2, 5, 2, 5]),
         _barPool(), p, blankable: _p2),
+
+    // —— 数字与数量配对：数字几，旁边就有几个 ——
+    _q('p-num-count-1', '数字后面跟着同样多的圆点：1、●、2、●●',
+        [Pic.number(1), Pic.dots(1), Pic.number(2), Pic.dots(2)],
+        _numDotsPool(4), p, diff: 2),
+    _q('p-num-count-2', '数字和圆点数量一样多',
+        [Pic.number(3), Pic.dots(3), Pic.number(4), Pic.dots(4)],
+        _numDotsPool(5), p, diff: 2),
+    _q('p-num-dice', '骰子点数和前面的数字一样多',
+        [Pic.number(2), Pic.dice(2), Pic.number(5), Pic.dice(5)],
+        _numDicePool(), p, diff: 3),
+
+    // —— 方向 / 颜色的三个一循环 ——
+    _q('p-dir-cycle3', '箭头朝上、朝右、朝下，再回到朝上',
+        _arrows([0, 1, 2, 0]), _arrowPool(), p, diff: 3, blankable: [1, 2]),
+    _q('p-block-cycle3', '红、黄、绿轮流出现', _blocks([0, 2, 3, 0]),
+        _blockPool(), p, diff: 3, blankable: [1, 2]),
+
+    // —— 骰子 / 圆点 / 图形个数 补充 ——
+    _q('p-dice-desc6', '骰子点数从 6 到 3', _dice([6, 5, 4, 3]), _dicePool(), p,
+        diff: 2),
+    _q('p-cnt-desc-3', '圆点每次减 2：7、5、3、1',
+        _dots([7, 5, 3, 1], base: 4), _dotsPool(9, base: 4), p, diff: 2),
+    _q('p-shcount-step2', '三角形每次多 2 个：1、3、5、7',
+        _shcount(2, [1, 3, 5, 7]), _shcountPool(2, 8), p, diff: 3),
+
+    // —— 同类辨认：补充 ——
+    _q('p-cat-toy', '找同类：这些全是玩具',
+        _singles(_toys.take(4).toList()), _catPool(_toys), p, diff: 2),
+    _q('p-cat-animal', '找同类：这些全是小动物',
+        _singles(_animals.take(4).toList()), _catPool(_animals), p),
 
     // ============================================================
     // 7–8 岁 · 小学低年级：数列 / 旋转 / 组合
@@ -555,6 +709,44 @@ List<PatternQuestion> _buildBank() {
         _numPool([1, 3, 9, 27], span: 4), l, diff: 3),
     _q('l-shape-rot-square', '正方形顺时针转 90°', _shapes(1, [0, 1, 2, 3]),
         _shapeTurnPool(1), l, diff: 3),
+
+    // —— 数列新规律：质数 / 交错 / 复合 / 对称 ——
+    _q('l-num-prime', '连续的质数：2、3、5、7', _nums([2, 3, 5, 7]),
+        _numPool([2, 3, 5, 7]), l, diff: 3, blankable: [1, 2, 3]),
+    _q('l-num-interleave', '两列数字交错：1、5、2、6', _nums([1, 5, 2, 6]),
+        _numPool([1, 5, 2, 6]), l, diff: 3, blankable: [3]),
+    _q('l-num-compound', '每次都乘 2 再加 1：5、11、23、47',
+        _nums([5, 11, 23, 47]), _numPool([5, 11, 23, 47], span: 5), l,
+        diff: 3, blankable: [3]),
+    _q('l-num-palindrome', '左右对称：1、2、2、1', _nums([1, 2, 2, 1]),
+        _numPool([1, 2, 2, 1]), l, diff: 2, blankable: [1, 2, 3]),
+    _q('l-num-square1', '每个数比平方数多 1：2、5、10、17',
+        _nums([2, 5, 10, 17]), _numPool([2, 5, 10, 17], span: 3), l, diff: 3,
+        blankable: [3]),
+
+    // —— 图形个数：前两个相加得下一个 ——
+    _q('l-shcount-fib', '图形个数：前两个相加得下一个：1、2、3、5',
+        _shcount(3, [1, 2, 3, 5]), _shcountPool(3, 8), l, diff: 3,
+        blankable: _p2),
+
+    // —— 图形 + 颜色 二维循环 ——
+    _q('l-shapecolor-cycle', '图形和颜色一起循环：圆红、方黄、三角绿、圆红',
+        [
+          Pic.shapeCount(0, 1, color: 0),
+          Pic.shapeCount(1, 1, color: 2),
+          Pic.shapeCount(2, 1, color: 3),
+          Pic.shapeCount(0, 1, color: 0),
+        ],
+        _shapeColorPoolAll(), l, diff: 3, blankable: [1, 2, 3]),
+
+    // —— 箭头的三个一循环 ——
+    _q('l-dir-cycle3', '箭头：上、右、下、上……', _arrows([0, 1, 2, 0]),
+        _arrowPool(), l, diff: 3, blankable: [1, 2]),
+
+    // —— 数字与骰子配对 ——
+    _q('l-num-dice', '数字和骰子点数一一对应：3 点、5 点',
+        [Pic.number(3), Pic.dice(3), Pic.number(5), Pic.dice(5)],
+        _numDicePool(), l, diff: 3),
 
     // ============================================================
     // 9–10 岁 · 小学高年级：等差 / 等比 / 二维规律
@@ -659,5 +851,197 @@ List<PatternQuestion> _buildBank() {
         _numPool([2, 3, 5, 8]), u, diff: 3, blankable: _p2),
     _q('u-shape-rot-square', '正方形顺时针转 90°', _shapes(1, [0, 1, 2, 3]),
         _shapeTurnPool(1), u, diff: 3),
+
+    // —— 数列新规律：交错 / 复合 / 递推 / 质数 ——
+    _q('u-num-interleave', '两列数字交错：1、10、2、20', _nums([1, 10, 2, 20]),
+        _numPool([1, 10, 2, 20], span: 3), u, diff: 3, blankable: [3]),
+    _q('u-num-compound', '每次都乘 2 再减 1：3、5、9、17',
+        _nums([3, 5, 9, 17]), _numPool([3, 5, 9, 17], span: 3), u, diff: 3,
+        blankable: [3]),
+    _q('u-num-fib3', '前两个数相加得到后一个：3、4、7、11',
+        _nums([3, 4, 7, 11]), _numPool([3, 4, 7, 11], span: 3), u, diff: 3,
+        blankable: [1, 2, 3]),
+    _q('u-num-prime2', '连续的质数：3、5、7、11',
+        _nums([3, 5, 7, 11]), _numPool([3, 5, 7, 11], span: 3), u, diff: 3,
+        blankable: [1, 2, 3]),
+
+    // —— 图形个数：翻倍 / 数字对应 ——
+    _q('u-shcount-double', '图形个数每次都翻倍：1、2、4、8',
+        _shcount(1, [1, 2, 4, 8]), _shcountPool(1, 10), u, diff: 3),
+    _q('u-num-shcount', '数字和图形个数一样多',
+        [
+          Pic.number(2),
+          Pic.shapeCount(0, 2),
+          Pic.number(4),
+          Pic.shapeCount(0, 4),
+        ],
+        _numShcountPool(0, 6), u, diff: 3),
+
+    // —— 二维：个数变化 + 颜色循环 ——
+    _q('u-two-attr-colorcycle', '个数变少，颜色也循环：4 红、3 黄、2 绿、1 红',
+        [
+          Pic.shapeCount(0, 4, color: 0),
+          Pic.shapeCount(0, 3, color: 2),
+          Pic.shapeCount(0, 2, color: 3),
+          Pic.shapeCount(0, 1, color: 0),
+        ],
+        _shapeCountColorPool(0), u, diff: 3),
+
+    // —— 箭头的三个一循环 ——
+    _q('u-dir-cycle3', '箭头：上、右、下、上……', _arrows([0, 1, 2, 0]),
+        _arrowPool(), u, diff: 3, blankable: [1, 2]),
+
+    // ============================================================
+    // 属性规律 · 长短 / 高矮 / 厚薄 / 粗细 / 胖瘦 / 远近
+    // 「多少、大小、深浅」在原有题目里已有覆盖，这里补齐其余维度，
+    // 每个维度用同色系的 0..4 五档表达「越来越…」和「…交替」。
+    // ============================================================
+    // —— 2–3 岁 · 先认「一样」和最简单的两两交替 ——
+    _q('b-len-same', '四根小棒一样长，找出缺少的那根',
+        _lenBars(0, [2, 2, 2, 2]), _lenPool(0), b),
+    _q('b-len-alt', '长、短一个隔一个', _lenBars(0, [4, 0, 4, 0]),
+        _lenPool(0), b, blankable: _p2),
+    _q('b-thick-same', '四块木板一样厚，找出缺少的那块',
+        _thickBars(1, [3, 3, 3, 3]), _thickPool(1), b),
+    _q('b-thick-alt', '厚、薄一个隔一个', _thickBars(1, [4, 0, 4, 0]),
+        _thickPool(1), b, blankable: _p2),
+    _q('b-width-same', '四根柱子一样粗，找出缺少的那根',
+        _widthBars(2, [2, 2, 2, 2]), _widthPool(2), b),
+    _q('b-width-alt', '粗、细一个隔一个', _widthBars(2, [4, 0, 4, 0]),
+        _widthPool(2), b, blankable: _p2),
+    _q('b-blob-same', '四个小球一样胖，找出缺少的那个',
+        _blobs(3, [3, 3, 3, 3]), _blobPool(3), b),
+    _q('b-blob-alt', '胖、瘦一个隔一个', _blobs(3, [4, 0, 4, 0]),
+        _blobPool(3), b, blankable: _p2),
+    _q('b-dist-same', '四个小球一样远，找出缺少的那个',
+        _dists(4, [1, 1, 1, 1]), _distPool(4), b),
+    _q('b-tall-same', '四根柱子一样高，找出缺少的那根',
+        _bars([3, 3, 3, 3]), _barPool(), b),
+    _q('b-tall-alt', '高、矮一个隔一个', _bars([4, 1, 4, 1]), _barPool(), b,
+        blankable: _p2),
+
+    // —— 3–4 岁 · 认一样 / 交替，迈出「越来越…」第一步 ——
+    _q('t-len-same', '四根小棒一样长，找出缺少的那根',
+        _lenBars(1, [3, 3, 3, 3]), _lenPool(1), t),
+    _q('t-len-alt', '长、短轮流出现', _lenBars(1, [4, 0, 4, 0]), _lenPool(1),
+        t, blankable: _p2),
+    _q('t-len-asc', '小棒一根比一根长', _lenBars(1, [0, 1, 2, 3]), _lenPool(1),
+        t, diff: 2),
+    _q('t-thick-alt', '厚、薄轮流出现', _thickBars(2, [4, 0, 4, 0]),
+        _thickPool(2), t, blankable: _p2),
+    _q('t-thick-asc', '木板一块比一块厚', _thickBars(2, [0, 1, 2, 3]),
+        _thickPool(2), t, diff: 2),
+    _q('t-width-same', '四根柱子一样粗，找出缺少的那根',
+        _widthBars(3, [2, 2, 2, 2]), _widthPool(3), t),
+    _q('t-width-alt', '粗、细轮流出现', _widthBars(3, [4, 0, 4, 0]),
+        _widthPool(3), t, blankable: _p2),
+    _q('t-blob-alt', '胖、瘦轮流出现', _blobs(4, [0, 4, 0, 4]), _blobPool(4),
+        t, blankable: _p2),
+    _q('t-blob-asc', '圆球一圈比一圈胖', _blobs(4, [0, 1, 2, 3]), _blobPool(4),
+        t, diff: 2),
+    _q('t-dist-alt', '小球一会儿近、一会儿远', _dists(1, [0, 4, 0, 4]),
+        _distPool(1), t, diff: 2, blankable: _p2),
+    _q('t-tall-asc', '小树一棵比一棵高', _bars([1, 2, 3, 4]), _barPool(), t,
+        diff: 2),
+    _q('t-tall-alt', '高、矮轮流出现', _bars([1, 4, 1, 4]), _barPool(), t,
+        blankable: _p2),
+
+    // —— 5–6 岁 · 「越来越…」双向序列 + 交替 ——
+    _q('p-len-asc', '小棒一根比一根长', _lenBars(0, [0, 1, 2, 3]), _lenPool(0),
+        p),
+    _q('p-len-desc', '小棒一根比一根短', _lenBars(0, [4, 3, 2, 1]),
+        _lenPool(0), p),
+    _q('p-len-alt', '长、短轮流出现', _lenBars(0, [0, 4, 0, 4]), _lenPool(0), p,
+        blankable: _p2),
+    _q('p-tall-asc', '柱子一根比一根高', _bars([1, 2, 3, 4]), _barPool(), p),
+    _q('p-tall-desc', '柱子一根比一根矮', _bars([5, 4, 3, 2]), _barPool(), p),
+    _q('p-thick-asc', '书本一本比一本厚', _thickBars(1, [0, 1, 2, 3]),
+        _thickPool(1), p),
+    _q('p-thick-desc', '木板一块比一块薄', _thickBars(1, [4, 3, 2, 1]),
+        _thickPool(1), p),
+    _q('p-width-asc', '树干一根比一根粗', _widthBars(2, [0, 1, 2, 3]),
+        _widthPool(2), p),
+    _q('p-width-desc', '树干一根比一根细', _widthBars(2, [4, 3, 2, 1]),
+        _widthPool(2), p),
+    _q('p-width-alt', '粗、细轮流出现', _widthBars(2, [4, 0, 4, 0]),
+        _widthPool(2), p, blankable: _p2),
+    _q('p-blob-asc', '圆球一个比一个胖', _blobs(3, [0, 1, 2, 3]), _blobPool(3),
+        p),
+    _q('p-blob-desc', '圆球一个比一个瘦', _blobs(3, [4, 3, 2, 1]), _blobPool(3),
+        p),
+    _q('p-dist-asc', '小球越走越远', _dists(4, [0, 1, 2, 3]), _distPool(4), p),
+    _q('p-dist-desc', '小球越走越近', _dists(4, [4, 3, 2, 1]), _distPool(4), p),
+    _q('p-dist-alt', '小球一会儿近、一会儿远', _dists(4, [0, 4, 0, 4]),
+        _distPool(4), p, blankable: _p2),
+
+    // —— 7–8 岁 · 双向序列 + 「属性 + 颜色」二维规律 ——
+    _q('l-len-asc', '小棒一根比一根长', _lenBars(0, [0, 1, 2, 3]), _lenPool(0),
+        l, diff: 2),
+    _q('l-len-desc', '小棒一根比一根短', _lenBars(0, [4, 3, 2, 1]),
+        _lenPool(0), l, diff: 2),
+    _q('l-thick-asc', '木板一块比一块厚', _thickBars(1, [0, 1, 2, 3]),
+        _thickPool(1), l, diff: 2),
+    _q('l-width-asc', '树干一根比一根粗', _widthBars(2, [0, 1, 2, 3]),
+        _widthPool(2), l, diff: 2),
+    _q('l-blob-desc', '圆球一个比一个瘦', _blobs(3, [4, 3, 2, 1]), _blobPool(3),
+        l, diff: 2),
+    _q('l-dist-asc', '小球越走越远', _dists(4, [0, 1, 2, 3]), _distPool(4), l,
+        diff: 2),
+    _q('l-tall-desc', '柱子一根比一根矮', _bars([5, 4, 3, 2]), _barPool(), l,
+        diff: 2),
+    _q('l-two-len-color', '小棒越来越长，颜色也跟着换：红、橙、黄、绿',
+        [
+          Pic.lengthBar(0, base: 0),
+          Pic.lengthBar(1, base: 1),
+          Pic.lengthBar(2, base: 2),
+          Pic.lengthBar(3, base: 3),
+        ],
+        _lenPool2(4, 5), l, diff: 3),
+    _q('l-two-blob-color', '圆球越来越胖，颜色红、黄、绿循环',
+        [
+          Pic.blob(0, base: 0),
+          Pic.blob(1, base: 2),
+          Pic.blob(2, base: 3),
+          Pic.blob(3, base: 0),
+        ],
+        _blobPool2(4, 5), l, diff: 3),
+
+    // —— 9–10 岁 · 属性序列 + 属性/颜色二维循环 ——
+    _q('u-len-asc', '小棒一根比一根长', _lenBars(1, [0, 1, 2, 3]), _lenPool(1),
+        u, diff: 2),
+    _q('u-len-desc', '小棒一根比一根短', _lenBars(1, [4, 3, 2, 1]),
+        _lenPool(1), u, diff: 2),
+    _q('u-width-desc', '树干一根比一根细', _widthBars(3, [4, 3, 2, 1]),
+        _widthPool(3), u, diff: 2),
+    _q('u-thick-desc', '木板一块比一块薄', _thickBars(3, [4, 3, 2, 1]),
+        _thickPool(3), u, diff: 2),
+    _q('u-dist-asc', '小球越走越远', _dists(0, [0, 1, 2, 3]), _distPool(0), u,
+        diff: 2),
+    _q('u-dist-desc', '小球越走越近', _dists(0, [4, 3, 2, 1]), _distPool(0), u,
+        diff: 2),
+    _q('u-two-len-color', '小棒越来越长，颜色红、黄、绿循环',
+        [
+          Pic.lengthBar(0, base: 0),
+          Pic.lengthBar(1, base: 2),
+          Pic.lengthBar(2, base: 3),
+          Pic.lengthBar(3, base: 0),
+        ],
+        _lenPool2(4, 5), u, diff: 3),
+    _q('u-two-thick-color', '木板越来越厚，颜色红、绿、蓝循环',
+        [
+          Pic.thickness(0, base: 0),
+          Pic.thickness(1, base: 3),
+          Pic.thickness(2, base: 4),
+          Pic.thickness(3, base: 0),
+        ],
+        _thickPool2(5, 5), u, diff: 3),
+    _q('u-two-width-color', '树干越来越粗，颜色橙、绿、紫循环',
+        [
+          Pic.widthBar(0, base: 1),
+          Pic.widthBar(1, base: 3),
+          Pic.widthBar(2, base: 5),
+          Pic.widthBar(3, base: 1),
+        ],
+        _widthPool2(6, 5), u, diff: 3),
   ];
 }

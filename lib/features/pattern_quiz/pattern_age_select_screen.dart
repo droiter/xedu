@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'pattern_quiz_bank.dart';
 import 'pattern_quiz_models.dart';
 import 'pattern_quiz_screen.dart';
+import 'pattern_stats_screen.dart';
 
 /// 「看图找规律」的年龄选择页。
 ///
@@ -47,7 +48,18 @@ class _PatternAgeSelectScreenState extends State<PatternAgeSelectScreen> {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     return Scaffold(
-      appBar: AppBar(title: const Text('看图找规律')),
+      appBar: AppBar(
+        title: const Text('看图找规律'),
+        actions: [
+          IconButton(
+            tooltip: '学习统计',
+            icon: const Icon(Icons.insights_rounded),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const PatternStatsScreen()),
+            ),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(

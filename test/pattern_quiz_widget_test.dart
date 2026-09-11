@@ -1,13 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:xedu/features/pattern_quiz/celebration.dart';
 import 'package:xedu/features/pattern_quiz/pattern_age_select_screen.dart';
 import 'package:xedu/features/pattern_quiz/pattern_quiz_bank.dart';
 import 'package:xedu/features/pattern_quiz/pattern_quiz_models.dart';
 import 'package:xedu/features/pattern_quiz/pattern_quiz_screen.dart';
 import 'package:xedu/features/pattern_quiz/pic_view.dart';
+import 'package:xedu/state/providers.dart';
 
 Widget _host(Widget child) => MaterialApp(home: Scaffold(body: child));
+
+/// 答题页会读写 Riverpod（记录做题统计），所以要套一层 ProviderScope 并注入
+/// 内存版 SharedPreferences。
+Future<Widget> _quizHost(Widget child) async {
+  SharedPreferences.setMockInitialValues({});
+  final prefs = await SharedPreferences.getInstance();
+  return ProviderScope(
+    overrides: [prefsProvider.overrideWithValue(prefs)],
+    child: MaterialApp(home: child),
+  );
+}
 
 void main() {
   group('规律题渲染', () {
@@ -47,8 +62,7 @@ void main() {
 
     testWidgets('每个年龄档位都能单选进入答题', (tester) async {
       useTabletView(tester);
-      await tester
-          .pumpWidget(const MaterialApp(home: PatternAgeSelectScreen()));
+      await tester.pumpWidget(await _quizHost(const PatternAgeSelectScreen()));
 
       // 五个年龄档位都在（含新增的 2–3 岁）
       for (final g in PatternAgeGroup.values) {
@@ -78,8 +92,7 @@ void main() {
 
     testWidgets('多选年龄时合并题库一起出题，每局仍是固定题量', (tester) async {
       useTabletView(tester);
-      await tester
-          .pumpWidget(const MaterialApp(home: PatternAgeSelectScreen()));
+      await tester.pumpWidget(await _quizHost(const PatternAgeSelectScreen()));
 
       // 默认 3–4 岁，再勾上 5–6 岁 → 两档合并
       await tester.tap(find.text('5–6 岁'));
@@ -110,8 +123,7 @@ void main() {
 
     testWidgets('一个都不选时不能开始', (tester) async {
       useTabletView(tester);
-      await tester
-          .pumpWidget(const MaterialApp(home: PatternAgeSelectScreen()));
+      await tester.pumpWidget(await _quizHost(const PatternAgeSelectScreen()));
 
       await tester.tap(find.text('3–4 岁')); // 取消默认选择
       await tester.pump();
@@ -124,7 +136,7 @@ void main() {
     testWidgets('每题都能答题（点第一个选项不抛异常）', (tester) async {
       for (final g in PatternAgeGroup.values) {
         await tester
-            .pumpWidget(MaterialApp(home: PatternQuizScreen(ages: {g})));
+            .pumpWidget(await _quizHost(PatternQuizScreen(ages: {g})));
         await tester.pump();
         expect(find.text('请选择'), findsOneWidget, reason: g.ageText);
         await tester.tap(find.text('A'));
@@ -155,8 +167,8 @@ void main() {
 
     testWidgets('答对后不用点按钮，自动进入下一题', (tester) async {
       useTabletView(tester);
-      await tester.pumpWidget(MaterialApp(
-          home: PatternQuizScreen(ages: {PatternAgeGroup.preschool})));
+      await tester.pumpWidget(await _quizHost(
+          PatternQuizScreen(ages: {PatternAgeGroup.preschool})));
       await tester.pump();
 
       expect(find.text('第 1 / ${PatternQuizScreen.sessionSize} 题'),
@@ -176,8 +188,8 @@ void main() {
 
     testWidgets('答完全部题目进入结果页，带撒花与星级', (tester) async {
       useTabletView(tester);
-      await tester.pumpWidget(MaterialApp(
-          home: PatternQuizScreen(ages: {PatternAgeGroup.lowerGrade})));
+      await tester.pumpWidget(await _quizHost(
+          PatternQuizScreen(ages: {PatternAgeGroup.lowerGrade})));
       await tester.pump();
 
       for (var i = 0; i < PatternQuizScreen.sessionSize; i++) {
@@ -194,10 +206,83 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
+    testWidgets('答题时会同时展示题目的多级分类 id', (tester) async {
+      useTabletView(tester);
+      await tester.pumpWidget(await _quizHost(
+          PatternQuizScreen(ages: {PatternAgeGroup.preschool})));
+      await tester.pump();
+
+      // 徽标形如「PT.P.ATTR.LEN.asc-1 · 属性·长短」
+      expect(find.textContaining('PT.'), findsOneWidget);
+    });
+
+    testWidgets('规律提示先隐藏，答错一次后才出现', (tester) async {
+      useTabletView(tester);
+      await tester.pumpWidget(await _quizHost(
+          PatternQuizScreen(ages: {PatternAgeGroup.preschool})));
+      await tester.pump();
+
+      // 刚进题时提示不可见
+      expect(find.byIcon(Icons.lightbulb_outline_rounded), findsNothing);
+
+      // 依次点 A/B/C/D 逼出一次答错（答对的题自动跳到下一题后继续）
+      var sawWrong = false;
+      const letters = ['A', 'B', 'C', 'D'];
+      for (var i = 0; i < 40 && !sawWrong; i++) {
+        await tester.tap(find.text(letters[i % letters.length]));
+        await tester.pump(const Duration(milliseconds: 300));
+        sawWrong =
+            find.byIcon(Icons.lightbulb_outline_rounded).evaluate().isNotEmpty;
+        if (!sawWrong && find.textContaining('马上').evaluate().isNotEmpty) {
+          // 这题一次答对：进入下一题后提示应重新隐藏
+          await tester.pump(const Duration(seconds: 2));
+          expect(find.byIcon(Icons.lightbulb_outline_rounded), findsNothing);
+        }
+      }
+      expect(sawWrong, isTrue, reason: '连续 40 次都没答错，测不出提示逻辑');
+
+      // 答错后提示亮出，且答对前不会收起
+      expect(find.byIcon(Icons.lightbulb_outline_rounded), findsOneWidget);
+
+      // 冲掉答错后的重排计时器
+      await tester.pump(const Duration(milliseconds: 800));
+    });
+
+    testWidgets('题号旁的复制图标把 id 拷进剪贴板', (tester) async {
+      useTabletView(tester);
+      final copied = <String>[];
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        (call) async {
+          if (call.method == 'Clipboard.setData') {
+            copied.add((call.arguments as Map)['text'] as String);
+          }
+          return null;
+        },
+      );
+      addTearDown(() => tester.binding.defaultBinaryMessenger
+          .setMockMethodCallHandler(SystemChannels.platform, null));
+
+      await tester.pumpWidget(await _quizHost(
+          PatternQuizScreen(ages: {PatternAgeGroup.preschool})));
+      await tester.pump();
+
+      expect(find.byTooltip('复制题号'), findsOneWidget);
+      await tester.tap(find.byTooltip('复制题号'));
+      await tester.pump();
+
+      expect(copied, isNotEmpty);
+      expect(copied.last, startsWith('PT.'));
+
+      // 冲掉复制提示条与退出动画
+      await tester.pump(const Duration(seconds: 1));
+      await tester.pump(const Duration(milliseconds: 400));
+    });
+
     testWidgets('重新开始会重新抽 10 题', (tester) async {
       useTabletView(tester);
-      await tester.pumpWidget(MaterialApp(
-          home: PatternQuizScreen(ages: {PatternAgeGroup.upperGrade})));
+      await tester.pumpWidget(await _quizHost(
+          PatternQuizScreen(ages: {PatternAgeGroup.upperGrade})));
       await tester.pump();
 
       await answerUntilRight(tester);

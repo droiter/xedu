@@ -17,6 +17,9 @@ const String kRemindKey = 'xedu_remind_lesson';
 /// 每个用户的个人学习数据都保存在单独的 key 下。
 String studyKeyFor(String uid) => 'xedu_study_$uid';
 
+/// 每个用户的「看图找规律」做题记录（错题 / 分类统计）单独保存。
+String patternStatsKeyFor(String uid) => 'xedu_pattern_$uid';
+
 // 课程封面渐变调色板（seed 取模得到稳定配色）
 const List<List<Color>> kCoverPalette = [
   [Color(0xFF4F6BFF), Color(0xFF9A5CFF)], // 靛紫

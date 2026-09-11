@@ -39,8 +39,23 @@ enum PicKind {
   /// 纯色块（颜色交替、颜色循环规律）。
   colorBlock,
 
-  /// 柱状条，[Pic.n] 为高度档数（阶梯 / 生长规律）。
+  /// 柱状条，[Pic.n] 为高度档数（阶梯 / 生长规律，也用于「高矮」）。
   bar,
+
+  /// 长短：横向长条，[Pic.level] 为长度档（0 最短 … 4 最长）。
+  lengthBar,
+
+  /// 厚薄：横向薄板，[Pic.level] 为厚度档（0 最薄 … 4 最厚）。
+  thickness,
+
+  /// 粗细：竖向圆棒，[Pic.level] 为粗细档（0 最细 … 4 最粗）。
+  widthBar,
+
+  /// 胖瘦：椭圆，[Pic.level] 为胖瘦档（0 最瘦 … 4 最胖）。
+  blob,
+
+  /// 远近：地平线上的小球，[Pic.level] 为远近档（0 最近 … 4 最远）。
+  distance,
 
   /// 外部图片资源（预留，需要配合 pubspec.yaml 的 assets 目录）。
   asset,
@@ -77,11 +92,12 @@ class Pic {
   final int n;
 
   /// 档位：emojiSize 的大小档、arrowQuarter 的朝向(0上 1右 2下 3左)、
-  /// colorRamp 的深浅档、shape 的旋转格数、shapeCount 的颜色编号。
+  /// colorRamp 的深浅档、shape 的旋转格数、shapeCount 的颜色编号，
+  /// 以及 lengthBar/thickness/widthBar/blob/distance 的属性档（0..4）。
   final int level;
 
   /// 底座下标：dots / colorRamp 的调色板编号、shape/shapeCount 的图形编号、
-  /// colorBlock 的颜色编号。
+  /// colorBlock 与各属性条的颜色编号。
   final int base;
 
   /// 资源路径（asset 类型用）。
@@ -185,6 +201,51 @@ class Pic {
         label: '高度 $units',
       );
 
+  /// 长短：横向长条。[level] 0 最短 … 4 最长；[base] 为颜色编号。
+  static Pic lengthBar(int level, {int base = 0}) => Pic(
+        kind: PicKind.lengthBar,
+        id: 'len:$base:$level',
+        level: level,
+        base: base,
+        label: '长短',
+      );
+
+  /// 厚薄：横向薄板。[level] 0 最薄 … 4 最厚；[base] 为颜色编号。
+  static Pic thickness(int level, {int base = 0}) => Pic(
+        kind: PicKind.thickness,
+        id: 'thk:$base:$level',
+        level: level,
+        base: base,
+        label: '厚薄',
+      );
+
+  /// 粗细：竖向圆棒。[level] 0 最细 … 4 最粗；[base] 为颜色编号。
+  static Pic widthBar(int level, {int base = 0}) => Pic(
+        kind: PicKind.widthBar,
+        id: 'wid:$base:$level',
+        level: level,
+        base: base,
+        label: '粗细',
+      );
+
+  /// 胖瘦：椭圆。[level] 0 最瘦 … 4 最胖；[base] 为颜色编号。
+  static Pic blob(int level, {int base = 0}) => Pic(
+        kind: PicKind.blob,
+        id: 'blob:$base:$level',
+        level: level,
+        base: base,
+        label: '胖瘦',
+      );
+
+  /// 远近：地平线上的小球。[level] 0 最近 … 4 最远；[base] 为颜色编号。
+  static Pic distance(int level, {int base = 0}) => Pic(
+        kind: PicKind.distance,
+        id: 'dist:$base:$level',
+        level: level,
+        base: base,
+        label: '远近',
+      );
+
   static Pic asset(String path, {String? label}) => Pic(
         kind: PicKind.asset,
         id: 'asset:$path',
@@ -233,10 +294,10 @@ extension PatternAgeGroupX on PatternAgeGroup {
   /// 一句话说明题库侧重。
   String get blurb => switch (this) {
         PatternAgeGroup.baby => '找一样 · 认颜色 · 最简单交替',
-        PatternAgeGroup.toddler => '大小 · 颜色 · 简单交替',
-        PatternAgeGroup.preschool => '数量 · 方向 · 阶梯 · 深浅',
-        PatternAgeGroup.lowerGrade => '数列 · 旋转 · 组合',
-        PatternAgeGroup.upperGrade => '等差等比 · 二维规律',
+        PatternAgeGroup.toddler => '大小 · 长短 · 粗细 · 简单交替',
+        PatternAgeGroup.preschool => '数量 · 长短 · 高矮 · 厚薄 · 粗细 · 胖瘦 · 远近 · 深浅',
+        PatternAgeGroup.lowerGrade => '数列 · 旋转 · 组合 · 属性规律',
+        PatternAgeGroup.upperGrade => '等差等比 · 二维规律 · 属性规律',
       };
 
   /// 卡片上的装饰 emoji。

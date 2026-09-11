@@ -137,6 +137,11 @@ class PicView extends StatelessWidget {
           PicKind.dice => _dice(box, scheme),
           PicKind.colorBlock => _colorBlock(box),
           PicKind.bar => _bar(box, accent, scheme),
+          PicKind.lengthBar => _lengthBar(box),
+          PicKind.thickness => _thickness(box),
+          PicKind.widthBar => _widthBar(box),
+          PicKind.blob => _blob(box),
+          PicKind.distance => _distance(box, scheme),
           PicKind.asset => _asset(box),
         };
         return Center(child: art);
@@ -356,6 +361,132 @@ class PicView extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  /// 属性档位裁剪到 0..4。
+  int _lvl5(int v) => v < 0 ? 0 : (v > 4 ? 4 : v);
+
+  /// 属性条用的颜色（按 base 从鲜明色板取）。
+  Color _barColor() => kBlockColors[_mod(pic.base, kBlockColors.length)];
+
+  // 长短：横向长条，长度随档位增长（0..4）。
+  Widget _lengthBar(double box) {
+    const frac = [0.22, 0.40, 0.58, 0.78, 1.0];
+    final color = _barColor();
+    return SizedBox(
+      width: box,
+      height: box,
+      child: Center(
+        child: Container(
+          width: box * frac[_lvl5(pic.level)],
+          height: box * 0.26,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(box * 0.13),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // 厚薄：横向薄板，厚度随档位增长（0..4）。
+  Widget _thickness(double box) {
+    const frac = [0.07, 0.15, 0.24, 0.35, 0.48];
+    final color = _barColor();
+    return SizedBox(
+      width: box,
+      height: box,
+      child: Center(
+        child: Container(
+          width: box * 0.92,
+          height: box * frac[_lvl5(pic.level)],
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(box * 0.07),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // 粗细：竖向圆棒，宽度随档位增长（0..4）。
+  Widget _widthBar(double box) {
+    const frac = [0.10, 0.18, 0.28, 0.40, 0.54];
+    final color = _barColor();
+    final w = box * frac[_lvl5(pic.level)];
+    return SizedBox(
+      width: box,
+      height: box,
+      child: Center(
+        child: Container(
+          width: w,
+          height: box * 0.84,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(w / 2),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // 胖瘦：椭圆（高度固定），宽度随档位增长（0..4）。
+  Widget _blob(double box) {
+    const frac = [0.30, 0.45, 0.62, 0.80, 0.96];
+    final color = _barColor();
+    final w = box * frac[_lvl5(pic.level)];
+    const h = 0.74;
+    return SizedBox(
+      width: box,
+      height: box,
+      child: Center(
+        child: Container(
+          width: w,
+          height: box * h,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.all(
+              Radius.elliptical(w / 2, box * h / 2),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // 远近：地平线上的小球，越远越小、越向上（0 最近 .. 4 最远）。
+  Widget _distance(double box, ColorScheme scheme) {
+    const dia = [0.44, 0.34, 0.25, 0.17, 0.11];
+    const cy = [0.80, 0.70, 0.60, 0.51, 0.43];
+    final lvl = _lvl5(pic.level);
+    final d = box * dia[lvl];
+    final color = _barColor();
+    final line = scheme.onSurface.withOpacity(0.30);
+    Widget ground(double top, double thickness) => Positioned(
+          left: box * 0.06,
+          right: box * 0.06,
+          top: box * top,
+          child: Container(height: thickness, color: line),
+        );
+    return SizedBox(
+      width: box,
+      height: box,
+      child: Stack(
+        children: [
+          ground(0.34, 1.2), // 地平线
+          ground(0.94, 1.6), // 地面
+          Positioned(
+            left: box * 0.5 - d / 2,
+            top: box * cy[lvl] - d / 2,
+            child: Container(
+              width: d,
+              height: d,
+              decoration: BoxDecoration(shape: BoxShape.circle, color: color),
+            ),
+          ),
+        ],
       ),
     );
   }
