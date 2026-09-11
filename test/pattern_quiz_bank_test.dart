@@ -4,10 +4,10 @@ import 'package:xedu/features/pattern_quiz/pattern_quiz_models.dart';
 
 void main() {
   group('规律题库', () {
-    test('题库总量足够，且覆盖全部年龄档位', () {
-      expect(kPatternQuestions.length, greaterThanOrEqualTo(100));
+    test('题库总量足够，且每个年龄档位都至少有 30 题', () {
+      expect(kPatternQuestions.length, greaterThanOrEqualTo(150));
       for (final g in PatternAgeGroup.values) {
-        expect(patternBankFor(g).length, greaterThanOrEqualTo(15),
+        expect(patternBankFor(g).length, greaterThanOrEqualTo(30),
             reason: '${g.ageText} 的题量偏少');
       }
     });

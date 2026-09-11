@@ -26,8 +26,7 @@ class _PatternAgeSelectScreenState extends State<PatternAgeSelectScreen> {
 
   final Set<PatternAgeGroup> _selected = {PatternAgeGroup.toddler};
 
-  int get _total =>
-      patternBankForAges(_selected).length;
+  int get _total => patternBankForAges(_selected).length;
 
   void _toggle(PatternAgeGroup g) {
     setState(() {
@@ -145,7 +144,7 @@ class _PatternAgeSelectScreenState extends State<PatternAgeSelectScreen> {
                       const SizedBox(height: 6),
                       Row(
                         children: [
-                          Text('共 ${bank.length} 题',
+                          Text('题库 ${bank.length} 题',
                               style: TextStyle(
                                   fontSize: 12,
                                   color: accent.withOpacity(0.9),
@@ -203,10 +202,12 @@ class _PatternAgeSelectScreenState extends State<PatternAgeSelectScreen> {
                           style: const TextStyle(
                               fontSize: 14, fontWeight: FontWeight.w700)),
                       const SizedBox(height: 2),
-                      Text(canStart ? '共 $_total 道题' : '请至少选择一个年龄段',
+                      Text(
+                          canStart
+                              ? '每局随机 ${PatternQuizScreen.sessionSize} 题 · 题库共 $_total 题'
+                              : '请至少选择一个年龄段',
                           style: TextStyle(
-                              fontSize: 12.5,
-                              color: scheme.onSurfaceVariant)),
+                              fontSize: 12.5, color: scheme.onSurfaceVariant)),
                     ],
                   ),
                 ),

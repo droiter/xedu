@@ -236,6 +236,48 @@ List<PatternQuestion> _buildBank() {
         _ecount('🍎', [1, 2, 1, 2]), _ecountPool('🍎', 4), b,
         diff: 2, blankable: _p2),
 
+    // —— 找一样：再换几组常见图案 ——
+    _q('b-same-grape', '都是葡萄，找出缺少的那张',
+        _singles(['🍇', '🍇', '🍇', '🍇']), _altPool(['🍇']), b),
+    _q('b-same-rabbit', '都是小兔子，找出缺少的那张',
+        _singles(['🐰', '🐰', '🐰', '🐰']), _altPool(['🐰']), b),
+    _q('b-same-car', '都是小汽车，找出缺少的那张',
+        _singles(['🚗', '🚗', '🚗', '🚗']), _altPool(['🚗']), b),
+    _q('b-same-icecream', '都是冰淇淋，找出缺少的那张',
+        _singles(['🍦', '🍦', '🍦', '🍦']), _altPool(['🍦']), b),
+    _q('b-same-basketball', '都是篮球，找出缺少的那张',
+        _singles(['🏀', '🏀', '🏀', '🏀']), _altPool(['🏀']), b),
+    _q('b-same-green', '四块都是绿色，找出缺少的那块',
+        _blocks([3, 3, 3, 3]), _blockPool(), b),
+    _q('b-same-yellow', '四块都是黄色，找出缺少的那块',
+        _blocks([2, 2, 2, 2]), _blockPool(), b),
+    _q('b-same-heart', '都是爱心，找出缺少的那张', _shapes(4, [0, 0, 0, 0]),
+        _shapePool(), b),
+
+    // —— 两两交替：换更多主题，练同一个规律的迁移 ——
+    _q('b-alt-dog-rabbit', '小狗、小兔一个隔一个',
+        _singles(['🐶', '🐰', '🐶', '🐰']), _altPool(['🐶', '🐰']), b,
+        blankable: _p2),
+    _q('b-alt-apple-orange', '苹果、橘子一个隔一个',
+        _singles(['🍎', '🍊', '🍎', '🍊']), _altPool(['🍎', '🍊']), b,
+        blankable: _p2),
+    _q('b-alt-star-moon', '星星、月亮一个隔一个',
+        _singles(['⭐', '🌙', '⭐', '🌙']), _altPool(['⭐', '🌙']), b,
+        blankable: _p2),
+    _q('b-alt-circle-triangle', '圆形、三角形一个隔一个',
+        [Pic.shape(0), Pic.shape(2), Pic.shape(0), Pic.shape(2)], _shapePool(),
+        b, blankable: _p2),
+    _q('b-alt-star-heart', '五角星、爱心一个隔一个',
+        [Pic.shape(3), Pic.shape(4), Pic.shape(3), Pic.shape(4)], _shapePool(),
+        b, blankable: _p2),
+    _q('b-alt-size-balloon', '气球一会儿大、一会儿小',
+        _esize('🎈', [3, 0, 3, 0]), _esizePool('🎈'), b, blankable: _p2),
+    _q('b-alt-red-yellow', '红色、黄色一个隔一个', _blocks([0, 2, 0, 2]),
+        _blockPool(), b, blankable: _p2),
+    _q('b-alt-cat-fish', '小猫、小鱼一个隔一个',
+        _singles(['🐱', '🐟', '🐱', '🐟']), _altPool(['🐱', '🐟']), b,
+        blankable: _p2),
+
     // ============================================================
     // 3–4 岁 · 幼儿启蒙：大小 / 颜色 / 简单交替 / 同类辨认
     // ============================================================
@@ -408,6 +450,20 @@ List<PatternQuestion> _buildBank() {
         _catPool(_foods), p),
     _q('p-cat-school', '找同类：这些全是学习用品',
         _singles(_school.take(4).toList()), _catPool(_school), p, diff: 2),
+    _q('p-cat-vehicle', '找同类：这些全是交通工具',
+        _singles(_vehicles.take(4).toList()), _catPool(_vehicles), p),
+
+    // —— 数量 / 大小 / 点数 / 阶梯 补充题 ——
+    _q('p-cnt-asc-odd', '圆点从 1 个到 7 个，每次加 2', _dots([1, 3, 5, 7]),
+        _dotsPool(9), p, diff: 2),
+    _q('p-size-asc-star', '星星从小到大', _esize('⭐', [0, 1, 2, 3]),
+        _esizePool('⭐'), p),
+    _q('p-shcount-star', '五角星从 1 个增加到 4 个', _shcount(3, [1, 2, 3, 4]),
+        _shcountPool(3, 6), p, diff: 2),
+    _q('p-dice-alt', '骰子 1 点、6 点轮流出现', _dice([1, 6, 1, 6]),
+        _dicePool(), p, diff: 2, blankable: _p2),
+    _q('p-bar-alt', '柱子一会儿矮、一会儿高', _bars([2, 5, 2, 5]),
+        _barPool(), p, blankable: _p2),
 
     // ============================================================
     // 7–8 岁 · 小学低年级：数列 / 旋转 / 组合
@@ -484,6 +540,21 @@ List<PatternQuestion> _buildBank() {
         _singles(_sports.take(4).toList()), _catPool(_sports), l),
     _q('l-cat-musical', '找同类：这些全是乐器',
         _singles(_musical.take(4).toList()), _catPool(_musical), l, diff: 2),
+    _q('l-cat-vehicle', '找同类：这些全是交通工具',
+        _singles(_vehicles.skip(2).take(4).toList()), _catPool(_vehicles), l,
+        diff: 2),
+
+    // —— 数列 / 旋转 补充题 ——
+    _q('l-num-asc-4', '数字每次加 4：4、8、12、16', _nums([4, 8, 12, 16]),
+        _numPool([4, 8, 12, 16]), l, diff: 2),
+    _q('l-num-asc-10', '数字每次加 10：10、20、30、40',
+        _nums([10, 20, 30, 40]), _numPool([10, 20, 30, 40]), l, diff: 2),
+    _q('l-num-desc-2', '数字每次减 2：8、6、4、2', _nums([8, 6, 4, 2]),
+        _numPool([8, 6, 4, 2]), l),
+    _q('l-num-mul3', '每个数都是前一个的 3 倍：1、3、9、27', _nums([1, 3, 9, 27]),
+        _numPool([1, 3, 9, 27], span: 4), l, diff: 3),
+    _q('l-shape-rot-square', '正方形顺时针转 90°', _shapes(1, [0, 1, 2, 3]),
+        _shapeTurnPool(1), l, diff: 3),
 
     // ============================================================
     // 9–10 岁 · 小学高年级：等差 / 等比 / 二维规律
@@ -569,5 +640,24 @@ List<PatternQuestion> _buildBank() {
         _singles(_clothes.take(4).toList()), _catPool(_clothes), u),
     _q('u-cat-weather', '找同类：这些全是天气 / 天空',
         _singles(_weather.take(4).toList()), _catPool(_weather), u, diff: 2),
+
+    // —— 数列补充：等差 / 平方 / 立方 / 递推 ——
+    _q('u-num-asc-15', '数字每次加 15：15、30、45、60',
+        _nums([15, 30, 45, 60]), _numPool([15, 30, 45, 60], span: 4), u,
+        diff: 2),
+    _q('u-num-desc-11', '数字每次减 11：99、88、77、66',
+        _nums([99, 88, 77, 66]), _numPool([99, 88, 77, 66], span: 4), u,
+        diff: 3),
+    _q('u-num-mul2c', '每个数都是前一个的 2 倍：5、10、20、40',
+        _nums([5, 10, 20, 40]), _numPool([5, 10, 20, 40], span: 3), u,
+        diff: 3),
+    _q('u-num-square2', '平方数：9、16、25、36', _nums([9, 16, 25, 36]),
+        _numPool([9, 16, 25, 36], span: 3), u, diff: 3),
+    _q('u-num-cube', '立方数：1、8、27、64', _nums([1, 8, 27, 64]),
+        _numPool([1, 8, 27, 64], span: 3), u, diff: 3),
+    _q('u-num-fib2', '前两个数相加得到后一个：2、3、5、8', _nums([2, 3, 5, 8]),
+        _numPool([2, 3, 5, 8]), u, diff: 3, blankable: _p2),
+    _q('u-shape-rot-square', '正方形顺时针转 90°', _shapes(1, [0, 1, 2, 3]),
+        _shapeTurnPool(1), u, diff: 3),
   ];
 }

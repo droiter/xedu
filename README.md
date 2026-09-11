@@ -82,7 +82,7 @@ flutter build apk --release
 | 课程详情 | 报名解锁课时、章节目录、学习进度、平板左右分栏 |
 | 课时页 | 讲义渲染、在线视频播放、标记完成、自动进入下一节 |
 | 随堂测验 | 单选即时反馈 + 答案解析 + 最高分记录 |
-| 看图找规律 | 首页入口：4 格规律图挖空一格的题库闯关（答错重排并替换干扰项，可重试到答对） |
+| 看图找规律 | 首页入口：4 格规律图挖空一格的题库闯关。每局随机 10 题；答对自动进入下一题（音效 + 震动 + 炫光），答错重排并替换干扰项可重试，通关撒花 |
 | 学习进度 | 连续天数 / 今日与累计时长 / 完成课时 / 在学课程 |
 | 个人中心 | 深色模式、提醒开关、关于、退出登录 |
 | 自适应 | 手机（≤699dp 单列列表）与平板（≥700dp 宫格 / 分栏）两套布局 |
@@ -104,9 +104,11 @@ lib/
     ├─ onboarding/  auth/  shell/
     ├─ home/  catalog/  course/
     ├─ lesson/  quiz/
-    ├─ pattern_quiz/            # 「看图找规律」题库（models + bank + screen）
+    ├─ pattern_quiz/            # 「看图找规律」（models + bank + screen + celebration + sfx）
     └─ progress/  profile/
 assets/data/courses.json        # 演示课程目录（新增课程只需改这里）
+assets/audio/quiz_*.wav         # 答题音效（脚本合成，见下文）
+scripts/gen_quiz_sounds.py      # 重新生成上面的音效
 ```
 
 ## 五、数据说明（接入后端前）
@@ -126,9 +128,15 @@ assets/data/courses.json        # 演示课程目录（新增课程只需改这�
 渲染（无需图片资源）。换真实图片时，把题目里的元素换成 `Pic.asset(path)`
 并把文件声明到 `pubspec.yaml` 的 `assets:` 即可。
 
-题库按 `PatternAgeGroup` 分 5 档：2–3 岁（16 题）/ 3–4 岁（34 题）/
-5–6 岁（27 题）/ 7–8 岁（26 题）/ 9–10 岁（26 题），共 129 题。
-进入时**可多选年龄段**，`patternBankForAges()` 会把选中的题库合并出题。
+题库按 `PatternAgeGroup` 分 5 档：2–3 岁（32 题）/ 3–4 岁（34 题）/
+5–6 岁（33 题）/ 7–8 岁（32 题）/ 9–10 岁（33 题），共 164 题，每档都够抽 30 局以上不重样。
+进入时**可多选年龄段**，`patternBankForAges()` 会把选中的题库合并出题，
+再由 `PatternQuizScreen.sessionSize`（默认 10）随机抽题，**每局只做 10 题**。
+
+答题反馈：答对播放 `assets/audio/quiz_*.wav`（由 `scripts/gen_quiz_sounds.py` 合成，
+`flutter pub run` 之外无需额外素材）、触发震动并弹出炫光爆发，短暂停留后自动进入下一题；
+答错轻音提示并重排备选。成绩按**一次答对**的题数计算，通关页有撒花与星级动画。
+音效播放失败会自动静音降级，不影响答题。
 
 **主要扩展点**
 - `lib/state/auth.dart`：把假认证换成真实登录接口
