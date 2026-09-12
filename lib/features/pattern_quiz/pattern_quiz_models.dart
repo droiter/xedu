@@ -270,6 +270,9 @@ enum PatternAgeGroup {
 
   /// 9–10 岁：等差 / 等比数列、二维规律。
   upperGrade,
+
+  /// 「100 岁」：4 格图里规律只重复一次、孩子没法归纳的题先挪到这里暂存。
+  hundred,
 }
 
 extension PatternAgeGroupX on PatternAgeGroup {
@@ -280,6 +283,7 @@ extension PatternAgeGroupX on PatternAgeGroup {
         PatternAgeGroup.preschool => '5–6 岁',
         PatternAgeGroup.lowerGrade => '7–8 岁',
         PatternAgeGroup.upperGrade => '9–10 岁',
+        PatternAgeGroup.hundred => '100 岁',
       };
 
   /// 学段名称。
@@ -289,6 +293,7 @@ extension PatternAgeGroupX on PatternAgeGroup {
         PatternAgeGroup.preschool => '学前预备',
         PatternAgeGroup.lowerGrade => '小学低年级',
         PatternAgeGroup.upperGrade => '小学高年级',
+        PatternAgeGroup.hundred => '难题暂存',
       };
 
   /// 一句话说明题库侧重。
@@ -298,6 +303,7 @@ extension PatternAgeGroupX on PatternAgeGroup {
         PatternAgeGroup.preschool => '数量 · 长短 · 高矮 · 厚薄 · 粗细 · 胖瘦 · 远近 · 深浅',
         PatternAgeGroup.lowerGrade => '数列 · 旋转 · 组合 · 属性规律',
         PatternAgeGroup.upperGrade => '等差等比 · 二维规律 · 属性规律',
+        PatternAgeGroup.hundred => '规律只重复一次，孩子难以归纳',
       };
 
   /// 卡片上的装饰 emoji。
@@ -307,6 +313,7 @@ extension PatternAgeGroupX on PatternAgeGroup {
         PatternAgeGroup.preschool => '🎈',
         PatternAgeGroup.lowerGrade => '✏️',
         PatternAgeGroup.upperGrade => '🔢',
+        PatternAgeGroup.hundred => '🧓',
       };
 }
 

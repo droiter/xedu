@@ -233,6 +233,12 @@ List<Pic> _shapeCountColorPool(int shape) => [
     ];
 
 // ---------- 题目构造 ----------
+/// 题目短名里第 2 段的题型 token（形如 `b-alt-red-blue` → `alt`）。
+String _tokenOfId(String id) {
+  final parts = id.split('-');
+  return parts.length >= 2 ? parts[1] : '';
+}
+
 PatternQuestion _q(
   String id,
   String title,
@@ -247,7 +253,8 @@ PatternQuestion _q(
       title: title,
       items: items,
       distractors: distractors,
-      age: age,
+      // 「交替」题 4 格里规律只重复一次，孩子没法归纳，统一挪到「100 岁」暂存。
+      age: _tokenOfId(id) == 'alt' ? PatternAgeGroup.hundred : age,
       difficulty: diff,
       blankable: blankable,
     );
@@ -397,7 +404,7 @@ List<PatternQuestion> _buildBank() {
         [Pic.shape(0), Pic.shape(1), Pic.shape(0), Pic.shape(1)], _shapePool(),
         t,
         blankable: _p2),
-    _q('t-alt-count-apple', '苹果一会儿 1 个、一会儿 2 个',
+    _q('t-alt-count-apple2', '苹果一会儿 1 个、一会儿 2 个',
         _ecount('🍎', [1, 2, 1, 2]), _ecountPool('🍎', 4), t,
         diff: 2, blankable: _p2),
     _q('t-alt-size-fish', '小鱼一会儿大、一会儿小',
@@ -451,7 +458,7 @@ List<PatternQuestion> _buildBank() {
     _q('t-alt-count-candy', '糖果一会儿 1 个、一会儿 3 个',
         _ecount('🍬', [1, 3, 1, 3]), _ecountPool('🍬', 5), t,
         diff: 2, blankable: _p2),
-    _q('t-alt-size-balloon', '气球一会儿大、一会儿小',
+    _q('t-alt-size-balloon2', '气球一会儿大、一会儿小',
         _esize('🎈', [3, 0, 3, 0]), _esizePool('🎈'), t,
         diff: 2, blankable: _p2),
     _q('t-alt-size-apple', '苹果一会儿小、一会儿大',

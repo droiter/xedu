@@ -23,6 +23,7 @@ class _PatternAgeSelectScreenState extends State<PatternAgeSelectScreen> {
     PatternAgeGroup.preschool: Color(0xFF22B573),
     PatternAgeGroup.lowerGrade: Color(0xFF3D7BFF),
     PatternAgeGroup.upperGrade: Color(0xFF8E24AA),
+    PatternAgeGroup.hundred: Color(0xFF607D8B),
   };
 
   final Set<PatternAgeGroup> _selected = {PatternAgeGroup.toddler};

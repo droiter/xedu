@@ -610,12 +610,14 @@ class _PatternQuizScreenState extends ConsumerState<PatternQuizScreen>
           ),
           child: Stack(
             children: [
+              Center(child: PicView(pic: pic, color: scheme.primary)),
+              // 序号画在图片之上：色块会铺满整格，压在下面就被挡住了。
               Positioned(
                 top: 4,
                 left: 6,
                 child: Container(
-                  width: 18,
-                  height: 18,
+                  width: 20,
+                  height: 20,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
@@ -624,17 +626,31 @@ class _PatternQuizScreenState extends ConsumerState<PatternQuizScreen>
                         : (Theme.of(context).brightness == Brightness.dark
                             ? scheme.surfaceContainerHighest
                             : scheme.primaryContainer),
+                    border: Border.all(
+                      color: isCorrectOpt && _resolved
+                          ? Colors.green
+                          : (Theme.of(context).brightness == Brightness.dark
+                              ? scheme.outline
+                              : Colors.white),
+                      width: 1.5,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        blurRadius: 3,
+                        offset: const Offset(0, 1),
+                      ),
+                    ],
                   ),
                   child: Text(letter,
                       style: TextStyle(
-                          fontSize: 10.5,
+                          fontSize: 11,
                           fontWeight: FontWeight.w800,
                           color: isCorrectOpt && _resolved
                               ? Colors.white
                               : scheme.onPrimaryContainer)),
                 ),
               ),
-              Center(child: PicView(pic: pic, color: scheme.primary)),
             ],
           ),
         ),

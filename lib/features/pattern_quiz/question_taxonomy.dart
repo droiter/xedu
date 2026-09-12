@@ -5,7 +5,7 @@ import 'pattern_quiz_models.dart';
 ///
 /// 一道题按 5 级归类：
 ///   题库 `PT`（找规律）
-///     └ 年龄段 `B/T/P/L/U`（2–3 / 3–4 / 5–6 / 7–8 / 9–10 岁）
+///     └ 年龄段 `B/T/P/L/U/100`（2–3 / 3–4 / 5–6 / 7–8 / 9–10 / 100 岁）
 ///         └ 规律大类 [PatternFamily]（辨认 / 序列 / 数量 / 属性 / 颜色 / 形状方向）
 ///             └ 具体类型 [PatternType]（交替 / 数列 / 长短 …）
 ///                 └ 实例（题目自己的英文短名）
@@ -69,6 +69,7 @@ const Map<PatternAgeGroup, String> _ageCode = {
   PatternAgeGroup.preschool: 'P',
   PatternAgeGroup.lowerGrade: 'L',
   PatternAgeGroup.upperGrade: 'U',
+  PatternAgeGroup.hundred: '100',
 };
 
 /// 题目短名里第 2 段（题型 token）→ 具体类型。
