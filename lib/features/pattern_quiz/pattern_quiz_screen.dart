@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'celebration.dart';
+import 'exit_gate.dart';
 import 'pattern_quiz_bank.dart';
 import 'pattern_quiz_models.dart';
 import 'pattern_stats.dart';
@@ -21,7 +22,8 @@ import 'quiz_sfx.dart';
 /// - 从多个备选中选出被挖掉的那张图；
 /// - **答对**：音效 + 震动 + 炫光爆发，稍作停留后自动进入下一题；
 /// - **答错**：轻音提示并重打乱备选、替换部分干扰项，可以再试，直到答对为止。
-///   成绩按「一次答对」的题数计算。
+///   成绩按「一次答对」的题数计算；
+/// - **没做完就想返回**：拦下来，先答对一道一位数乘法才放行（见 [showExitGate]）。
 class PatternQuizScreen extends ConsumerStatefulWidget {
   const PatternQuizScreen({super.key, required this.ages});
 
@@ -79,6 +81,9 @@ class _PatternQuizScreenState extends ConsumerState<PatternQuizScreen>
   int _missedThis = 0; // 本题已经答错几次
   int _wrongTotal = 0; // 累计答错次数
   bool _finished = false;
+
+  /// 通过家长验证后置真，放行这一次返回。
+  bool _exiting = false;
 
   int get _total => _order.length;
   bool get _isLast => _qi >= _total - 1;
@@ -245,27 +250,52 @@ class _PatternQuizScreenState extends ConsumerState<PatternQuizScreen>
     });
   }
 
+  /// 没做完就想走：先过家长验证，答对乘法题才放行。
+  Future<void> _guardExit() async {
+    final result = await showExitGate(context);
+    if (!mounted) return;
+    if (result.isPassed) {
+      setState(() => _exiting = true);
+      Navigator.of(context).pop();
+      return;
+    }
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(
+        content: Text(result.message),
+        duration: const Duration(seconds: 2),
+      ));
+  }
+
   // ---------- UI ----------
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('看图找规律 · $_agesLabel'),
-        actions: [
-          IconButton(
-            tooltip: '学习统计',
-            icon: const Icon(Icons.insights_rounded),
-            onPressed: () => _openStats(context),
-          ),
-          IconButton(
-            tooltip: '重新开始',
-            icon: const Icon(Icons.refresh_rounded),
-            onPressed: () => setState(_restart),
-          ),
-        ],
+    return PopScope(
+      // 做完（成绩页）直接放行；做题中则拦下来验证。
+      canPop: _finished || _exiting,
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) return;
+        _guardExit();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('看图找规律 · $_agesLabel'),
+          actions: [
+            IconButton(
+              tooltip: '学习统计',
+              icon: const Icon(Icons.insights_rounded),
+              onPressed: () => _openStats(context),
+            ),
+            IconButton(
+              tooltip: '重新开始',
+              icon: const Icon(Icons.refresh_rounded),
+              onPressed: () => setState(_restart),
+            ),
+          ],
+        ),
+        body: SafeArea(
+            child: _finished ? _resultView(context) : _gameView(context)),
       ),
-      body: SafeArea(
-          child: _finished ? _resultView(context) : _gameView(context)),
     );
   }
 
