@@ -46,10 +46,14 @@ void main() {
     await tester.enterText(find.byType(TextField).at(2), '1234');
 
     await tester.tap(find.text('注册并登录'));
-    await tester.pumpAndSettle(const Duration(milliseconds: 200));
+    // 底部选项卡的流光一直在转，pumpAndSettle 永远等不到静止。
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
 
     // 底部导航出现代表已进入主界面
-    expect(find.text('首页'), findsOneWidget);
+    expect(find.text('看图找规律'), findsWidgets); // 选项卡 + 首页入口卡
     expect(find.text('课程'), findsOneWidget);
+    expect(find.text('进度'), findsOneWidget);
+    expect(find.text('我的'), findsOneWidget);
   });
 }

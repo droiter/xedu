@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/models.dart';
 import '../../shared/widgets/content_viewer.dart';
 import '../../shared/widgets/course_card.dart';
+import '../../shared/widgets/glow_border.dart';
 import '../../state/providers.dart';
 import '../course/course_detail_screen.dart';
 import '../pattern_quiz/pattern_age_select_screen.dart';
@@ -47,39 +48,58 @@ class HomeScreen extends ConsumerWidget {
       children: [
         _greeting(context, name),
         const SizedBox(height: 12),
-        _searchBar(context),
+        // 除「看图找规律」外的入口一律置灰保留，看得见但点不进去。
+        _Locked(child: _searchBar(context)),
         const SizedBox(height: 8),
-        if (featured != null) _featuredBanner(context, featured),
+        if (featured != null)
+          _Locked(child: _featuredBanner(context, featured)),
         _quizEntry(context),
         const SizedBox(height: 16),
-        if (enrolled.isNotEmpty) ...[
-          SectionHeader(title: '继续学习', actionText: '我的进度', onAction: () => onOpenTab(2)),
-          SizedBox(
-            height: 148,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemCount: enrolled.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 12),
-              itemBuilder: (_, i) => SizedBox(
-                width: 310,
-                child: CourseCard(
-                  course: enrolled[i],
-                  progress: progressOf(enrolled[i]),
-                  onTap: () => _open(context, enrolled[i]),
+        if (enrolled.isNotEmpty)
+          _Locked(
+            child: Column(
+              children: [
+                SectionHeader(
+                    title: '继续学习',
+                    actionText: '我的进度',
+                    onAction: () => onOpenTab(2)),
+                SizedBox(
+                  height: 148,
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: enrolled.length,
+                    separatorBuilder: (_, __) => const SizedBox(width: 12),
+                    itemBuilder: (_, i) => SizedBox(
+                      width: 310,
+                      child: CourseCard(
+                        course: enrolled[i],
+                        progress: progressOf(enrolled[i]),
+                        onTap: () => _open(context, enrolled[i]),
+                      ),
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
-        ],
-        if (fresh.isNotEmpty) ...[
-          SectionHeader(title: '为你推荐', actionText: '全部课程', onAction: () => onOpenTab(1)),
-          for (final c in fresh) ...[
-            CourseCard(course: c, onTap: () => _open(context, c)),
-            const SizedBox(height: 12),
-          ],
-        ] else ...[
+        if (fresh.isNotEmpty)
+          _Locked(
+            child: Column(
+              children: [
+                SectionHeader(
+                    title: '为你推荐',
+                    actionText: '全部课程',
+                    onAction: () => onOpenTab(1)),
+                for (final c in fresh) ...[
+                  CourseCard(course: c, onTap: () => _open(context, c)),
+                  const SizedBox(height: 12),
+                ],
+              ],
+            ),
+          )
+        else ...[
           const SizedBox(height: 12),
-          EmptyHint(
+          const EmptyHint(
             icon: Icons.school_outlined,
             text: '把感兴趣的课都学一遍吧',
             detail: '前往「课程」页浏览全部课程',
@@ -105,7 +125,9 @@ class HomeScreen extends ConsumerWidget {
           radius: 22,
           backgroundColor: scheme.primaryContainer,
           child: Text(name.isNotEmpty ? name.substring(0, 1) : '同',
-              style: TextStyle(fontWeight: FontWeight.w700, color: scheme.onPrimaryContainer)),
+              style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  color: scheme.onPrimaryContainer)),
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -113,9 +135,11 @@ class HomeScreen extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('$greet，$name',
-                  style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w800)),
+                  style: const TextStyle(
+                      fontSize: 19, fontWeight: FontWeight.w800)),
               Text('今天也要进步一点点哦',
-                  style: TextStyle(fontSize: 12.5, color: scheme.onSurfaceVariant)),
+                  style: TextStyle(
+                      fontSize: 12.5, color: scheme.onSurfaceVariant)),
             ],
           ),
         ),
@@ -136,7 +160,8 @@ class HomeScreen extends ConsumerWidget {
             children: [
               Icon(Icons.search_rounded, color: Colors.grey),
               SizedBox(width: 10),
-              Text('搜索想学的课程', style: TextStyle(color: Colors.grey, fontSize: 14)),
+              Text('搜索想学的课程',
+                  style: TextStyle(color: Colors.grey, fontSize: 14)),
             ],
           ),
         ),
@@ -148,59 +173,62 @@ class HomeScreen extends ConsumerWidget {
     final colors = coverGradient('pattern-quiz');
     return Padding(
       padding: const EdgeInsets.only(top: 14),
-      child: Material(
-        clipBehavior: Clip.antiAlias,
-        borderRadius: BorderRadius.circular(18),
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const PatternAgeSelectScreen()),
-              ),
-          child: Ink(
-            height: 86,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                colors: colors,
-              ),
+      child: GlowBorder(
+        radius: 18,
+        child: Material(
+          clipBehavior: Clip.antiAlias,
+          borderRadius: BorderRadius.circular(18),
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const PatternAgeSelectScreen()),
             ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 18),
-              child: Row(
-                children: [
-                  Container(
-                    width: 46,
-                    height: 46,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.22),
-                      borderRadius: BorderRadius.circular(14),
+            child: Ink(
+              height: 86,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: colors,
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 18),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 46,
+                      height: 46,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.22),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: const Icon(Icons.auto_awesome_rounded,
+                          color: Colors.white, size: 26),
                     ),
-                    child: const Icon(Icons.auto_awesome_rounded,
-                        color: Colors.white, size: 26),
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('看图找规律',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w800)),
-                        const SizedBox(height: 3),
-                        Text('选年龄（可多选） · 补全 4 格图找规律',
-                            style: TextStyle(
-                                color: Colors.white.withOpacity(0.85),
-                                fontSize: 12.5)),
-                      ],
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('看图找规律',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w800)),
+                          const SizedBox(height: 3),
+                          Text('选年龄（可多选） · 补全 4 格图找规律',
+                              style: TextStyle(
+                                  color: Colors.white.withOpacity(0.85),
+                                  fontSize: 12.5)),
+                        ],
+                      ),
                     ),
-                  ),
-                  Icon(Icons.chevron_right_rounded,
-                      color: Colors.white.withOpacity(0.9), size: 28),
-                ],
+                    Icon(Icons.chevron_right_rounded,
+                        color: Colors.white.withOpacity(0.9), size: 28),
+                  ],
+                ),
               ),
             ),
           ),
@@ -238,28 +266,35 @@ class HomeScreen extends ConsumerWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 3),
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.22),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: const Text('本周精选',
-                              style: TextStyle(color: Colors.white, fontSize: 11)),
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 11)),
                         ),
                         const SizedBox(height: 10),
                         Text(course.title,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
-                                color: Colors.white, fontSize: 17, fontWeight: FontWeight.w800)),
+                                color: Colors.white,
+                                fontSize: 17,
+                                fontWeight: FontWeight.w800)),
                         const SizedBox(height: 6),
                         Text('${course.teacher} · ${course.totalLessons} 节课',
-                            style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 12)),
+                            style: TextStyle(
+                                color: Colors.white.withOpacity(0.8),
+                                fontSize: 12)),
                       ],
                     ),
                   ),
                   const SizedBox(width: 12),
-                  Icon(Icons.play_circle_fill_rounded, color: Colors.white.withOpacity(0.9), size: 52),
+                  Icon(Icons.play_circle_fill_rounded,
+                      color: Colors.white.withOpacity(0.9), size: 52),
                 ],
               ),
             ),
@@ -273,5 +308,30 @@ class HomeScreen extends ConsumerWidget {
     Navigator.of(context).push(MaterialPageRoute(
       builder: (_) => CourseDetailScreen(course: course),
     ));
+  }
+}
+
+/// 置灰且不可点：入口仍然看得见，但点不进去。
+class _Locked extends StatelessWidget {
+  const _Locked({required this.child});
+
+  final Widget child;
+
+  // 去色矩阵（Rec. 709 亮度权重），让入口一眼看出是关着的。
+  static const ColorFilter _grey = ColorFilter.matrix(<double>[
+    0.2126, 0.7152, 0.0722, 0, 0, //
+    0.2126, 0.7152, 0.0722, 0, 0, //
+    0.2126, 0.7152, 0.0722, 0, 0, //
+    0, 0, 0, 1, 0, //
+  ]);
+
+  @override
+  Widget build(BuildContext context) {
+    return IgnorePointer(
+      child: Opacity(
+        opacity: 0.42,
+        child: ColorFiltered(colorFilter: _grey, child: child),
+      ),
+    );
   }
 }
