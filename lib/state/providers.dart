@@ -5,3 +5,4 @@ export 'onboarding.dart';
 export 'prefs.dart';
 export 'study.dart';
 export 'theme_controller.dart';
+export 'video_library.dart';

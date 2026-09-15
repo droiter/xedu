@@ -5,6 +5,7 @@ import '../../core/constants.dart';
 import '../../core/theme.dart';
 import '../../data/models.dart';
 import '../../state/providers.dart';
+import '../video/video_manage_screen.dart';
 
 /// 「我的」：账号、设置、关于、退出。
 class ProfileScreen extends ConsumerStatefulWidget {
@@ -22,6 +23,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Widget build(BuildContext context) {
     final user = ref.watch(authControllerProvider.select((s) => s.user));
     final dark = ref.watch(themeControllerProvider);
+    final lib = ref.watch(videoLibraryProvider);
     final scheme = Theme.of(context).colorScheme;
 
     if (!_remindLoaded) {
@@ -38,6 +40,24 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800)),
           const SizedBox(height: 14),
           if (user != null) _userCard(context, scheme, user),
+          const SizedBox(height: 16),
+          const _SectionLabel('视频'),
+          Card(
+            margin: EdgeInsets.zero,
+            child: ListTile(
+              leading: const Icon(Icons.video_library_outlined),
+              title: const Text('我的视频'),
+              subtitle: Text(
+                lib.isEmpty
+                    ? '新建分类，往里面添视频'
+                    : '${lib.categories.length} 个分类 · ${lib.totalVideos} 个视频',
+              ),
+              trailing: const Icon(Icons.chevron_right_rounded),
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const VideoManageScreen()),
+              ),
+            ),
+          ),
           const SizedBox(height: 16),
           const _SectionLabel('偏好设置'),
           Card(

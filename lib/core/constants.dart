@@ -20,6 +20,19 @@ String studyKeyFor(String uid) => 'xedu_study_$uid';
 /// 每个用户的「看图找规律」做题记录（错题 / 分类统计）单独保存。
 String patternStatsKeyFor(String uid) => 'xedu_pattern_$uid';
 
+/// 「看视频」视频库：分类 + 视频。全机共用一份（家长加片，孩子看）。
+const String kVideoLibraryKey = 'xedu_video_lib';
+
+// 底部选项卡下标
+const int kQuizTab = 0;
+const int kVideoTab = 1;
+const int kCourseTab = 2;
+const int kProgressTab = 3;
+const int kProfileTab = 4;
+
+/// 当前开放的选项卡：看图找规律 / 看视频 / 我的；课程与进度只见其形、点不进去。
+const Set<int> kOpenTabs = {kQuizTab, kVideoTab, kProfileTab};
+
 // 课程封面渐变调色板（seed 取模得到稳定配色）
 const List<List<Color>> kCoverPalette = [
   [Color(0xFF4F6BFF), Color(0xFF9A5CFF)], // 靛紫

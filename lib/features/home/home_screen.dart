@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/constants.dart';
 import '../../data/models.dart';
 import '../../shared/widgets/content_viewer.dart';
 import '../../shared/widgets/course_card.dart';
@@ -12,7 +13,7 @@ import '../pattern_quiz/pattern_age_select_screen.dart';
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key, required this.onOpenTab});
 
-  /// 通知外壳切换底部导航（0 首页 / 1 课程 / 2 进度）。
+  /// 通知外壳切换底部导航（下标见 constants.dart 的 kXxxTab）。
   final ValueChanged<int> onOpenTab;
 
   @override
@@ -62,7 +63,7 @@ class HomeScreen extends ConsumerWidget {
                 SectionHeader(
                     title: '继续学习',
                     actionText: '我的进度',
-                    onAction: () => onOpenTab(2)),
+                    onAction: () => onOpenTab(kProgressTab)),
                 SizedBox(
                   height: 148,
                   child: ListView.separated(
@@ -89,7 +90,7 @@ class HomeScreen extends ConsumerWidget {
                 SectionHeader(
                     title: '为你推荐',
                     actionText: '全部课程',
-                    onAction: () => onOpenTab(1)),
+                    onAction: () => onOpenTab(kCourseTab)),
                 for (final c in fresh) ...[
                   CourseCard(course: c, onTap: () => _open(context, c)),
                   const SizedBox(height: 12),
@@ -153,7 +154,7 @@ class HomeScreen extends ConsumerWidget {
       borderRadius: BorderRadius.circular(14),
       child: InkWell(
         borderRadius: BorderRadius.circular(14),
-        onTap: () => onOpenTab(1),
+        onTap: () => onOpenTab(kCourseTab),
         child: const Padding(
           padding: EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           child: Row(
