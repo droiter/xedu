@@ -6,6 +6,7 @@ import '../catalog/catalog_screen.dart';
 import '../home/home_screen.dart';
 import '../profile/profile_screen.dart';
 import '../progress/progress_screen.dart';
+import '../qa_quiz/qa_age_select_screen.dart';
 import '../video/video_library_screen.dart';
 
 /// 底部导航主框架。
@@ -26,6 +27,7 @@ class _MainShellState extends State<MainShell> {
         index: _index,
         children: [
           HomeScreen(onOpenTab: _goTab),
+          const QaAgeSelectScreen(),
           VideoLibraryScreen(onOpenManage: () => _goTab(kProfileTab)),
           const CatalogScreen(),
           ProgressScreen(onExplore: () => _goTab(kCourseTab)),
@@ -44,6 +46,8 @@ class _MainShellState extends State<MainShell> {
 }
 
 /// 底部选项卡：第一格「看图找规律」带转圈光辉，置灰的格子点不进去。
+///
+/// 六格并排比原来挤，字号和内边距都收了一点，字太长会省略号收尾。
 class _TabBar extends StatelessWidget {
   const _TabBar({required this.index, required this.onSelect});
 
@@ -55,6 +59,7 @@ class _TabBar extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     const cells = [
       (Icons.auto_awesome_rounded, '看图找规律'),
+      (Icons.question_answer_rounded, '看图问答'),
       (Icons.ondemand_video_rounded, '看视频'),
       (Icons.grid_view_outlined, '课程'),
       (Icons.leaderboard_outlined, '进度'),
@@ -119,8 +124,8 @@ class _TabCell extends StatelessWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
-            // 五格并排，字要收一点才不会被截断。
-            fontSize: 10.5,
+            // 六格并排，字要收一点才不会被截断。
+            fontSize: 9.5,
             fontWeight: _open ? FontWeight.w700 : FontWeight.w500,
             color: color,
           ),
@@ -128,9 +133,9 @@ class _TabCell extends StatelessWidget {
       ],
     );
 
-    // 五格并排本来就不宽，光辉那格也只用同样的内边距，不然文字会被挤成省略号。
+    // 六格并排本来就不宽，光辉那格也只用同样的内边距，不然文字会被挤成省略号。
     final content = Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 6),
       child: body,
     );
 

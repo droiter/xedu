@@ -142,6 +142,9 @@ class PicView extends StatelessWidget {
           PicKind.widthBar => _widthBar(box),
           PicKind.blob => _blob(box),
           PicKind.distance => _distance(box, scheme),
+          PicKind.speed => _speed(box, scheme),
+          PicKind.depth => _depth(box, scheme),
+          PicKind.queue => _queue(box, scheme),
           PicKind.asset => _asset(box),
         };
         return Center(child: art);
@@ -484,6 +487,142 @@ class PicView extends StatelessWidget {
               width: d,
               height: d,
               decoration: BoxDecoration(shape: BoxShape.circle, color: color),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // 快慢：物体身后的速度线，档位越高线越多越长。
+  Widget _speed(double box, ColorScheme scheme) {
+    final lvl = _lvl5(pic.level);
+    final color = _barColor();
+    final streaks = lvl + 1; // 1..5 条
+    return SizedBox(
+      width: box,
+      height: box,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: box * 0.30,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                for (var i = 0; i < streaks; i++)
+                  Container(
+                    width: box * (0.12 + 0.05 * lvl) * (1 - 0.12 * i),
+                    height: box * 0.045,
+                    margin: EdgeInsets.symmetric(vertical: box * 0.03),
+                    decoration: BoxDecoration(
+                      color: color.withOpacity(0.85 - 0.1 * i),
+                      borderRadius: BorderRadius.circular(box * 0.03),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                pic.emoji.isEmpty ? '🚗' : pic.emoji,
+                style: TextStyle(fontSize: box * 0.5),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // 深浅：杯子里的水，水位随档位升高。
+  Widget _depth(double box, ColorScheme scheme) {
+    const frac = [0.12, 0.28, 0.46, 0.66, 0.84];
+    final lvl = _lvl5(pic.level);
+    final water = _barColor();
+    final wall = scheme.onSurface.withOpacity(0.45);
+    return SizedBox(
+      width: box,
+      height: box,
+      child: Center(
+        child: Container(
+          width: box * 0.62,
+          height: box * 0.84,
+          padding: EdgeInsets.all(box * 0.05),
+          decoration: BoxDecoration(
+            border: Border.all(color: wall, width: 2),
+            borderRadius: BorderRadius.vertical(
+              bottom: Radius.circular(box * 0.14),
+            ),
+          ),
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: FractionallySizedBox(
+              heightFactor: frac[lvl],
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: water,
+                  borderRadius: BorderRadius.vertical(
+                    bottom: Radius.circular(box * 0.09),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // 前后：一队小动物依次遮挡，右边是前面，越靠前挡得越完整。
+  Widget _queue(double box, ColorScheme scheme) {
+    final row = pic.emojis;
+    if (row.isEmpty) return _asset(box);
+    final n = row.length;
+    final item = box / (1 + (n - 1) * 0.78);
+    final step = item * 0.78;
+    final hint = scheme.onSurface.withOpacity(0.55);
+
+    return SizedBox(
+      width: box,
+      height: box,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(left: box * 0.55, bottom: box * 0.04),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('前', style: TextStyle(fontSize: box * 0.12, color: hint)),
+                Icon(Icons.arrow_forward_rounded, size: box * 0.16, color: hint),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: item,
+            width: box,
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                // 从左到右依次绘制：后画的在上一层，自然形成「前面的挡住后面的」。
+                for (var i = 0; i < n; i++)
+                  Positioned(
+                    left: i * step,
+                    top: 0,
+                    width: item,
+                    height: item,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(row[i], style: TextStyle(fontSize: item * 0.9)),
+                    ),
+                  ),
+              ],
             ),
           ),
         ],

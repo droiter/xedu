@@ -1,0 +1,1312 @@
+{
+  "version": 1,
+  "_note": "看图问答题库。题面文字 = 朗读文字 = 屏幕上显示的文字，三者必须完全一致，语音高亮才能对齐。所以题面里不要出现阿拉伯数字（语音引擎会念成汉字，高亮就对不上了），一律用中文数字。",
+  "questions": [
+    {
+      "id": "dog",
+      "age": "baby",
+      "kind": "describe",
+      "sub": "WHAT",
+      "stars": 1,
+      "prompt": "图上是什么小动物？",
+      "scene": [{ "kind": "emojiSingle", "emoji": "🐶" }],
+      "options": [
+        { "text": "小狗" },
+        { "text": "小猫" },
+        { "text": "小兔" },
+        { "text": "小鸭子" }
+      ],
+      "answer": 0
+    },
+    {
+      "id": "apple",
+      "age": "baby",
+      "kind": "describe",
+      "sub": "WHAT",
+      "stars": 1,
+      "prompt": "图上是什么水果？",
+      "scene": [{ "kind": "emojiSingle", "emoji": "🍎" }],
+      "options": [
+        { "text": "苹果" },
+        { "text": "香蕉" },
+        { "text": "葡萄" },
+        { "text": "西瓜" }
+      ],
+      "answer": 0
+    },
+    {
+      "id": "balloon-color",
+      "age": "baby",
+      "kind": "describe",
+      "sub": "COLOR",
+      "stars": 1,
+      "prompt": "气球是什么颜色的？",
+      "scene": [{ "kind": "emojiSingle", "emoji": "🎈" }],
+      "options": [
+        { "text": "红色" },
+        { "text": "黄色" },
+        { "text": "蓝色" },
+        { "text": "绿色" }
+      ],
+      "answer": 0
+    },
+    {
+      "id": "apple-count",
+      "age": "baby",
+      "kind": "describe",
+      "sub": "COUNT",
+      "stars": 1,
+      "prompt": "图上有几个苹果？",
+      "scene": [{ "kind": "emojiCount", "emoji": "🍎", "n": 3 }],
+      "options": [
+        { "text": "一个" },
+        { "text": "两个" },
+        { "text": "三个" },
+        { "text": "四个" }
+      ],
+      "answer": 2
+    },
+    {
+      "id": "two-dogs",
+      "age": "baby",
+      "kind": "sameDiff",
+      "sub": "EQ",
+      "stars": 1,
+      "prompt": "这两个小动物一样吗？",
+      "scene": [
+        { "kind": "emojiSingle", "emoji": "🐶" },
+        { "kind": "emojiSingle", "emoji": "🐶" }
+      ],
+      "options": [{ "text": "一样" }, { "text": "不一样" }],
+      "answer": 0
+    },
+    {
+      "id": "cat-dog",
+      "age": "baby",
+      "kind": "sameDiff",
+      "sub": "EQ",
+      "stars": 1,
+      "prompt": "这两只小动物一样吗？",
+      "scene": [
+        { "kind": "emojiSingle", "emoji": "🐱" },
+        { "kind": "emojiSingle", "emoji": "🐶" }
+      ],
+      "options": [{ "text": "一样" }, { "text": "不一样" }],
+      "answer": 1
+    },
+    {
+      "id": "find-dog",
+      "age": "baby",
+      "kind": "sameDiff",
+      "sub": "SAMEPICK",
+      "stars": 1,
+      "prompt": "哪一个和上面的小动物一样？",
+      "scene": [{ "kind": "emojiSingle", "emoji": "🐶" }],
+      "options": [
+        { "pic": { "kind": "emojiSingle", "emoji": "🐶" } },
+        { "pic": { "kind": "emojiSingle", "emoji": "🐱" } },
+        { "pic": { "kind": "emojiSingle", "emoji": "🐰" } },
+        { "pic": { "kind": "emojiSingle", "emoji": "🐻" } }
+      ],
+      "answer": 0
+    },
+    {
+      "id": "find-diff-fruit",
+      "age": "baby",
+      "kind": "sameDiff",
+      "sub": "DIFFPICK",
+      "stars": 2,
+      "prompt": "哪一个水果和其他不一样？",
+      "scene": [],
+      "options": [
+        { "pic": { "kind": "emojiSingle", "emoji": "🍎" } },
+        { "pic": { "kind": "emojiSingle", "emoji": "🍎" } },
+        { "pic": { "kind": "emojiSingle", "emoji": "🍌" } },
+        { "pic": { "kind": "emojiSingle", "emoji": "🍎" } }
+      ],
+      "answer": 2
+    },
+    {
+      "id": "one-plus-one-obj",
+      "age": "baby",
+      "kind": "add",
+      "sub": "OBJ",
+      "stars": 1,
+      "prompt": "一个苹果加一个苹果，一共几个？",
+      "scene": [
+        { "kind": "emojiSingle", "emoji": "🍎" },
+        { "kind": "emojiSingle", "emoji": "➕" },
+        { "kind": "emojiSingle", "emoji": "🍎" },
+        { "kind": "emojiSingle", "emoji": "＝" },
+        { "kind": "emojiSingle", "emoji": "❓" }
+      ],
+      "options": [
+        { "pic": { "kind": "dots", "n": 1, "base": 0 }, "text": "一个" },
+        { "pic": { "kind": "dots", "n": 2, "base": 0 }, "text": "两个" },
+        { "pic": { "kind": "dots", "n": 3, "base": 0 }, "text": "三个" },
+        { "pic": { "kind": "dots", "n": 4, "base": 0 }, "text": "四个" }
+      ],
+      "answer": 1
+    },
+    {
+      "id": "one-plus-one-dig",
+      "age": "baby",
+      "kind": "add",
+      "sub": "DIG",
+      "stars": 1,
+      "prompt": "一加一等于几？",
+      "scene": [
+        { "kind": "number", "n": 1 },
+        { "kind": "emojiSingle", "emoji": "➕" },
+        { "kind": "number", "n": 1 },
+        { "kind": "emojiSingle", "emoji": "＝" },
+        { "kind": "emojiSingle", "emoji": "❓" }
+      ],
+      "options": [
+        { "text": "一" },
+        { "text": "二" },
+        { "text": "三" },
+        { "text": "四" }
+      ],
+      "answer": 1
+    },
+    {
+      "id": "tallest-tree",
+      "age": "baby",
+      "kind": "compare",
+      "sub": "HIGH",
+      "stars": 1,
+      "prompt": "哪一棵树最高？",
+      "scene": [],
+      "options": [
+        { "pic": { "kind": "bar", "n": 2 } },
+        { "pic": { "kind": "bar", "n": 5 } },
+        { "pic": { "kind": "bar", "n": 3 } },
+        { "pic": { "kind": "bar", "n": 4 } }
+      ],
+      "answer": 1
+    },
+    {
+      "id": "longest-pencil",
+      "age": "baby",
+      "kind": "compare",
+      "sub": "LEN",
+      "stars": 2,
+      "prompt": "哪一支铅笔最长？",
+      "scene": [],
+      "options": [
+        { "pic": { "kind": "lengthBar", "level": 0, "base": 2 } },
+        { "pic": { "kind": "lengthBar", "level": 3, "base": 2 } },
+        { "pic": { "kind": "lengthBar", "level": 1, "base": 2 } },
+        { "pic": { "kind": "lengthBar", "level": 2, "base": 2 } }
+      ],
+      "answer": 1
+    },
+    {
+      "id": "biggest-ball",
+      "age": "baby",
+      "kind": "compare",
+      "sub": "SIZE",
+      "stars": 2,
+      "prompt": "哪一个球最大？",
+      "scene": [],
+      "options": [
+        { "pic": { "kind": "emojiSize", "emoji": "⚽", "level": 0 } },
+        { "pic": { "kind": "emojiSize", "emoji": "⚽", "level": 1 } },
+        { "pic": { "kind": "emojiSize", "emoji": "⚽", "level": 3 } },
+        { "pic": { "kind": "emojiSize", "emoji": "⚽", "level": 2 } }
+      ],
+      "answer": 2
+    },
+
+    {
+      "id": "panda",
+      "age": "toddler",
+      "kind": "describe",
+      "sub": "WHAT",
+      "stars": 1,
+      "prompt": "图上是什么小动物？",
+      "scene": [{ "kind": "emojiSingle", "emoji": "🐼" }],
+      "options": [
+        { "text": "熊猫" },
+        { "text": "老虎" },
+        { "text": "狐狸" },
+        { "text": "青蛙" }
+      ],
+      "answer": 0
+    },
+    {
+      "id": "star-count",
+      "age": "toddler",
+      "kind": "describe",
+      "sub": "COUNT",
+      "stars": 1,
+      "prompt": "图上有几颗星星？",
+      "scene": [{ "kind": "emojiCount", "emoji": "⭐", "n": 4 }],
+      "options": [
+        { "text": "三颗" },
+        { "text": "四颗" },
+        { "text": "五颗" },
+        { "text": "六颗" }
+      ],
+      "answer": 1
+    },
+    {
+      "id": "block-color",
+      "age": "toddler",
+      "kind": "describe",
+      "sub": "COLOR",
+      "stars": 1,
+      "prompt": "这个方块是什么颜色的？",
+      "scene": [{ "kind": "colorBlock", "base": 4 }],
+      "options": [
+        { "text": "红色" },
+        { "text": "蓝色" },
+        { "text": "黄色" },
+        { "text": "绿色" }
+      ],
+      "answer": 1
+    },
+    {
+      "id": "two-apples",
+      "age": "toddler",
+      "kind": "sameDiff",
+      "sub": "EQ",
+      "stars": 1,
+      "prompt": "这两个苹果一样吗？",
+      "scene": [
+        { "kind": "emojiSingle", "emoji": "🍎" },
+        { "kind": "emojiSingle", "emoji": "🍎" }
+      ],
+      "options": [{ "text": "一样" }, { "text": "不一样" }],
+      "answer": 0
+    },
+    {
+      "id": "find-star",
+      "age": "toddler",
+      "kind": "sameDiff",
+      "sub": "SAMEPICK",
+      "stars": 2,
+      "prompt": "哪一个和上面的图形一样？",
+      "scene": [{ "kind": "shape", "base": 3 }],
+      "options": [
+        { "pic": { "kind": "shape", "base": 0 } },
+        { "pic": { "kind": "shape", "base": 3 } },
+        { "pic": { "kind": "shape", "base": 5 } },
+        { "pic": { "kind": "shape", "base": 6 } }
+      ],
+      "answer": 1
+    },
+    {
+      "id": "find-diff-shape",
+      "age": "toddler",
+      "kind": "sameDiff",
+      "sub": "DIFFPICK",
+      "stars": 2,
+      "prompt": "哪一个图形和其他不一样？",
+      "scene": [],
+      "options": [
+        { "pic": { "kind": "shape", "base": 0 } },
+        { "pic": { "kind": "shape", "base": 0 } },
+        { "pic": { "kind": "shape", "base": 2 } },
+        { "pic": { "kind": "shape", "base": 0 } }
+      ],
+      "answer": 2
+    },
+    {
+      "id": "read-apple",
+      "age": "toddler",
+      "kind": "pickImage",
+      "sub": "WORD",
+      "stars": 1,
+      "prompt": "请选出苹果。",
+      "read": false,
+      "scene": [],
+      "options": [
+        { "pic": { "kind": "emojiSingle", "emoji": "🍎" } },
+        { "pic": { "kind": "emojiSingle", "emoji": "🍌" } },
+        { "pic": { "kind": "emojiSingle", "emoji": "🍇" } },
+        { "pic": { "kind": "emojiSingle", "emoji": "🍉" } }
+      ],
+      "answer": 0
+    },
+    {
+      "id": "read-three-apples",
+      "age": "toddler",
+      "kind": "pickImage",
+      "sub": "COUNT",
+      "stars": 2,
+      "prompt": "请选出三个苹果。",
+      "read": false,
+      "scene": [],
+      "options": [
+        { "pic": { "kind": "emojiCount", "emoji": "🍎", "n": 2 } },
+        { "pic": { "kind": "emojiCount", "emoji": "🍎", "n": 3 } },
+        { "pic": { "kind": "emojiCount", "emoji": "🍎", "n": 4 } },
+        { "pic": { "kind": "emojiCount", "emoji": "🍎", "n": 5 } }
+      ],
+      "answer": 1
+    },
+    {
+      "id": "two-plus-one-obj",
+      "age": "toddler",
+      "kind": "add",
+      "sub": "OBJ",
+      "stars": 2,
+      "prompt": "两个苹果加一个苹果，一共几个？",
+      "scene": [
+        { "kind": "emojiCount", "emoji": "🍎", "n": 2 },
+        { "kind": "emojiSingle", "emoji": "➕" },
+        { "kind": "emojiSingle", "emoji": "🍎" },
+        { "kind": "emojiSingle", "emoji": "＝" },
+        { "kind": "emojiSingle", "emoji": "❓" }
+      ],
+      "options": [
+        { "pic": { "kind": "dots", "n": 1, "base": 1 }, "text": "一个" },
+        { "pic": { "kind": "dots", "n": 2, "base": 1 }, "text": "两个" },
+        { "pic": { "kind": "dots", "n": 3, "base": 1 }, "text": "三个" },
+        { "pic": { "kind": "dots", "n": 4, "base": 1 }, "text": "四个" }
+      ],
+      "answer": 2
+    },
+    {
+      "id": "two-plus-three-dig",
+      "age": "toddler",
+      "kind": "add",
+      "sub": "DIG",
+      "stars": 2,
+      "prompt": "二加三等于几？",
+      "scene": [
+        { "kind": "number", "n": 2 },
+        { "kind": "emojiSingle", "emoji": "➕" },
+        { "kind": "number", "n": 3 },
+        { "kind": "emojiSingle", "emoji": "＝" },
+        { "kind": "emojiSingle", "emoji": "❓" }
+      ],
+      "options": [
+        { "text": "四" },
+        { "text": "五" },
+        { "text": "六" },
+        { "text": "七" }
+      ],
+      "answer": 1
+    },
+    {
+      "id": "tallest-tower",
+      "age": "toddler",
+      "kind": "compare",
+      "sub": "HIGH",
+      "stars": 1,
+      "prompt": "哪一座塔最高？",
+      "scene": [],
+      "options": [
+        { "pic": { "kind": "bar", "n": 5 } },
+        { "pic": { "kind": "bar", "n": 2 } },
+        { "pic": { "kind": "bar", "n": 4 } },
+        { "pic": { "kind": "bar", "n": 3 } }
+      ],
+      "answer": 0
+    },
+    {
+      "id": "shortest-stick",
+      "age": "toddler",
+      "kind": "compare",
+      "sub": "SHORT",
+      "stars": 2,
+      "prompt": "哪一根小棒最短？",
+      "scene": [],
+      "options": [
+        { "pic": { "kind": "lengthBar", "level": 2, "base": 3 } },
+        { "pic": { "kind": "lengthBar", "level": 3, "base": 3 } },
+        { "pic": { "kind": "lengthBar", "level": 0, "base": 3 } },
+        { "pic": { "kind": "lengthBar", "level": 1, "base": 3 } }
+      ],
+      "answer": 2
+    },
+    {
+      "id": "thickest-rope",
+      "age": "toddler",
+      "kind": "compare",
+      "sub": "THICK",
+      "stars": 2,
+      "prompt": "哪一根绳子最粗？",
+      "scene": [],
+      "options": [
+        { "pic": { "kind": "widthBar", "level": 1, "base": 0 } },
+        { "pic": { "kind": "widthBar", "level": 3, "base": 0 } },
+        { "pic": { "kind": "widthBar", "level": 2, "base": 0 } },
+        { "pic": { "kind": "widthBar", "level": 0, "base": 0 } }
+      ],
+      "answer": 1
+    },
+    {
+      "id": "fattest-ball",
+      "age": "toddler",
+      "kind": "compare",
+      "sub": "FAT",
+      "stars": 2,
+      "prompt": "哪一个球最胖？",
+      "scene": [],
+      "options": [
+        { "pic": { "kind": "blob", "level": 2, "base": 4 } },
+        { "pic": { "kind": "blob", "level": 0, "base": 4 } },
+        { "pic": { "kind": "blob", "level": 3, "base": 4 } },
+        { "pic": { "kind": "blob", "level": 1, "base": 4 } }
+      ],
+      "answer": 2
+    },
+    {
+      "id": "farthest-ball",
+      "age": "toddler",
+      "kind": "compare",
+      "sub": "FAR",
+      "stars": 3,
+      "prompt": "哪一个球离我们最远？",
+      "scene": [],
+      "options": [
+        { "pic": { "kind": "distance", "level": 0, "base": 1 } },
+        { "pic": { "kind": "distance", "level": 2, "base": 1 } },
+        { "pic": { "kind": "distance", "level": 4, "base": 1 } },
+        { "pic": { "kind": "distance", "level": 1, "base": 1 } }
+      ],
+      "answer": 2
+    },
+
+    {
+      "id": "dice-five",
+      "age": "preschool",
+      "kind": "describe",
+      "sub": "COUNT",
+      "stars": 2,
+      "prompt": "骰子上的点有几个？",
+      "scene": [{ "kind": "dice", "n": 5 }],
+      "options": [
+        { "text": "三个" },
+        { "text": "四个" },
+        { "text": "五个" },
+        { "text": "六个" }
+      ],
+      "answer": 2
+    },
+    {
+      "id": "pentagon",
+      "age": "preschool",
+      "kind": "describe",
+      "sub": "SHAPE",
+      "stars": 2,
+      "prompt": "图上是什么图形？",
+      "scene": [{ "kind": "shape", "base": 6 }],
+      "options": [
+        { "text": "圆形" },
+        { "text": "五边形" },
+        { "text": "六边形" },
+        { "text": "菱形" }
+      ],
+      "answer": 1
+    },
+    {
+      "id": "read-five-dots",
+      "age": "preschool",
+      "kind": "pickImage",
+      "sub": "COUNT",
+      "stars": 2,
+      "prompt": "请选出五个圆点。",
+      "read": false,
+      "scene": [],
+      "options": [
+        { "pic": { "kind": "dots", "n": 3, "base": 0 } },
+        { "pic": { "kind": "dots", "n": 4, "base": 0 } },
+        { "pic": { "kind": "dots", "n": 5, "base": 0 } },
+        { "pic": { "kind": "dots", "n": 6, "base": 0 } }
+      ],
+      "answer": 2
+    },
+    {
+      "id": "read-hexagon",
+      "age": "preschool",
+      "kind": "pickImage",
+      "sub": "SHAPE",
+      "stars": 2,
+      "prompt": "请选出六边形。",
+      "read": false,
+      "scene": [],
+      "options": [
+        { "pic": { "kind": "shape", "base": 0 } },
+        { "pic": { "kind": "shape", "base": 5 } },
+        { "pic": { "kind": "shape", "base": 7 } },
+        { "pic": { "kind": "shape", "base": 4 } }
+      ],
+      "answer": 2
+    },
+    {
+      "id": "read-deepest-blue",
+      "age": "preschool",
+      "kind": "pickImage",
+      "sub": "COLOR",
+      "stars": 2,
+      "prompt": "请选出颜色最深的蓝色方块。",
+      "read": false,
+      "scene": [],
+      "options": [
+        { "pic": { "kind": "colorRamp", "base": 0, "level": 1 } },
+        { "pic": { "kind": "colorRamp", "base": 0, "level": 0 } },
+        { "pic": { "kind": "colorRamp", "base": 0, "level": 3 } },
+        { "pic": { "kind": "colorRamp", "base": 0, "level": 2 } }
+      ],
+      "answer": 2
+    },
+    {
+      "id": "read-tallest",
+      "age": "preschool",
+      "kind": "pickImage",
+      "sub": "CMP",
+      "stars": 2,
+      "prompt": "请选出最高的柱子。",
+      "read": false,
+      "scene": [],
+      "options": [
+        { "pic": { "kind": "bar", "n": 2 } },
+        { "pic": { "kind": "bar", "n": 5 } },
+        { "pic": { "kind": "bar", "n": 3 } },
+        { "pic": { "kind": "bar", "n": 4 } }
+      ],
+      "answer": 1
+    },
+    {
+      "id": "find-same-square",
+      "age": "preschool",
+      "kind": "sameDiff",
+      "sub": "SAMEPICK",
+      "stars": 2,
+      "prompt": "哪一个和上面的图形一样？",
+      "scene": [{ "kind": "shape", "base": 1 }],
+      "options": [
+        { "pic": { "kind": "shape", "base": 1 } },
+        { "pic": { "kind": "shape", "base": 0 } },
+        { "pic": { "kind": "shape", "base": 3 } },
+        { "pic": { "kind": "shape", "base": 6 } }
+      ],
+      "answer": 0
+    },
+    {
+      "id": "find-diff-block",
+      "age": "preschool",
+      "kind": "sameDiff",
+      "sub": "DIFFPICK",
+      "stars": 2,
+      "prompt": "哪一个色块和其他不一样？",
+      "scene": [],
+      "options": [
+        { "pic": { "kind": "colorBlock", "base": 3 } },
+        { "pic": { "kind": "colorBlock", "base": 3 } },
+        { "pic": { "kind": "colorBlock", "base": 0 } },
+        { "pic": { "kind": "colorBlock", "base": 3 } }
+      ],
+      "answer": 2
+    },
+    {
+      "id": "four-plus-three",
+      "age": "preschool",
+      "kind": "add",
+      "sub": "DIG",
+      "stars": 2,
+      "prompt": "四加三等于几？",
+      "scene": [
+        { "kind": "number", "n": 4 },
+        { "kind": "emojiSingle", "emoji": "➕" },
+        { "kind": "number", "n": 3 },
+        { "kind": "emojiSingle", "emoji": "＝" },
+        { "kind": "emojiSingle", "emoji": "❓" }
+      ],
+      "options": [
+        { "text": "六" },
+        { "text": "七" },
+        { "text": "八" },
+        { "text": "九" }
+      ],
+      "answer": 1
+    },
+    {
+      "id": "five-plus-five",
+      "age": "preschool",
+      "kind": "add",
+      "sub": "DIG",
+      "stars": 2,
+      "prompt": "五加五等于几？",
+      "scene": [
+        { "kind": "number", "n": 5 },
+        { "kind": "emojiSingle", "emoji": "➕" },
+        { "kind": "number", "n": 5 },
+        { "kind": "emojiSingle", "emoji": "＝" },
+        { "kind": "emojiSingle", "emoji": "❓" }
+      ],
+      "options": [
+        { "text": "八" },
+        { "text": "九" },
+        { "text": "十" },
+        { "text": "十一" }
+      ],
+      "answer": 2
+    },
+    {
+      "id": "three-plus-two-obj",
+      "age": "preschool",
+      "kind": "add",
+      "sub": "OBJ",
+      "stars": 3,
+      "prompt": "三个苹果加两个苹果，一共几个？",
+      "scene": [
+        { "kind": "emojiCount", "emoji": "🍎", "n": 3 },
+        { "kind": "emojiSingle", "emoji": "➕" },
+        { "kind": "emojiCount", "emoji": "🍎", "n": 2 },
+        { "kind": "emojiSingle", "emoji": "＝" },
+        { "kind": "emojiSingle", "emoji": "❓" }
+      ],
+      "options": [
+        { "pic": { "kind": "dots", "n": 4, "base": 4 }, "text": "四个" },
+        { "pic": { "kind": "dots", "n": 5, "base": 4 }, "text": "五个" },
+        { "pic": { "kind": "dots", "n": 6, "base": 4 }, "text": "六个" },
+        { "pic": { "kind": "dots", "n": 7, "base": 4 }, "text": "七个" }
+      ],
+      "answer": 1
+    },
+    {
+      "id": "six-plus-two",
+      "age": "preschool",
+      "kind": "add",
+      "sub": "DIG",
+      "stars": 3,
+      "prompt": "六加二等于几？",
+      "scene": [
+        { "kind": "number", "n": 6 },
+        { "kind": "emojiSingle", "emoji": "➕" },
+        { "kind": "number", "n": 2 },
+        { "kind": "emojiSingle", "emoji": "＝" },
+        { "kind": "emojiSingle", "emoji": "❓" }
+      ],
+      "options": [
+        { "text": "七" },
+        { "text": "八" },
+        { "text": "九" },
+        { "text": "十" }
+      ],
+      "answer": 1
+    },
+    {
+      "id": "thinnest-stick",
+      "age": "preschool",
+      "kind": "compare",
+      "sub": "THIN",
+      "stars": 2,
+      "prompt": "哪一根小棒最细？",
+      "scene": [],
+      "options": [
+        { "pic": { "kind": "widthBar", "level": 3, "base": 5 } },
+        { "pic": { "kind": "widthBar", "level": 0, "base": 5 } },
+        { "pic": { "kind": "widthBar", "level": 2, "base": 5 } },
+        { "pic": { "kind": "widthBar", "level": 1, "base": 5 } }
+      ],
+      "answer": 1
+    },
+    {
+      "id": "thinnest-board",
+      "age": "preschool",
+      "kind": "compare",
+      "sub": "THINBOARD",
+      "stars": 2,
+      "prompt": "哪一块木板最薄？",
+      "scene": [],
+      "options": [
+        { "pic": { "kind": "thickness", "level": 1, "base": 2 } },
+        { "pic": { "kind": "thickness", "level": 3, "base": 2 } },
+        { "pic": { "kind": "thickness", "level": 0, "base": 2 } },
+        { "pic": { "kind": "thickness", "level": 2, "base": 2 } }
+      ],
+      "answer": 2
+    },
+    {
+      "id": "deepest-well",
+      "age": "preschool",
+      "kind": "compare",
+      "sub": "DEEP",
+      "stars": 3,
+      "prompt": "哪一口井最深？",
+      "scene": [],
+      "options": [
+        { "pic": { "kind": "depth", "level": 2, "base": 0 } },
+        { "pic": { "kind": "depth", "level": 0, "base": 0 } },
+        { "pic": { "kind": "depth", "level": 3, "base": 0 } },
+        { "pic": { "kind": "depth", "level": 1, "base": 0 } }
+      ],
+      "answer": 2
+    },
+    {
+      "id": "fastest-car",
+      "age": "preschool",
+      "kind": "compare",
+      "sub": "FAST",
+      "stars": 2,
+      "prompt": "哪一辆车开得最快？",
+      "scene": [],
+      "options": [
+        { "pic": { "kind": "speed", "level": 0, "emoji": "🚗", "base": 0 } },
+        { "pic": { "kind": "speed", "level": 3, "emoji": "🚗", "base": 0 } },
+        { "pic": { "kind": "speed", "level": 1, "emoji": "🚗", "base": 0 } },
+        { "pic": { "kind": "speed", "level": 2, "emoji": "🚗", "base": 0 } }
+      ],
+      "answer": 1
+    },
+    {
+      "id": "slowest-snail",
+      "age": "preschool",
+      "kind": "compare",
+      "sub": "SLOW",
+      "stars": 3,
+      "prompt": "哪一只小动物爬得最慢？",
+      "scene": [],
+      "options": [
+        { "pic": { "kind": "speed", "level": 3, "emoji": "🐌", "base": 1 } },
+        { "pic": { "kind": "speed", "level": 1, "emoji": "🐌", "base": 1 } },
+        { "pic": { "kind": "speed", "level": 0, "emoji": "🐌", "base": 1 } },
+        { "pic": { "kind": "speed", "level": 2, "emoji": "🐌", "base": 1 } }
+      ],
+      "answer": 2
+    },
+
+    {
+      "id": "triangle-count",
+      "age": "lowerGrade",
+      "kind": "describe",
+      "sub": "COUNT",
+      "stars": 2,
+      "prompt": "图上有几个三角形？",
+      "scene": [{ "kind": "shapeCount", "base": 2, "n": 6, "level": 2 }],
+      "options": [
+        { "text": "四个" },
+        { "text": "五个" },
+        { "text": "六个" },
+        { "text": "七个" }
+      ],
+      "answer": 2
+    },
+    {
+      "id": "hexagon-sides",
+      "age": "lowerGrade",
+      "kind": "describe",
+      "sub": "SHAPE",
+      "stars": 2,
+      "prompt": "这个图形有几条边？",
+      "scene": [{ "kind": "shape", "base": 7 }],
+      "options": [
+        { "text": "五条" },
+        { "text": "六条" },
+        { "text": "七条" },
+        { "text": "八条" }
+      ],
+      "answer": 1
+    },
+    {
+      "id": "read-triangle",
+      "age": "lowerGrade",
+      "kind": "pickImage",
+      "sub": "SHAPE",
+      "stars": 2,
+      "prompt": "请选出三角形。",
+      "read": false,
+      "scene": [],
+      "options": [
+        { "pic": { "kind": "shape", "base": 0 } },
+        { "pic": { "kind": "shape", "base": 1 } },
+        { "pic": { "kind": "shape", "base": 2 } },
+        { "pic": { "kind": "shape", "base": 3 } }
+      ],
+      "answer": 2
+    },
+    {
+      "id": "read-five-stars",
+      "age": "lowerGrade",
+      "kind": "pickImage",
+      "sub": "COUNT",
+      "stars": 3,
+      "prompt": "请选出五个五角星。",
+      "read": false,
+      "scene": [],
+      "options": [
+        { "pic": { "kind": "shapeCount", "base": 3, "n": 4, "level": 0 } },
+        { "pic": { "kind": "shapeCount", "base": 3, "n": 5, "level": 0 } },
+        { "pic": { "kind": "shapeCount", "base": 3, "n": 6, "level": 0 } },
+        { "pic": { "kind": "shapeCount", "base": 3, "n": 3, "level": 0 } }
+      ],
+      "answer": 1
+    },
+    {
+      "id": "read-tallest-bar",
+      "age": "lowerGrade",
+      "kind": "pickImage",
+      "sub": "CMP",
+      "stars": 2,
+      "prompt": "请选出最高的柱子。",
+      "read": false,
+      "scene": [],
+      "options": [
+        { "pic": { "kind": "bar", "n": 3 } },
+        { "pic": { "kind": "bar", "n": 5 } },
+        { "pic": { "kind": "bar", "n": 2 } },
+        { "pic": { "kind": "bar", "n": 4 } }
+      ],
+      "answer": 1
+    },
+    {
+      "id": "find-diff-count",
+      "age": "lowerGrade",
+      "kind": "sameDiff",
+      "sub": "DIFFPICK",
+      "stars": 3,
+      "prompt": "哪一张图和其他不一样？",
+      "scene": [],
+      "options": [
+        { "pic": { "kind": "shapeCount", "base": 1, "n": 3, "level": 4 } },
+        { "pic": { "kind": "shapeCount", "base": 1, "n": 3, "level": 4 } },
+        { "pic": { "kind": "shapeCount", "base": 1, "n": 3, "level": 4 } },
+        { "pic": { "kind": "shapeCount", "base": 1, "n": 4, "level": 4 } }
+      ],
+      "answer": 3
+    },
+    {
+      "id": "find-same-count",
+      "age": "lowerGrade",
+      "kind": "sameDiff",
+      "sub": "SAMEPICK",
+      "stars": 3,
+      "prompt": "哪一张图上的三角形和上面的一样多？",
+      "scene": [{ "kind": "shapeCount", "base": 2, "n": 4, "level": 0 }],
+      "options": [
+        { "pic": { "kind": "shapeCount", "base": 2, "n": 3, "level": 0 } },
+        { "pic": { "kind": "shapeCount", "base": 2, "n": 4, "level": 0 } },
+        { "pic": { "kind": "shapeCount", "base": 2, "n": 5, "level": 0 } },
+        { "pic": { "kind": "shapeCount", "base": 2, "n": 6, "level": 0 } }
+      ],
+      "answer": 1
+    },
+    {
+      "id": "seven-plus-five",
+      "age": "lowerGrade",
+      "kind": "add",
+      "sub": "DIG",
+      "stars": 2,
+      "prompt": "七加五等于几？",
+      "scene": [
+        { "kind": "number", "n": 7 },
+        { "kind": "emojiSingle", "emoji": "➕" },
+        { "kind": "number", "n": 5 },
+        { "kind": "emojiSingle", "emoji": "＝" },
+        { "kind": "emojiSingle", "emoji": "❓" }
+      ],
+      "options": [
+        { "text": "十一" },
+        { "text": "十二" },
+        { "text": "十三" },
+        { "text": "十四" }
+      ],
+      "answer": 1
+    },
+    {
+      "id": "eight-plus-seven",
+      "age": "lowerGrade",
+      "kind": "add",
+      "sub": "DIG",
+      "stars": 3,
+      "prompt": "八加七等于几？",
+      "scene": [
+        { "kind": "number", "n": 8 },
+        { "kind": "emojiSingle", "emoji": "➕" },
+        { "kind": "number", "n": 7 },
+        { "kind": "emojiSingle", "emoji": "＝" },
+        { "kind": "emojiSingle", "emoji": "❓" }
+      ],
+      "options": [
+        { "text": "十四" },
+        { "text": "十五" },
+        { "text": "十六" },
+        { "text": "十七" }
+      ],
+      "answer": 1
+    },
+    {
+      "id": "nine-plus-six",
+      "age": "lowerGrade",
+      "kind": "add",
+      "sub": "DIG",
+      "stars": 3,
+      "prompt": "九加六等于几？",
+      "scene": [
+        { "kind": "number", "n": 9 },
+        { "kind": "emojiSingle", "emoji": "➕" },
+        { "kind": "number", "n": 6 },
+        { "kind": "emojiSingle", "emoji": "＝" },
+        { "kind": "emojiSingle", "emoji": "❓" }
+      ],
+      "options": [
+        { "text": "十三" },
+        { "text": "十四" },
+        { "text": "十五" },
+        { "text": "十六" }
+      ],
+      "answer": 2
+    },
+    {
+      "id": "five-plus-four-obj",
+      "age": "lowerGrade",
+      "kind": "add",
+      "sub": "OBJ",
+      "stars": 3,
+      "prompt": "五个苹果加四个苹果，一共几个？",
+      "scene": [
+        { "kind": "emojiCount", "emoji": "🍎", "n": 5 },
+        { "kind": "emojiSingle", "emoji": "➕" },
+        { "kind": "emojiCount", "emoji": "🍎", "n": 4 },
+        { "kind": "emojiSingle", "emoji": "＝" },
+        { "kind": "emojiSingle", "emoji": "❓" }
+      ],
+      "options": [
+        { "pic": { "kind": "dots", "n": 7, "base": 3 }, "text": "七个" },
+        { "pic": { "kind": "dots", "n": 8, "base": 3 }, "text": "八个" },
+        { "pic": { "kind": "dots", "n": 9, "base": 3 }, "text": "九个" },
+        { "pic": { "kind": "dots", "n": 10, "base": 3 }, "text": "十个" }
+      ],
+      "answer": 2
+    },
+    {
+      "id": "nearest-ball",
+      "age": "lowerGrade",
+      "kind": "compare",
+      "sub": "NEAR",
+      "stars": 3,
+      "prompt": "哪一个球离我们最近？",
+      "scene": [],
+      "options": [
+        { "pic": { "kind": "distance", "level": 4, "base": 2 } },
+        { "pic": { "kind": "distance", "level": 2, "base": 2 } },
+        { "pic": { "kind": "distance", "level": 0, "base": 2 } },
+        { "pic": { "kind": "distance", "level": 3, "base": 2 } }
+      ],
+      "answer": 2
+    },
+    {
+      "id": "longest-ribbon",
+      "age": "lowerGrade",
+      "kind": "compare",
+      "sub": "LONG",
+      "stars": 2,
+      "prompt": "哪一条丝带最长？",
+      "scene": [],
+      "options": [
+        { "pic": { "kind": "lengthBar", "level": 3, "base": 6 } },
+        { "pic": { "kind": "lengthBar", "level": 1, "base": 6 } },
+        { "pic": { "kind": "lengthBar", "level": 2, "base": 6 } },
+        { "pic": { "kind": "lengthBar", "level": 0, "base": 6 } }
+      ],
+      "answer": 0
+    },
+    {
+      "id": "front-animal",
+      "age": "lowerGrade",
+      "kind": "compare",
+      "sub": "FRONT",
+      "stars": 3,
+      "prompt": "哪一只小动物排在最前面？",
+      "scene": [{ "kind": "queue", "emojis": ["🐼", "🐻", "🐱", "🐰"] }],
+      "options": [
+        { "pic": { "kind": "emojiSingle", "emoji": "🐼" } },
+        { "pic": { "kind": "emojiSingle", "emoji": "🐻" } },
+        { "pic": { "kind": "emojiSingle", "emoji": "🐱" } },
+        { "pic": { "kind": "emojiSingle", "emoji": "🐰" } }
+      ],
+      "answer": 3
+    },
+    {
+      "id": "back-animal",
+      "age": "lowerGrade",
+      "kind": "compare",
+      "sub": "BACK",
+      "stars": 3,
+      "prompt": "哪一只小动物排在最后面？",
+      "scene": [{ "kind": "queue", "emojis": ["🐼", "🐻", "🐱", "🐰"] }],
+      "options": [
+        { "pic": { "kind": "emojiSingle", "emoji": "🐼" } },
+        { "pic": { "kind": "emojiSingle", "emoji": "🐻" } },
+        { "pic": { "kind": "emojiSingle", "emoji": "🐱" } },
+        { "pic": { "kind": "emojiSingle", "emoji": "🐰" } }
+      ],
+      "answer": 0
+    },
+
+    {
+      "id": "cross",
+      "age": "upperGrade",
+      "kind": "describe",
+      "sub": "SHAPE",
+      "stars": 2,
+      "prompt": "图上是什么图形？",
+      "scene": [{ "kind": "shape", "base": 8 }],
+      "options": [
+        { "text": "圆形" },
+        { "text": "十字" },
+        { "text": "菱形" },
+        { "text": "五边形" }
+      ],
+      "answer": 1
+    },
+    {
+      "id": "circle-count-seven",
+      "age": "upperGrade",
+      "kind": "describe",
+      "sub": "COUNT",
+      "stars": 2,
+      "prompt": "图上有几个圆形？",
+      "scene": [{ "kind": "shapeCount", "base": 0, "n": 7, "level": 4 }],
+      "options": [
+        { "text": "六个" },
+        { "text": "七个" },
+        { "text": "八个" },
+        { "text": "九个" }
+      ],
+      "answer": 1
+    },
+    {
+      "id": "read-cross",
+      "age": "upperGrade",
+      "kind": "pickImage",
+      "sub": "SHAPE",
+      "stars": 2,
+      "prompt": "请选出十字。",
+      "read": false,
+      "scene": [],
+      "options": [
+        { "pic": { "kind": "shape", "base": 0 } },
+        { "pic": { "kind": "shape", "base": 8 } },
+        { "pic": { "kind": "shape", "base": 5 } },
+        { "pic": { "kind": "shape", "base": 3 } }
+      ],
+      "answer": 1
+    },
+    {
+      "id": "read-ordinal-third",
+      "age": "upperGrade",
+      "kind": "pickImage",
+      "sub": "ORD",
+      "stars": 3,
+      "prompt": "请选出排在第三位的小动物。",
+      "read": false,
+      "scene": [{ "kind": "queue", "emojis": ["🐼", "🐻", "🐱", "🦊", "🐰"] }],
+      "options": [
+        { "pic": { "kind": "emojiSingle", "emoji": "🐼" } },
+        { "pic": { "kind": "emojiSingle", "emoji": "🐻" } },
+        { "pic": { "kind": "emojiSingle", "emoji": "🐱" } },
+        { "pic": { "kind": "emojiSingle", "emoji": "🦊" } }
+      ],
+      "answer": 2
+    },
+    {
+      "id": "read-deepest-cup",
+      "age": "upperGrade",
+      "kind": "pickImage",
+      "sub": "DEEP",
+      "stars": 3,
+      "prompt": "请选出水最深的那杯。",
+      "read": false,
+      "scene": [],
+      "options": [
+        { "pic": { "kind": "depth", "level": 1, "base": 1 } },
+        { "pic": { "kind": "depth", "level": 3, "base": 1 } },
+        { "pic": { "kind": "depth", "level": 0, "base": 1 } },
+        { "pic": { "kind": "depth", "level": 2, "base": 1 } }
+      ],
+      "answer": 1
+    },
+    {
+      "id": "find-diff-speed",
+      "age": "upperGrade",
+      "kind": "sameDiff",
+      "sub": "DIFFPICK",
+      "stars": 3,
+      "prompt": "哪一辆车和其他不一样？",
+      "scene": [],
+      "options": [
+        { "pic": { "kind": "speed", "level": 2, "emoji": "🚕", "base": 2 } },
+        { "pic": { "kind": "speed", "level": 2, "emoji": "🚕", "base": 2 } },
+        { "pic": { "kind": "speed", "level": 4, "emoji": "🚕", "base": 2 } },
+        { "pic": { "kind": "speed", "level": 2, "emoji": "🚕", "base": 2 } }
+      ],
+      "answer": 2
+    },
+    {
+      "id": "nine-plus-eight",
+      "age": "upperGrade",
+      "kind": "add",
+      "sub": "DIG",
+      "stars": 3,
+      "prompt": "九加八等于几？",
+      "scene": [
+        { "kind": "number", "n": 9 },
+        { "kind": "emojiSingle", "emoji": "➕" },
+        { "kind": "number", "n": 8 },
+        { "kind": "emojiSingle", "emoji": "＝" },
+        { "kind": "emojiSingle", "emoji": "❓" }
+      ],
+      "options": [
+        { "text": "十六" },
+        { "text": "十七" },
+        { "text": "十八" },
+        { "text": "十九" }
+      ],
+      "answer": 1
+    },
+    {
+      "id": "seven-plus-six",
+      "age": "upperGrade",
+      "kind": "add",
+      "sub": "DIG",
+      "stars": 3,
+      "prompt": "七加六等于几？",
+      "scene": [
+        { "kind": "number", "n": 7 },
+        { "kind": "emojiSingle", "emoji": "➕" },
+        { "kind": "number", "n": 6 },
+        { "kind": "emojiSingle", "emoji": "＝" },
+        { "kind": "emojiSingle", "emoji": "❓" }
+      ],
+      "options": [
+        { "text": "十二" },
+        { "text": "十三" },
+        { "text": "十四" },
+        { "text": "十五" }
+      ],
+      "answer": 1
+    },
+    {
+      "id": "nine-plus-nine",
+      "age": "upperGrade",
+      "kind": "add",
+      "sub": "DIG",
+      "stars": 3,
+      "prompt": "九加九等于几？",
+      "scene": [
+        { "kind": "number", "n": 9 },
+        { "kind": "emojiSingle", "emoji": "➕" },
+        { "kind": "number", "n": 9 },
+        { "kind": "emojiSingle", "emoji": "＝" },
+        { "kind": "emojiSingle", "emoji": "❓" }
+      ],
+      "options": [
+        { "text": "十七" },
+        { "text": "十八" },
+        { "text": "十九" },
+        { "text": "二十" }
+      ],
+      "answer": 1
+    },
+    {
+      "id": "eight-plus-nine-obj",
+      "age": "upperGrade",
+      "kind": "add",
+      "sub": "OBJ",
+      "stars": 3,
+      "prompt": "八个苹果加九个苹果，一共几个？",
+      "scene": [
+        { "kind": "emojiCount", "emoji": "🍎", "n": 8 },
+        { "kind": "emojiSingle", "emoji": "➕" },
+        { "kind": "emojiCount", "emoji": "🍎", "n": 9 },
+        { "kind": "emojiSingle", "emoji": "＝" },
+        { "kind": "emojiSingle", "emoji": "❓" }
+      ],
+      "options": [
+        { "pic": { "kind": "number", "n": 16 }, "text": "十六个" },
+        { "pic": { "kind": "number", "n": 17 }, "text": "十七个" },
+        { "pic": { "kind": "number", "n": 18 }, "text": "十八个" },
+        { "pic": { "kind": "number", "n": 19 }, "text": "十九个" }
+      ],
+      "answer": 1
+    },
+    {
+      "id": "thickest-rope",
+      "age": "upperGrade",
+      "kind": "compare",
+      "sub": "THICK",
+      "stars": 3,
+      "prompt": "哪一根绳子最粗？",
+      "scene": [],
+      "options": [
+        { "pic": { "kind": "widthBar", "level": 2, "base": 7 } },
+        { "pic": { "kind": "widthBar", "level": 0, "base": 7 } },
+        { "pic": { "kind": "widthBar", "level": 1, "base": 7 } },
+        { "pic": { "kind": "widthBar", "level": 3, "base": 7 } }
+      ],
+      "answer": 3
+    },
+    {
+      "id": "shallowest-cup",
+      "age": "upperGrade",
+      "kind": "compare",
+      "sub": "SHALLOW",
+      "stars": 3,
+      "prompt": "哪一杯水最浅？",
+      "scene": [],
+      "options": [
+        { "pic": { "kind": "depth", "level": 0, "base": 3 } },
+        { "pic": { "kind": "depth", "level": 2, "base": 3 } },
+        { "pic": { "kind": "depth", "level": 3, "base": 3 } },
+        { "pic": { "kind": "depth", "level": 1, "base": 3 } }
+      ],
+      "answer": 0
+    },
+    {
+      "id": "slowest-car",
+      "age": "upperGrade",
+      "kind": "compare",
+      "sub": "SLOW",
+      "stars": 3,
+      "prompt": "哪一辆车开得最慢？",
+      "scene": [],
+      "options": [
+        { "pic": { "kind": "speed", "level": 4, "emoji": "🚙", "base": 3 } },
+        { "pic": { "kind": "speed", "level": 0, "emoji": "🚙", "base": 3 } },
+        { "pic": { "kind": "speed", "level": 2, "emoji": "🚙", "base": 3 } },
+        { "pic": { "kind": "speed", "level": 3, "emoji": "🚙", "base": 3 } }
+      ],
+      "answer": 1
+    },
+    {
+      "id": "front-animal",
+      "age": "upperGrade",
+      "kind": "compare",
+      "sub": "FRONT",
+      "stars": 3,
+      "prompt": "哪一只小动物排在最前面？",
+      "scene": [{ "kind": "queue", "emojis": ["🐻", "🐼", "🦊", "🐰", "🐱"] }],
+      "options": [
+        { "pic": { "kind": "emojiSingle", "emoji": "🐼" } },
+        { "pic": { "kind": "emojiSingle", "emoji": "🐻" } },
+        { "pic": { "kind": "emojiSingle", "emoji": "🐰" } },
+        { "pic": { "kind": "emojiSingle", "emoji": "🐱" } }
+      ],
+      "answer": 3
+    },
+    {
+      "id": "back-animal",
+      "age": "upperGrade",
+      "kind": "compare",
+      "sub": "BACK",
+      "stars": 3,
+      "prompt": "哪一只小动物排在最后面？",
+      "scene": [{ "kind": "queue", "emojis": ["🐻", "🐼", "🦊", "🐰", "🐱"] }],
+      "options": [
+        { "pic": { "kind": "emojiSingle", "emoji": "🦊" } },
+        { "pic": { "kind": "emojiSingle", "emoji": "🐻" } },
+        { "pic": { "kind": "emojiSingle", "emoji": "🐼" } },
+        { "pic": { "kind": "emojiSingle", "emoji": "🐱" } }
+      ],
+      "answer": 1
+    }
+  ]
+}

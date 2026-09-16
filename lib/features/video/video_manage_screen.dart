@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -222,7 +223,7 @@ class _VideoManageScreenState extends ConsumerState<VideoManageScreen> {
             ListTile(
               leading: const Icon(Icons.smartphone_rounded),
               title: const Text('从本机选择文件'),
-              subtitle: const Text('从平板 / 手机里挑一个视频，会复制进 App'),
+              subtitle: const Text('可一次勾多个，名字自动用文件名，会复制进 App'),
               onTap: () => Navigator.pop(ctx, _AddMode.file),
             ),
             const SizedBox(height: 8),
@@ -248,36 +249,47 @@ class _VideoManageScreenState extends ConsumerState<VideoManageScreen> {
   }
 
   Future<void> _addFromFile(VideoCategory c) async {
-    PickedVideo? picked;
+    List<PickedVideo> picked;
     try {
-      picked = await pickLocalVideo();
+      picked = await pickLocalVideos();
     } catch (e) {
       if (!mounted) return;
       _toast('打开文件选择器失败：$e');
       return;
     }
-    if (picked == null || !mounted) return;
+    if (picked.isEmpty || !mounted) return;
 
-    final name = await _askText(
-      title: '视频名称',
-      hint: '给孩子看的名字',
-      initial: defaultVideoName(picked.name, c.videos.length + 1),
-      confirmText: '添加',
-    );
-    if (name == null || !mounted) return;
-
-    // 复制进 App 私有目录再记录，缓存里的临时路径迟早会被系统清掉。
-    String? dest;
+    // 一次可能勾十几个，名字直接取文件名，不再一个个弹框问。
+    final progress =
+        ValueNotifier<String>('正在导入 ${picked.length} 个视频…');
+    final failed = <String>[];
+    var index = c.videos.length;
     try {
-      dest = await _busy('正在导入视频…', () => importLocalVideo(picked!));
-    } catch (e) {
-      if (!mounted) return;
-      _toast('导入失败：$e');
-      return;
+      await _busy(progress, () async {
+        for (var i = 0; i < picked.length; i++) {
+          final p = picked[i];
+          final title = defaultVideoName(p.name, ++index);
+          progress.value = '正在导入 ${i + 1}/${picked.length}：$title';
+          String? dest;
+          try {
+            // 复制进 App 私有目录再记录，缓存里的临时路径迟早会被系统清掉。
+            dest = await importLocalVideo(p);
+            await _lib.addVideo(c.id,
+                title: title, source: dest, kind: VideoKind.file);
+          } catch (e) {
+            // 一个失败不影响后面几个，最后一起报。已经复制进来的文件别留下当孤儿。
+            if (dest != null) await deleteLocalVideoFile(dest);
+            failed.add(title);
+          }
+        }
+      });
+    } finally {
+      progress.dispose();
     }
-    if (dest == null) return;
-    await _lib.addVideo(c.id,
-        title: name, source: dest, kind: VideoKind.file);
+    if (!mounted || failed.isEmpty) return;
+    final preview = failed.take(3).join('、');
+    _toast('有 ${failed.length} 个视频没能导入：'
+        '$preview${failed.length > 3 ? ' 等' : ''}');
   }
 
   Future<void> _deleteVideo(VideoCategory c, VideoItem v) async {
@@ -330,21 +342,27 @@ class _VideoManageScreenState extends ConsumerState<VideoManageScreen> {
   }
 
   /// 跑一个耗时任务，期间盖一层不可取消的进度框。
-  Future<T> _busy<T>(String label, Future<T> Function() run) async {
+  ///
+  /// [label] 传的是 ValueListenable 而不是普通字符串：批量导入要一边复制
+  /// 一边改「第几个」，普通字符串改了框里也不会跟着变。
+  Future<T> _busy<T>(ValueListenable<String> label, Future<T> Function() run) async {
     showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (_) => PopScope(
         canPop: false,
-        child: AlertDialog(
-          content: Row(
-            children: [
-              const SizedBox(
-                  width: 22, height: 22,
-                  child: CircularProgressIndicator(strokeWidth: 2.4)),
-              const SizedBox(width: 16),
-              Expanded(child: Text(label)),
-            ],
+        child: ValueListenableBuilder<String>(
+          valueListenable: label,
+          builder: (_, text, __) => AlertDialog(
+            content: Row(
+              children: [
+                const SizedBox(
+                    width: 22, height: 22,
+                    child: CircularProgressIndicator(strokeWidth: 2.4)),
+                const SizedBox(width: 16),
+                Expanded(child: Text(text)),
+              ],
+            ),
           ),
         ),
       ),

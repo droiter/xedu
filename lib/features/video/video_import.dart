@@ -21,20 +21,22 @@ class PickedVideo {
   final String path;
 }
 
-/// 打开系统文件选择器挑一个视频；取消或拿不到路径时返回 null。
-Future<PickedVideo?> pickLocalVideo() async {
+/// 打开系统文件选择器挑视频，可以一次多选；取消或一个路径都拿不到时返回空列表。
+Future<List<PickedVideo>> pickLocalVideos() async {
   // 带上 SAF 选项，选择器才会把原始 content:// 地址一起给回来，
   // 后面自己查文件名要靠它。
   final files = await FilePicker.pickFiles(
     type: FileType.video,
     androidOptions: const FilePickerAndroidOptions(),
   );
-  if (files.isEmpty) return null;
-  final f = files.first;
-  final path =
-      f.path ?? (f.uri.scheme == 'file' ? f.uri.toFilePath() : null);
-  if (path == null) return null;
-  return PickedVideo(name: await resolveVideoName(f), path: path);
+  final picked = <PickedVideo>[];
+  for (final f in files) {
+    final path =
+        f.path ?? (f.uri.scheme == 'file' ? f.uri.toFilePath() : null);
+    if (path == null) continue;
+    picked.add(PickedVideo(name: await resolveVideoName(f), path: path));
+  }
+  return picked;
 }
 
 /// 文件名去掉后缀，当视频名字的默认值。

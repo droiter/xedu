@@ -57,6 +57,15 @@ enum PicKind {
   /// 远近：地平线上的小球，[Pic.level] 为远近档（0 最近 … 4 最远）。
   distance,
 
+  /// 快慢：物体身后的速度线，[Pic.level] 为速度档（0 最慢 … 4 最快）。
+  speed,
+
+  /// 深浅：杯子里的水，[Pic.level] 为水位档（0 最浅 … 4 最深）。
+  depth,
+
+  /// 前后：一队小动物依次遮挡，[Pic.emojis] 从左到右 = 从最后面到最前面。
+  queue,
+
   /// 外部图片资源（预留，需要配合 pubspec.yaml 的 assets 目录）。
   asset,
 }
@@ -80,6 +89,7 @@ class Pic {
     this.base = 0,
     this.path = '',
     this.label,
+    this.emojis = const [],
   });
 
   final PicKind kind;
@@ -105,6 +115,9 @@ class Pic {
 
   /// 选项上的文字说明（可选）。
   final String? label;
+
+  /// 队列（[PicKind.queue] 用），从左到右 = 从最后面到最前面。
+  final List<String> emojis;
 
   static Pic dots(int count, {int base = 0}) => Pic(
         kind: PicKind.dots,
@@ -245,6 +258,37 @@ class Pic {
         base: base,
         label: '远近',
       );
+
+  /// 快慢：物体 + 速度线。[level] 0 最慢 … 4 最快；[emoji] 是被比较的物体。
+  static Pic speed(int level, {String emoji = '🚗', int base = 0}) => Pic(
+        kind: PicKind.speed,
+        id: 'spd:$emoji:$base:$level',
+        level: level,
+        emoji: emoji,
+        base: base,
+        label: '速度 $level',
+      );
+
+  /// 深浅：杯子里的水。[level] 0 最浅 … 4 最深；[base] 为水色编号。
+  static Pic depth(int level, {int base = 0}) => Pic(
+        kind: PicKind.depth,
+        id: 'dep:$base:$level',
+        level: level,
+        base: base,
+        label: '水深 $level',
+      );
+
+  /// 前后：一队不同的小动物，列表从左到右 = 从最后面到最前面。
+  static Pic queue(List<String> emojis) => Pic(
+        kind: PicKind.queue,
+        id: 'q:${emojis.join()}',
+        emojis: emojis,
+        label: '排队',
+      );
+
+  /// 队伍里的第 [index] 位（0 = 最后面）。
+  String queueAt(int index) =>
+      emojis.isEmpty ? '' : emojis[index % emojis.length];
 
   static Pic asset(String path, {String? label}) => Pic(
         kind: PicKind.asset,

@@ -5,6 +5,8 @@ import '../../core/constants.dart';
 import '../../core/theme.dart';
 import '../../data/models.dart';
 import '../../state/providers.dart';
+import '../qa_quiz/qa_rate_chips.dart';
+import '../qa_quiz/qa_speech.dart';
 import '../video/video_manage_screen.dart';
 
 /// 「我的」：账号、设置、关于、退出。
@@ -24,6 +26,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final user = ref.watch(authControllerProvider.select((s) => s.user));
     final dark = ref.watch(themeControllerProvider);
     final lib = ref.watch(videoLibraryProvider);
+    final rate = ref.watch(qaSpeechRateProvider);
     final scheme = Theme.of(context).colorScheme;
 
     if (!_remindLoaded) {
@@ -81,6 +84,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     setState(() => _remind = v);
                     ref.read(prefsProvider).setBool(kRemindKey, v);
                   },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.record_voice_over_outlined),
+                  title: const Text('朗读语速'),
+                  subtitle: Text('看图问答的朗读快慢 · 当前：${qaRateLabel(rate)}'),
+                ),
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(16, 0, 16, 14),
+                  child: QaRateChips(),
                 ),
                 ListTile(
                   leading: const Icon(Icons.info_outline_rounded),

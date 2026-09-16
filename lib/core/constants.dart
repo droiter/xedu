@@ -25,13 +25,18 @@ const String kVideoLibraryKey = 'xedu_video_lib';
 
 // 底部选项卡下标
 const int kQuizTab = 0;
-const int kVideoTab = 1;
-const int kCourseTab = 2;
-const int kProgressTab = 3;
-const int kProfileTab = 4;
+const int kQaTab = 1;
+const int kVideoTab = 2;
+const int kCourseTab = 3;
+const int kProgressTab = 4;
+const int kProfileTab = 5;
 
-/// 当前开放的选项卡：看图找规律 / 看视频 / 我的；课程与进度只见其形、点不进去。
-const Set<int> kOpenTabs = {kQuizTab, kVideoTab, kProfileTab};
+/// 当前开放的选项卡：看图找规律 / 看图问答 / 看视频 / 我的；
+/// 课程与进度只见其形、点不进去。
+const Set<int> kOpenTabs = {kQuizTab, kQaTab, kVideoTab, kProfileTab};
+
+/// 「看图问答」的朗读语速（倍速，1.0 为原速）。
+const String kQaSpeechRateKey = 'xedu_qa_speech_rate';
 
 // 课程封面渐变调色板（seed 取模得到稳定配色）
 const List<List<Color>> kCoverPalette = [
