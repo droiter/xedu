@@ -245,59 +245,27 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen> {
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 620),
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(16, 4, 16, 20),
+          padding: const EdgeInsets.fromLTRB(16, 2, 16, 12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _progressBar(context),
-              const SizedBox(height: 14),
-              Row(
-                children: [
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: scheme.primaryContainer,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text('第 ${_qi + 1} / $_total 题',
-                        style: TextStyle(
-                            fontSize: 12.5,
-                            fontWeight: FontWeight.w700,
-                            color: scheme.onPrimaryContainer)),
-                  ),
-                  const Spacer(),
-                  for (var i = 0; i < 3; i++)
-                    Icon(
-                      q.stars > i
-                          ? Icons.star_rounded
-                          : Icons.star_outline_rounded,
-                      size: 18,
-                      color: q.stars > i
-                          ? const Color(0xFFF59E0B)
-                          : scheme.outlineVariant,
-                    ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              _idBadge(context, q),
-              const SizedBox(height: 14),
+              _headRow(context, q),
+              const SizedBox(height: 8),
               if (q.scene.isNotEmpty) ...[
                 _sceneRow(context, q),
-                const SizedBox(height: 16),
+                const SizedBox(height: 10),
               ],
               _promptCard(context, q),
-              const SizedBox(height: 12),
-              _speechBar(context, q),
-              const SizedBox(height: 18),
+              const SizedBox(height: 10),
+              _readHint(context, q),
               Text('请选择答案',
                   style: TextStyle(
                       fontSize: 13.5,
                       fontWeight: FontWeight.w700,
                       color: scheme.onSurfaceVariant)),
-              const SizedBox(height: 10),
+              const SizedBox(height: 8),
               _optionGrid(context, q),
-              const SizedBox(height: 16),
+              const SizedBox(height: 10),
               if (_resolved) _praiseBanner(context),
             ],
           ),
@@ -306,13 +274,41 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen> {
     );
   }
 
-  Widget _progressBar(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(4),
-      child: LinearProgressIndicator(
-        value: (_qi + (_resolved ? 1 : 0)) / _total,
-        minHeight: 5,
-      ),
+  /// 一行放下三样：题号进度、本题 id、难度星；窄屏上 id 会自动缩一点。
+  Widget _headRow(BuildContext context, QaQuestion q) {
+    final scheme = Theme.of(context).colorScheme;
+
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          decoration: BoxDecoration(
+            color: scheme.primaryContainer,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Text('第 ${_qi + 1} / $_total 题',
+              style: TextStyle(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w700,
+                  color: scheme.onPrimaryContainer)),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: _idBadge(context, q),
+          ),
+        ),
+        const SizedBox(width: 8),
+        for (var i = 0; i < 3; i++)
+          Icon(
+            q.stars > i ? Icons.star_rounded : Icons.star_outline_rounded,
+            size: 18,
+            color:
+                q.stars > i ? const Color(0xFFF59E0B) : scheme.outlineVariant,
+          ),
+      ],
     );
   }
 
@@ -331,8 +327,7 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen> {
         ));
     }
 
-    return Center(
-      child: Material(
+    return Material(
         color: scheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(8),
         child: InkWell(
@@ -372,8 +367,9 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen> {
                   color: scheme.primary,
                 ),
                 const SizedBox(width: 4),
+                // 年龄段已经在标题栏里了，这里只留中文分类，省得一行放不下。
                 Text(
-                  '${q.age.ageText} · ${q.kind.label}',
+                  q.kind.label,
                   style: TextStyle(
                     fontSize: 11,
                     height: 1.3,
@@ -383,17 +379,15 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen> {
               ],
             ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 
   // ---------- 题面图 ----------
   Widget _sceneRow(BuildContext context, QaQuestion q) {
     final scheme = Theme.of(context).colorScheme;
     return Container(
-      height: 128,
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      height: 104,
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       decoration: BoxDecoration(
         color: Theme.of(context).brightness == Brightness.dark
             ? scheme.surfaceContainerHigh
@@ -416,30 +410,60 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen> {
   }
 
   // ---------- 题面文字 ----------
+  /// 题面 + 重播键**同一行**：读完想再听一遍就点右边那个喇叭，
+  /// 不用再去下面找一行按钮。语速由家长在「我的 → 偏好设置」里定，这里不给调。
   Widget _promptCard(BuildContext context, QaQuestion q) {
     final scheme = Theme.of(context).colorScheme;
+    final clip = q.readPrompt ? widget.bank.promptClip(q) : null;
+
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      padding: EdgeInsets.fromLTRB(16, 12, clip == null ? 16 : 6, 12),
       decoration: BoxDecoration(
         color: scheme.primaryContainer.withOpacity(0.45),
         borderRadius: BorderRadius.circular(16),
       ),
-      child: QaKaraokeText(
-        text: q.prompt,
-        clipKey: q.clipKey,
-        clip: widget.bank.promptClip(q),
-        highlight: q.readPrompt,
+      child: Row(
+        children: [
+          Expanded(
+            child: QaKaraokeText(
+              text: q.prompt,
+              clipKey: q.clipKey,
+              clip: widget.bank.promptClip(q),
+              highlight: q.readPrompt,
+            ),
+          ),
+          if (clip != null)
+            AnimatedBuilder(
+              animation: QaSpeech.instance.speaking,
+              builder: (context, _) {
+                final playing = QaSpeech.instance.isSpeaking(q.clipKey);
+                return IconButton.filledTonal(
+                  onPressed: playing
+                      ? () => QaSpeech.instance.stop()
+                      : () => QaSpeech.instance.speak(q.clipKey, clip),
+                  tooltip: playing ? '停止' : '再读一遍',
+                  icon: Icon(
+                      playing ? Icons.stop_rounded : Icons.volume_up_rounded),
+                  iconSize: 20,
+                  visualDensity: VisualDensity.compact,
+                  constraints:
+                      const BoxConstraints.tightFor(width: 40, height: 40),
+                );
+              },
+            ),
+        ],
       ),
     );
   }
 
-  /// 朗读条：只有重播。语速由家长在「我的 → 偏好设置」里定，题中间不给孩子调。
-  Widget _speechBar(BuildContext context, QaQuestion q) {
+  /// 不朗读的题（阅读选图）给一行小提示，朗读题不需要，占位为零。
+  Widget _readHint(BuildContext context, QaQuestion q) {
+    if (q.readPrompt) return const SizedBox.shrink();
     final scheme = Theme.of(context).colorScheme;
-
-    if (!q.readPrompt) {
-      return Row(
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(Icons.menu_book_rounded, size: 16, color: scheme.outline),
@@ -449,33 +473,7 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen> {
                 style: TextStyle(fontSize: 12.5, color: scheme.outline)),
           ),
         ],
-      );
-    }
-
-    final clip = widget.bank.promptClip(q);
-    if (clip == null) return const SizedBox.shrink();
-
-    return AnimatedBuilder(
-      animation: QaSpeech.instance.speaking,
-      builder: (context, _) {
-        final playing = QaSpeech.instance.isSpeaking(q.clipKey);
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            IconButton.filledTonal(
-              onPressed: playing
-                  ? () => QaSpeech.instance.stop()
-                  : () => QaSpeech.instance.speak(q.clipKey, clip),
-              tooltip: playing ? '停止' : '再读一遍',
-              icon: Icon(playing
-                  ? Icons.stop_rounded
-                  : Icons.volume_up_rounded),
-              iconSize: 20,
-              visualDensity: VisualDensity.compact,
-            ),
-          ],
-        );
-      },
+      ),
     );
   }
 
@@ -485,12 +483,12 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen> {
     final cols = n <= 2 ? n : 2;
     final rows = (n / cols).ceil();
     final hasPic = q.options.any((o) => o.hasPic);
-    final cellH = hasPic ? 142.0 : 74.0;
+    final cellH = hasPic ? 116.0 : 74.0;
 
     return Column(
       children: [
         for (var r = 0; r < rows; r++) ...[
-          if (r > 0) const SizedBox(height: 10),
+          if (r > 0) const SizedBox(height: 8),
           SizedBox(
             height: cellH,
             child: Row(
@@ -555,7 +553,7 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen> {
             children: [
               Positioned.fill(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 24, 10, 8),
+                  padding: const EdgeInsets.fromLTRB(10, 20, 10, 6),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [

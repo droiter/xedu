@@ -87,6 +87,24 @@ bool _meaningful(String? raw) {
   return !RegExp(r'^\d{6,}$').hasMatch(videoNameFromFileName(name));
 }
 
+/// 本机视频的查重指纹：原文件名 + 字节数；认不出来时返回空串。
+///
+/// 得赶在 [importLocalVideo] 之前算：那一步会把源文件清掉（选择器的缓存副本），
+/// 之后再想问大小就问不到了。
+///
+/// 名字问不到时只剩字节数可用——两个不同的视频撞上同一个字节数几乎不可能，
+/// 总比认不出「同一个文件又选了一遍」强。反过来，文件读不到就干脆不给指纹：
+/// 让家长自己删多出来的那份，也好过把想加的挡在门外。
+Future<String> videoFingerprint(PickedVideo picked) async {
+  int size;
+  try {
+    size = await File(picked.path).length();
+  } catch (_) {
+    return '';
+  }
+  return size <= 0 ? '' : '${picked.name}|$size';
+}
+
 /// 把挑中的视频复制进 App 私有目录，返回可长期播放的绝对路径。
 Future<String> importLocalVideo(PickedVideo picked) async {
   final dir = Directory(

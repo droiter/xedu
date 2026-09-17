@@ -27,14 +27,19 @@ QaQuestion _q(String age, String id) => _full.questions.firstWhere(
 QaBank _single(QaQuestion q) =>
     QaBank(questions: [q], clips: _full.clips);
 
-Future<Widget> _host(Widget child, {required Size size}) async {
+Future<Widget> _host(Widget child,
+    {required Size size, double bottomInset = 0}) async {
   SharedPreferences.setMockInitialValues({});
   final prefs = await SharedPreferences.getInstance();
   return ProviderScope(
     overrides: [prefsProvider.overrideWithValue(prefs)],
     child: MaterialApp(
       home: MediaQuery(
-        data: MediaQueryData(size: size),
+        data: MediaQueryData(
+          size: size,
+          padding: EdgeInsets.only(bottom: bottomInset),
+          viewPadding: EdgeInsets.only(bottom: bottomInset),
+        ),
         child: child,
       ),
     ),
@@ -90,6 +95,36 @@ void main() {
           await tester.pump();
         }
       });
+
+      testWidgets('${entry.key}：手机 + 系统导航条也一屏放得下（答案不被遮挡）',
+          (tester) async {
+        final q = entry.value;
+        tester.view.physicalSize = _phone;
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+
+        // 480dp 高减去 48 的系统导航条，是最挤的一档；要滚才看得到答案就算失败。
+        await tester.pumpWidget(await _host(
+          QaQuizScreen(ages: {q.age}, bank: _single(q)),
+          size: _phone,
+          bottomInset: 48,
+        ));
+        await tester.pump();
+
+        final pos = tester
+            .state<ScrollableState>(find.byType(Scrollable).first)
+            .position;
+        expect(pos.maxScrollExtent, 0,
+            reason: '${entry.key}：手机上要滚动才看得到答案');
+        final lastLetter = String.fromCharCode(64 + q.options.length);
+        expect(tester.getRect(find.text(lastLetter)).bottom,
+            lessThan(_phone.height - 48),
+            reason: '${entry.key}：最后一个选项压到系统导航条底下了');
+
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pump();
+      });
     }
   });
 
@@ -119,6 +154,13 @@ void main() {
       await tester.pump();
 
       expect(find.byTooltip('再读一遍'), findsOneWidget);
+      // 重播键就贴在题面文字右边，同一行
+      final promptRect = tester.getRect(find.text(q.prompt, findRichText: true));
+      final btnRect = tester.getRect(find.byTooltip('再读一遍'));
+      expect(btnRect.left, greaterThanOrEqualTo(promptRect.right - 1),
+          reason: '重播键跑到题面左边去了');
+      expect((btnRect.center.dy - promptRect.center.dy).abs(), lessThan(8),
+          reason: '重播键和题面不在同一行');
       // 语速已经挪到「我的 → 偏好设置」，答题页上不该再出现任何一档
       expect(find.text('语速'), findsNothing);
       for (final label in kQaRateLabels) {

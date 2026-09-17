@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../shared/widgets/content_viewer.dart';
 import '../../state/providers.dart';
 import 'video_import.dart';
+import 'video_thumbnail.dart';
 
 /// 「我的 → 我的视频」：建分类、往分类里加视频（链接或本机文件）。
 class VideoManageScreen extends ConsumerStatefulWidget {
@@ -16,6 +17,12 @@ class VideoManageScreen extends ConsumerStatefulWidget {
 
 class _VideoManageScreenState extends ConsumerState<VideoManageScreen> {
   VideoLibraryController get _lib => ref.read(videoLibraryProvider.notifier);
+
+  VideoThumbCache get _thumbs => ref.read(videoThumbCacheProvider);
+
+  /// 本机视频和链接在列表里用不同的小图标区分。
+  IconData _kindIcon(VideoItem v) =>
+      v.isLocal ? Icons.smartphone_rounded : Icons.link_rounded;
 
   @override
   Widget build(BuildContext context) {
@@ -130,12 +137,15 @@ class _VideoManageScreenState extends ConsumerState<VideoManageScreen> {
                 ListTile(
                   dense: true,
                   contentPadding: const EdgeInsets.only(left: 30, right: 4),
-                  leading: Icon(
-                    v.isLocal
-                        ? Icons.smartphone_rounded
-                        : Icons.link_rounded,
-                    size: 20,
-                    color: scheme.onSurfaceVariant,
+                  // 有缩略图就显示缩略图，来源（本机 / 链接）用小角标接着标，
+                  // 没有缩略图时那个图标就是占位块本身。
+                  leading: VideoThumb(
+                    video: v,
+                    width: 46,
+                    height: 34,
+                    radius: 8,
+                    placeholderIcon: _kindIcon(v),
+                    badgeIcon: _kindIcon(v),
                   ),
                   title: Text(v.title,
                       maxLines: 1,
@@ -196,11 +206,12 @@ class _VideoManageScreenState extends ConsumerState<VideoManageScreen> {
     if (ok != true) return;
     final locals = [
       for (final v in c.videos)
-        if (v.isLocal) v.source,
+        if (v.isLocal) v,
     ];
     await _lib.removeCategory(c.id);
-    for (final path in locals) {
-      await deleteLocalVideoFile(path);
+    for (final v in locals) {
+      await deleteLocalVideoFile(v.source);
+      await _thumbs.remove(v.id);
     }
   }
 
@@ -244,8 +255,15 @@ class _VideoManageScreenState extends ConsumerState<VideoManageScreen> {
       context: context,
       builder: (_) => const _LinkVideoDialog(),
     );
-    if (input == null) return;
-    await _lib.addVideo(c.id, title: input.title, source: input.url);
+    if (input == null || !mounted) return;
+    final r = await _lib.addVideo(c.id, title: input.title, source: input.url);
+    if (!mounted) return;
+    // 正常加进去不用吭声，列表里已经看得见了；只有被挡下来和改了名字才说一句。
+    if (!r.added) {
+      _toast('「${r.title}」已经在「${c.name}」里了，没有重复添加');
+    } else if (r.title != input.title) {
+      _toast('「${input.title}」重名了，已存为「${r.title}」');
+    }
   }
 
   Future<void> _addFromFile(VideoCategory c) async {
@@ -263,6 +281,7 @@ class _VideoManageScreenState extends ConsumerState<VideoManageScreen> {
     final progress =
         ValueNotifier<String>('正在导入 ${picked.length} 个视频…');
     final failed = <String>[];
+    final skipped = <String>[];
     var index = c.videos.length;
     try {
       await _busy(progress, () async {
@@ -272,10 +291,19 @@ class _VideoManageScreenState extends ConsumerState<VideoManageScreen> {
           progress.value = '正在导入 ${i + 1}/${picked.length}：$title';
           String? dest;
           try {
+            // 查重得赶在复制前面：同一个文件又选了一遍就不必白拷一份。
+            final fingerprint = await videoFingerprint(p);
+            if (_lib.isDuplicate(c.id, fingerprint)) {
+              skipped.add(title);
+              continue;
+            }
             // 复制进 App 私有目录再记录，缓存里的临时路径迟早会被系统清掉。
             dest = await importLocalVideo(p);
             await _lib.addVideo(c.id,
-                title: title, source: dest, kind: VideoKind.file);
+                title: title,
+                source: dest,
+                kind: VideoKind.file,
+                fingerprint: fingerprint);
           } catch (e) {
             // 一个失败不影响后面几个，最后一起报。已经复制进来的文件别留下当孤儿。
             if (dest != null) await deleteLocalVideoFile(dest);
@@ -286,10 +314,15 @@ class _VideoManageScreenState extends ConsumerState<VideoManageScreen> {
     } finally {
       progress.dispose();
     }
-    if (!mounted || failed.isEmpty) return;
-    final preview = failed.take(3).join('、');
-    _toast('有 ${failed.length} 个视频没能导入：'
-        '$preview${failed.length > 3 ? ' 等' : ''}');
+    if (!mounted) return;
+    final notes = <String>[
+      if (skipped.isNotEmpty)
+        '有 ${skipped.length} 个已经在「${c.name}」里了，没有重复添加：'
+            '${_preview(skipped)}',
+      if (failed.isNotEmpty) '有 ${failed.length} 个视频没能导入：${_preview(failed)}',
+    ];
+    if (notes.isEmpty) return;
+    _toast(notes.join('；'));
   }
 
   Future<void> _deleteVideo(VideoCategory c, VideoItem v) async {
@@ -301,7 +334,10 @@ class _VideoManageScreenState extends ConsumerState<VideoManageScreen> {
     );
     if (ok != true) return;
     await _lib.removeVideo(c.id, v.id);
-    if (v.isLocal) await deleteLocalVideoFile(v.source);
+    if (v.isLocal) {
+      await deleteLocalVideoFile(v.source);
+      await _thumbs.remove(v.id);
+    }
   }
 
   // ---- 小工具 ----
@@ -378,6 +414,10 @@ class _VideoManageScreenState extends ConsumerState<VideoManageScreen> {
     ScaffoldMessenger.of(context)
         .showSnackBar(SnackBar(content: Text(msg)));
   }
+
+  /// 「A、B、C 等」——一次勾十几个时全念出来太长，只报前三个。
+  String _preview(List<String> names) =>
+      '${names.take(3).join('、')}${names.length > 3 ? ' 等' : ''}';
 }
 
 enum _AddMode { link, file }

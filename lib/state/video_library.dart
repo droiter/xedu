@@ -18,6 +18,7 @@ class VideoItem {
     required this.title,
     required this.source,
     required this.kind,
+    this.fingerprint = '',
   });
 
   factory VideoItem.fromJson(Map<String, dynamic> json) => VideoItem(
@@ -25,6 +26,7 @@ class VideoItem {
         title: json['title'] as String? ?? '未命名视频',
         source: json['source'] as String? ?? '',
         kind: json['kind'] == 'file' ? VideoKind.file : VideoKind.link,
+        fingerprint: json['fingerprint'] as String? ?? '',
       );
 
   final String id;
@@ -32,13 +34,28 @@ class VideoItem {
   final String source;
   final VideoKind kind;
 
+  /// 查重指纹，只有本机视频才有：原文件名 + 字节数。
+  ///
+  /// 视频复制进 App 私有目录时会换名字（前面挂时间戳），光看 [source] 认不出
+  /// 「同一个文件又选了一遍」，所以趁还在源路径上先记下这个特征。
+  final String fingerprint;
+
   bool get isLocal => kind == VideoKind.file;
+
+  /// 查重用的键：有指纹的用指纹，没有的（链接、早先存下的数据）用 [source]。
+  /// 链接的 source 本身就是地址；老的本机视频 source 是各自唯一的路径，
+  /// 只会在同一条记录上撞到自己，不会把两个视频误判成一个。
+  String get dedupKey => keyOf(source, fingerprint);
+
+  static String keyOf(String source, String fingerprint) =>
+      fingerprint.isNotEmpty ? fingerprint : source;
 
   Map<String, dynamic> toJson() => {
         'id': id,
         'title': title,
         'source': source,
         'kind': kind.name,
+        'fingerprint': fingerprint,
       };
 }
 
@@ -63,6 +80,27 @@ class VideoCategory {
   final String id;
   final String name;
   final List<VideoItem> videos;
+
+  /// 分类里有没有撞上 [dedupKey] 的视频。
+  VideoItem? findDuplicate(String dedupKey) {
+    for (final v in videos) {
+      if (v.dedupKey == dedupKey) return v;
+    }
+    return null;
+  }
+
+  /// 分类里重名时给 [title] 加编号：「小猪佩奇」→「小猪佩奇 (2)」。
+  /// 名字本身就带编号的，从同一个根名字往上试，免得叠成「(2) (2)」。
+  String freeTitle(String title) {
+    final taken = {for (final v in videos) v.title};
+    if (!taken.contains(title)) return title;
+    final m = RegExp(r'^(.*?)\s*\((\d+)\)$').firstMatch(title);
+    final root = (m?.group(1) ?? title).trim();
+    for (var n = 2;; n++) {
+      final candidate = '$root ($n)';
+      if (!taken.contains(candidate)) return candidate;
+    }
+  }
 
   VideoCategory copyWith({String? name, List<VideoItem>? videos}) =>
       VideoCategory(
@@ -107,6 +145,20 @@ class VideoLibrary {
   Map<String, dynamic> toJson() => {
         'categories': [for (final c in categories) c.toJson()],
       };
+}
+
+/// [VideoLibraryController.addVideo] 的结果。
+///
+/// [added] 为 false 说明这次没加进去（撞上重复视频，或者分类已经不在了），
+/// 此时 [title] 是已经在库里的那个视频的名字，正好拿去告诉家长为什么没加。
+@immutable
+class AddVideoResult {
+  const AddVideoResult({required this.added, required this.title});
+
+  final bool added;
+
+  /// 最终用的名字。加进去了就是可能带了编号的新名字，没加进去就是原来的名字。
+  final String title;
 }
 
 /// 视频库的增删改，落盘到 SharedPreferences（全机一份）。
@@ -160,17 +212,31 @@ class VideoLibraryController extends Notifier<VideoLibrary> {
     ));
   }
 
-  Future<void> addVideo(
+  /// 往 [categoryId] 里加一个视频，返回最后的结果。
+  ///
+  /// 查重只看这个分类：分类里已经有同一个视频就不加——链接看地址，本机视频
+  /// 看 [fingerprint]（原文件名 + 字节数）。名字在这个分类里重了则自动加编号
+  /// （「小猪佩奇」→「小猪佩奇 (2)」），别的分类里叫什么名字就不管了。
+  Future<AddVideoResult> addVideo(
     String categoryId, {
     required String title,
     required String source,
     VideoKind kind = VideoKind.link,
+    String fingerprint = '',
   }) async {
+    final category = state.byId(categoryId);
+    final trimmed = title.trim().isEmpty ? '未命名视频' : title.trim();
+    if (category == null) return AddVideoResult(added: false, title: trimmed);
+
+    final dup = category.findDuplicate(VideoItem.keyOf(source, fingerprint));
+    if (dup != null) return AddVideoResult(added: false, title: dup.title);
+
     final item = VideoItem(
       id: 'v${DateTime.now().microsecondsSinceEpoch}',
-      title: title.trim().isEmpty ? '未命名视频' : title.trim(),
+      title: category.freeTitle(trimmed),
       source: source,
       kind: kind,
+      fingerprint: fingerprint,
     );
     await _save(VideoLibrary(categories: [
       for (final c in state.categories)
@@ -178,6 +244,16 @@ class VideoLibraryController extends Notifier<VideoLibrary> {
             ? c.copyWith(videos: [...c.videos, item])
             : c,
     ]));
+    return AddVideoResult(added: true, title: item.title);
+  }
+
+  /// 这个分类里是不是已经有同一个视频了（按 [fingerprint] 认）。
+  ///
+  /// 只给本机视频用：批量导入时先问一句，省得为一个已经在库里的视频白拷一份
+  /// 几百兆的文件。链接没有这一层——反正不用先复制，直接交给 [addVideo] 判就行。
+  bool isDuplicate(String categoryId, String fingerprint) {
+    if (fingerprint.isEmpty) return false;
+    return state.byId(categoryId)?.findDuplicate(fingerprint) != null;
   }
 
   Future<void> removeVideo(String categoryId, String videoId) async {

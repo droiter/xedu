@@ -98,6 +98,31 @@ const Map<int, List<List<double>>> kDiceLayouts = {
   ],
 };
 
+/// 实拍素材表：这些字形一律换成 `assets/img/qa/` 里的照片来画。
+///
+/// 换的是「画什么」，不是「怎么排」—— 数量题照样重复 n 张、大小题照样按档缩放、
+/// 速度题照样在左侧画速度线、排队题照样相互遮挡，所以题库 JSON 一个字都不用改。
+/// 表里没有的字形（数学符号 ➕＝❓、数字等）继续按字形渲染。
+const Map<String, String> kEmojiPhotos = {
+  '🍎': 'assets/img/qa/apple.jpg',
+  '🍌': 'assets/img/qa/banana.jpg',
+  '🍇': 'assets/img/qa/grapes.jpg',
+  '🍉': 'assets/img/qa/watermelon.jpg',
+  '🐶': 'assets/img/qa/dog.jpg',
+  '🐱': 'assets/img/qa/cat.jpg',
+  '🐻': 'assets/img/qa/bear.jpg',
+  '🐼': 'assets/img/qa/panda.jpg',
+  '🐰': 'assets/img/qa/rabbit.jpg',
+  '🦊': 'assets/img/qa/fox.jpg',
+  '🐌': 'assets/img/qa/snail.jpg',
+  '🚗': 'assets/img/qa/car.jpg',
+  '🚕': 'assets/img/qa/taxi.jpg',
+  '🚙': 'assets/img/qa/suv.jpg',
+  '⚽': 'assets/img/qa/ball.jpg',
+  '🎈': 'assets/img/qa/balloon.jpg',
+  '⭐': 'assets/img/qa/star.jpg',
+};
+
 /// 一个 [Pic] 元素的自适应渲染：在给定的方格内居中绘制对应图片 / 图形。
 class PicView extends StatelessWidget {
   const PicView({super.key, required this.pic, this.color});
@@ -125,10 +150,10 @@ class PicView extends StatelessWidget {
         final Widget art = switch (pic.kind) {
           PicKind.dots => _dots(box),
           PicKind.emojiCount =>
-            _text(box, pic.emoji * (pic.n > 0 ? pic.n : 1), scale: 0.62),
-          PicKind.emojiSingle => _text(box, pic.emoji, scale: 1.0),
+            _glyphs(box, pic.emoji, pic.n > 0 ? pic.n : 1, scale: 0.62),
+          PicKind.emojiSingle => _glyphs(box, pic.emoji, 1, scale: 1.0),
           PicKind.emojiSize =>
-            _text(box, pic.emoji, scale: _sizeScale(_level01(pic.level))),
+            _glyphs(box, pic.emoji, 1, scale: _sizeScale(_level01(pic.level))),
           PicKind.arrowQuarter => _arrow(box, accent),
           PicKind.colorRamp => _ramp(box),
           PicKind.number => _number(box, accent),
@@ -188,6 +213,56 @@ class PicView extends StatelessWidget {
           glyph,
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: box * 0.5 * scale),
+        ),
+      ),
+    );
+  }
+
+  /// 画 [count] 个 [emoji]：有实拍素材就并排放照片，否则退回原来的字形串。
+  Widget _glyphs(double box, String emoji, int count, {required double scale}) {
+    final path = kEmojiPhotos[emoji];
+    if (path == null) return _text(box, emoji * count, scale: scale);
+    final unit = box * 0.5 * scale;
+    return SizedBox(
+      width: box,
+      height: box,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (var i = 0; i < count; i++)
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: unit * 0.08),
+                child: _photo(path, unit, emoji),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 单个字形：有实拍素材就画照片，否则画字形本身。
+  Widget _glyph(String emoji, double size) {
+    final path = kEmojiPhotos[emoji];
+    if (path == null) return Text(emoji, style: TextStyle(fontSize: size));
+    return _photo(path, size * 1.2, emoji);
+  }
+
+  /// 单个素材：定死边长，外层 FittedBox 才能按比例缩放（否则图片会撑满方格，
+  /// 大小题的四档就分不出来了）。加载失败退回字形。
+  Widget _photo(String path, double side, String emoji) {
+    return SizedBox(
+      width: side,
+      height: side,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(side * 0.18),
+        child: Image.asset(
+          path,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => FittedBox(
+            child: Text(emoji, style: TextStyle(fontSize: side * 0.9)),
+          ),
         ),
       ),
     );
@@ -528,10 +603,7 @@ class PicView extends StatelessWidget {
           Expanded(
             child: FittedBox(
               fit: BoxFit.scaleDown,
-              child: Text(
-                pic.emoji.isEmpty ? '🚗' : pic.emoji,
-                style: TextStyle(fontSize: box * 0.5),
-              ),
+              child: _glyph(pic.emoji.isEmpty ? '🚗' : pic.emoji, box * 0.5),
             ),
           ),
         ],
@@ -619,7 +691,7 @@ class PicView extends StatelessWidget {
                     height: item,
                     child: FittedBox(
                       fit: BoxFit.scaleDown,
-                      child: Text(row[i], style: TextStyle(fontSize: item * 0.9)),
+                      child: _glyph(row[i], item * 0.9),
                     ),
                   ),
               ],

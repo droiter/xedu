@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:android_file_picker/android_file_picker.dart';
 import 'package:file_picker/file_picker.dart';
@@ -157,6 +158,126 @@ void main() {
       expect(cat.name, '英文动画');
       expect(cat.videos.single.title, '佩奇');
     });
+
+    test('本分类里已有的视频不再加，别的分类照样能存一份', () async {
+      final c = await _container();
+      final lib = c.read(videoLibraryProvider.notifier);
+      final cartoon = await lib.addCategory('动画片');
+      final songs = await lib.addCategory('儿歌');
+
+      final first = await lib.addVideo(cartoon,
+          title: '小猪佩奇', source: 'https://a.com/1.mp4');
+      expect(first.added, isTrue);
+      expect(first.title, '小猪佩奇');
+
+      // 同一个地址换个名字再添一次，还是同一个视频，不给加。
+      final again = await lib.addVideo(cartoon,
+          title: '佩奇第一集', source: 'https://a.com/1.mp4');
+      expect(again.added, isFalse);
+      expect(again.title, '小猪佩奇'); // 报的是已经在库里的那个名字
+      expect(c.read(videoLibraryProvider).totalVideos, 1);
+
+      // 别的分类里想再存一份是可以的。
+      final other = await lib.addVideo(songs,
+          title: '小猪佩奇', source: 'https://a.com/1.mp4');
+      expect(other.added, isTrue);
+      expect(c.read(videoLibraryProvider).totalVideos, 2);
+    });
+
+    test('分类里重名时自动加编号，不叠成「(2) (2)」', () async {
+      final c = await _container();
+      final lib = c.read(videoLibraryProvider.notifier);
+      final id = await lib.addCategory('动画片');
+
+      Future<String> add(String url) async =>
+          (await lib.addVideo(id, title: '小猪佩奇', source: url)).title;
+
+      expect(await add('https://a.com/1.mp4'), '小猪佩奇');
+      expect(await add('https://a.com/2.mp4'), '小猪佩奇 (2)');
+      expect(await add('https://a.com/3.mp4'), '小猪佩奇 (3)');
+
+      // 名字本来就带编号时，从同一个根名字往上接着找。
+      final fourth = await lib.addVideo(id,
+          title: '小猪佩奇 (2)', source: 'https://a.com/4.mp4');
+      expect(fourth.title, '小猪佩奇 (4)');
+      expect(c.read(videoLibraryProvider).totalVideos, 4);
+    });
+
+    test('本机视频按「原文件名 + 大小」查重，指纹会落盘', () async {
+      final c = await _container();
+      final lib = c.read(videoLibraryProvider.notifier);
+      final id = await lib.addCategory('动画片');
+      const fp = '小猪佩奇 01.mp4|2048';
+
+      final first = await lib.addVideo(id,
+          title: '小猪佩奇 01',
+          source: '/files/a1.mp4',
+          kind: VideoKind.file,
+          fingerprint: fp);
+      expect(first.added, isTrue);
+      expect(lib.isDuplicate(id, fp), isTrue);
+
+      // 同一个文件再选一遍：复制进来的是另一个带时间戳的路径，只能靠指纹认出来。
+      final again = await lib.addVideo(id,
+          title: '小猪佩奇 01',
+          source: '/files/a2.mp4',
+          kind: VideoKind.file,
+          fingerprint: fp);
+      expect(again.added, isFalse);
+      expect(c.read(videoLibraryProvider).totalVideos, 1);
+      expect(
+          c.read(videoLibraryProvider).categories.single.videos.single.fingerprint,
+          fp);
+
+      // 换个容器相当于 App 重启，指纹还在，照样认得出。
+      final restarted = ProviderContainer(overrides: [
+        prefsProvider.overrideWithValue(await SharedPreferences.getInstance()),
+      ]);
+      addTearDown(restarted.dispose);
+      final back = restarted.read(videoLibraryProvider).categories.single;
+      expect(back.videos.single.fingerprint, fp);
+    });
+
+    test('同名但大小不一样，算两个视频，第二个加编号', () async {
+      final c = await _container();
+      final lib = c.read(videoLibraryProvider.notifier);
+      final id = await lib.addCategory('动画片');
+
+      await lib.addVideo(id,
+          title: '汪汪队',
+          source: '/files/a.mp4',
+          kind: VideoKind.file,
+          fingerprint: '汪汪队.mp4|100');
+      final second = await lib.addVideo(id,
+          title: '汪汪队',
+          source: '/files/b.mp4',
+          kind: VideoKind.file,
+          fingerprint: '汪汪队.mp4|200');
+
+      expect(second.added, isTrue);
+      expect(second.title, '汪汪队 (2)');
+      expect(c.read(videoLibraryProvider).totalVideos, 2);
+    });
+
+    test('没有指纹（链接、老数据）不会互相误判', () async {
+      final c = await _container(seed: {kVideoLibraryKey: _seedLibraryJson()});
+      final lib = c.read(videoLibraryProvider.notifier);
+
+      expect(lib.isDuplicate('vc1', ''), isFalse);
+      // 老的本机视频没指纹，退回拿各自的路径当键：换个路径就是新的一份。
+      final fresh = await lib.addVideo('vc1',
+          title: '汪汪队 第 3 集',
+          source: '/data/user/0/com.xedu.xedu/files/y.mp4',
+          kind: VideoKind.file);
+      expect(fresh.added, isTrue);
+      // 路径一模一样才算重复。
+      final samePath = await lib.addVideo('vc1',
+          title: '汪汪队 第 2 集',
+          source: '/data/user/0/com.xedu.xedu/files/x.mp4',
+          kind: VideoKind.file);
+      expect(samePath.added, isFalse);
+      expect(c.read(videoLibraryProvider).totalVideos, 3);
+    });
   });
 
   group('「我的」里的视频管理页', () {
@@ -256,6 +377,51 @@ void main() {
       expect(find.text('小猪佩奇 第 1 集'), findsNothing);
       expect(find.text('汪汪队 第 2 集'), findsOneWidget);
       expect(find.text('1 个视频'), findsOneWidget);
+    });
+
+    testWidgets('链接已经在分类里时不再加，并告诉家长一声', (tester) async {
+      await tester.pumpWidget(await _host(const VideoManageScreen(),
+          seed: {kVideoLibraryKey: _seedLibraryJson()}));
+      await tester.pump();
+
+      await tester.tap(find.text('添加视频'));
+      await _settle(tester);
+      await tester.tap(find.text('粘贴视频链接'));
+      await _settle(tester);
+
+      // 名字换了，地址跟库里那条一模一样——是同一个视频，不该再存一份。
+      await tester.enterText(find.byType(TextField).at(0), '佩奇第一集');
+      await tester.enterText(
+          find.byType(TextField).at(1), 'https://example.com/p1.mp4');
+      await tester.tap(find.text('添加'));
+      await _settle(tester);
+
+      expect(find.textContaining('没有重复添加'), findsOneWidget);
+      expect(find.text('佩奇第一集'), findsNothing);
+      expect(find.text('小猪佩奇 第 1 集'), findsOneWidget);
+      expect(find.text('2 个视频'), findsOneWidget);
+    });
+
+    testWidgets('链接重名时自动加编号', (tester) async {
+      await tester.pumpWidget(await _host(const VideoManageScreen(),
+          seed: {kVideoLibraryKey: _seedLibraryJson()}));
+      await tester.pump();
+
+      await tester.tap(find.text('添加视频'));
+      await _settle(tester);
+      await tester.tap(find.text('粘贴视频链接'));
+      await _settle(tester);
+
+      // 名字跟已有的撞了，地址是新的：该存成「(2)」，而不是被当成重复挡下来。
+      await tester.enterText(find.byType(TextField).at(0), '小猪佩奇 第 1 集');
+      await tester.enterText(
+          find.byType(TextField).at(1), 'https://example.com/p9.mp4');
+      await tester.tap(find.text('添加'));
+      await _settle(tester);
+
+      expect(find.text('小猪佩奇 第 1 集'), findsOneWidget);
+      expect(find.text('小猪佩奇 第 1 集 (2)'), findsOneWidget);
+      expect(find.text('3 个视频'), findsOneWidget);
     });
   });
 
@@ -407,6 +573,36 @@ void main() {
         contentUri: 'content://media/external/video/media/1234',
       );
       expect(await resolveVideoName(f), '汪汪队.mp4');
+    });
+  });
+
+  group('本机视频指纹', () {
+    test('原文件名 + 字节数；文件读不到就不给指纹', () async {
+      final dir = await Directory.systemTemp.createTemp('xedu_fp');
+      addTearDown(() => dir.delete(recursive: true));
+
+      final a = File('${dir.path}/佩奇.mp4')
+        ..writeAsBytesSync(List.filled(2048, 7));
+      expect(
+        await videoFingerprint(PickedVideo(name: '佩奇.mp4', path: a.path)),
+        '佩奇.mp4|2048',
+      );
+
+      // 同一个文件被选择器拷到别处（缓存副本），指纹得一样，才认得出是它。
+      final b = File('${dir.path}/cache/佩奇.mp4')
+        ..createSync(recursive: true)
+        ..writeAsBytesSync(List.filled(2048, 7));
+      expect(
+        await videoFingerprint(PickedVideo(name: '佩奇.mp4', path: b.path)),
+        await videoFingerprint(PickedVideo(name: '佩奇.mp4', path: a.path)),
+      );
+
+      // 文件已经没了（系统清过缓存）就不给指纹：宁可漏判，也别把想加的挡在门外。
+      expect(
+        await videoFingerprint(
+            PickedVideo(name: '佩奇.mp4', path: '${dir.path}/没有这个.mp4')),
+        '',
+      );
     });
   });
 

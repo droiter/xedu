@@ -32,3 +32,4 @@ flutter:
     - assets/audio/
     # 目录声明不递归，问答语音在子目录里得单独列一行。
     - assets/audio/qa/
+    - assets/img/qa/

@@ -216,6 +216,44 @@ void main() {
       expect(find.textContaining('PT.'), findsOneWidget);
     });
 
+    testWidgets('手机 + 系统导航条：题号/id/难度星一行放得下，选项不被遮挡', (tester) async {
+      // 360x640 是最挤的一档手机，再压 48 给系统导航条
+      tester.view.physicalSize = const Size(360, 640);
+      tester.view.devicePixelRatio = 1.0;
+      tester.view.padding = const FakeViewPadding(bottom: 48);
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.view.resetPadding);
+
+      for (final g in PatternAgeGroup.values) {
+        await tester.pumpWidget(await _quizHost(PatternQuizScreen(ages: {g})));
+        await tester.pump();
+
+        final pos = tester
+            .state<ScrollableState>(find.byType(Scrollable).first)
+            .position;
+        expect(pos.maxScrollExtent, 0, reason: '$g：手机上要滚动才看得到选项');
+
+        // 题号、id 徽标、难度星（亮 + 暗共 3 颗）挤在同一行：纵向中心对齐
+        expect(find.textContaining('第 1 / '), findsOneWidget);
+        expect(find.textContaining('PT.'), findsOneWidget);
+        final stars = find.byIcon(Icons.star_rounded).evaluate().length +
+            find.byIcon(Icons.star_outline_rounded).evaluate().length;
+        expect(stars, 3);
+        final rowCenter = tester.getRect(find.textContaining('第 1 / ')).center.dy;
+        for (final f in [
+          find.textContaining('PT.'),
+          find.byIcon(Icons.star_rounded).first,
+        ]) {
+          expect((tester.getRect(f).center.dy - rowCenter).abs(), lessThan(4),
+              reason: '$g：题号、id、难度星没在同一行');
+        }
+
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pump();
+      }
+    });
+
     testWidgets('规律提示先隐藏，答错一次后才出现', (tester) async {
       useTabletView(tester);
       await tester.pumpWidget(await _quizHost(

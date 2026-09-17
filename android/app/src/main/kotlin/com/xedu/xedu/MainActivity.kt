@@ -1,5 +1,7 @@
 package com.xedu.xedu
 
+import android.graphics.Bitmap
+import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.provider.BaseColumns
 import android.provider.MediaStore
@@ -7,6 +9,10 @@ import android.provider.OpenableColumns
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.util.concurrent.Executors
+import kotlin.math.roundToInt
 
 class MainActivity : FlutterActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
@@ -30,6 +36,78 @@ class MainActivity : FlutterActivity() {
                     }
                 }.start()
             }
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "xedu/video")
+            .setMethodCallHandler { call, result ->
+                if (call.method != "thumbnail") {
+                    result.notImplemented()
+                    return@setMethodCallHandler
+                }
+                val path = call.argument<String>("path")
+                val maxWidth = call.argument<Int>("maxWidth") ?: 480
+                // 要读文件头、解码关键帧，比问文件名慢得多，更不能占主线程。
+                thumbWorker.execute {
+                    val bytes = thumbnailOf(path, maxWidth)
+                    runOnUiThread {
+                        try {
+                            result.success(bytes)
+                        } catch (_: Exception) {
+                            // 界面已经退掉了，这个结果没人要了。
+                        }
+                    }
+                }
+            }
+    }
+
+    /// 从本机视频里抽一帧当缩略图，返回 JPEG 字节；抽不出来返回 null。
+    private fun thumbnailOf(path: String?, maxWidth: Int): ByteArray? {
+        if (path.isNullOrBlank()) return null
+        val file = File(path)
+        if (!file.isFile || file.length() <= 0L) return null
+
+        val retriever = MediaMetadataRetriever()
+        return try {
+            retriever.setDataSource(path)
+            val frame = frameOf(retriever) ?: return null
+            val scaled = scaleDown(frame, maxWidth)
+            ByteArrayOutputStream().use { out ->
+                scaled.compress(Bitmap.CompressFormat.JPEG, 82, out)
+                out.toByteArray()
+            }
+        } catch (_: Exception) {
+            // 文件坏了、根本不是视频、这个编码解不了……都当抽不出来。
+            null
+        } finally {
+            try {
+                retriever.release()
+            } catch (_: Exception) {
+                // 释放失败无所谓。
+            }
+        }
+    }
+
+    /// 取片长十分之一处的一帧：开头往往是黑场或台标，截出来是一片黑。
+    private fun frameOf(retriever: MediaMetadataRetriever): Bitmap? {
+        val durationMs = retriever
+            .extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+            ?.toLongOrNull() ?: 0L
+        val targetUs = durationMs.coerceIn(0L, 50000L) / 10 * 1000
+        return retriever.getFrameAtTime(targetUs, MediaMetadataRetriever.OPTION_CLOSEST_SYNC)
+            ?: retriever.getFrameAtTime(-1L, MediaMetadataRetriever.OPTION_CLOSEST_SYNC)
+    }
+
+    private fun scaleDown(src: Bitmap, maxWidth: Int): Bitmap {
+        if (src.width <= maxWidth) return src
+        val height = (src.height.toFloat() * maxWidth / src.width).roundToInt()
+            .coerceAtLeast(1)
+        val scaled = Bitmap.createScaledBitmap(src, maxWidth, height, true)
+        if (scaled !== src) src.recycle()
+        return scaled
+    }
+
+    companion object {
+        /// 抽帧一个接一个来：解码一整帧又吃 CPU 又吃内存，列表里几十个视频
+        /// 同时开解，平板扛不住。慢一点没关系，缩略图是陆续补上的。
+        private val thumbWorker = Executors.newSingleThreadExecutor()
     }
 
     /// 文件在「文件管理 / 相册」里显示的名字；查不到就返回 null 交给上层兜底。

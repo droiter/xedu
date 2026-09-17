@@ -307,60 +307,29 @@ class _PatternQuizScreenState extends ConsumerState<PatternQuizScreen>
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 620),
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(16, 4, 16, 20),
+          padding: const EdgeInsets.fromLTRB(16, 2, 16, 12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _progressBar(context),
-              const SizedBox(height: 14),
-              Row(
-                children: [
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: scheme.primaryContainer,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text('第 ${_qi + 1} / $_total 题',
-                        style: TextStyle(
-                            fontSize: 12.5,
-                            fontWeight: FontWeight.w700,
-                            color: scheme.onPrimaryContainer)),
-                  ),
-                  const Spacer(),
-                  for (var i = 0; i < 3; i++)
-                    Icon(
-                      q.difficulty > i
-                          ? Icons.star_rounded
-                          : Icons.star_outline_rounded,
-                      size: 18,
-                      color: q.difficulty > i
-                          ? const Color(0xFFF59E0B)
-                          : scheme.outlineVariant,
-                    ),
-                ],
-              ),
-              const SizedBox(height: 12),
+              _headRow(context, q),
+              const SizedBox(height: 8),
               _hintLine(context, q),
-              const SizedBox(height: 4),
+              const SizedBox(height: 2),
               Text('找出规律，选出空白处缺少的那张图',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       fontSize: 12.5, color: scheme.onSurfaceVariant)),
-              const SizedBox(height: 10),
-              _idBadge(context, q),
-              const SizedBox(height: 14),
+              const SizedBox(height: 8),
               _slotRow(context),
-              const SizedBox(height: 20),
+              const SizedBox(height: 12),
               Text('请选择',
                   style: TextStyle(
                       fontSize: 13.5,
                       fontWeight: FontWeight.w700,
                       color: scheme.onSurfaceVariant)),
-              const SizedBox(height: 10),
+              const SizedBox(height: 8),
               _optionRow(context),
-              const SizedBox(height: 16),
+              const SizedBox(height: 10),
               if (_resolved) _praiseBanner(context),
             ],
           ),
@@ -369,13 +338,44 @@ class _PatternQuizScreenState extends ConsumerState<PatternQuizScreen>
     );
   }
 
-  Widget _progressBar(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(4),
-      child: LinearProgressIndicator(
-        value: (_qi + (_resolved ? 1 : 0)) / _total,
-        minHeight: 5,
-      ),
+  /// 一行放下三样：题号进度、本题 id、难度星；窄屏上 id 会自动缩一点。
+  Widget _headRow(BuildContext context, PatternQuestion q) {
+    final scheme = Theme.of(context).colorScheme;
+
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          decoration: BoxDecoration(
+            color: scheme.primaryContainer,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Text('第 ${_qi + 1} / $_total 题',
+              style: TextStyle(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w700,
+                  color: scheme.onPrimaryContainer)),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: _idBadge(context, q),
+          ),
+        ),
+        const SizedBox(width: 8),
+        for (var i = 0; i < 3; i++)
+          Icon(
+            q.difficulty > i
+                ? Icons.star_rounded
+                : Icons.star_outline_rounded,
+            size: 18,
+            color: q.difficulty > i
+                ? const Color(0xFFF59E0B)
+                : scheme.outlineVariant,
+          ),
+      ],
     );
   }
 
@@ -423,8 +423,7 @@ class _PatternQuizScreenState extends ConsumerState<PatternQuizScreen>
         );
     }
 
-    return Center(
-      child: Material(
+    return Material(
         color: scheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(8),
         child: InkWell(
@@ -475,9 +474,7 @@ class _PatternQuizScreenState extends ConsumerState<PatternQuizScreen>
               ],
             ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 
   void _openStats(BuildContext context) {

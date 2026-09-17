@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../shared/widgets/content_viewer.dart';
-import '../../shared/widgets/course_card.dart' show coverGradient;
 import '../../state/providers.dart';
 import 'video_player_screen.dart';
+import 'video_thumbnail.dart';
 
 /// 某个分类下的视频列表，点一个就播。
 class VideoCategoryScreen extends ConsumerWidget {
@@ -69,9 +69,7 @@ class VideoCategoryScreen extends ConsumerWidget {
                 final v = videos[i];
                 return _VideoTile(
                   index: i + 1,
-                  title: v.title,
-                  gradient: coverGradient(v.id),
-                  isLocal: v.isLocal,
+                  video: v,
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (_) => VideoPlayerScreen(video: v),
@@ -96,16 +94,12 @@ class VideoCategoryScreen extends ConsumerWidget {
 class _VideoTile extends StatelessWidget {
   const _VideoTile({
     required this.index,
-    required this.title,
-    required this.gradient,
-    required this.isLocal,
+    required this.video,
     required this.onTap,
   });
 
   final int index;
-  final String title;
-  final List<Color> gradient;
-  final bool isLocal;
+  final VideoItem video;
   final VoidCallback onTap;
 
   @override
@@ -121,20 +115,11 @@ class _VideoTile extends StatelessWidget {
           padding: const EdgeInsets.all(10),
           child: Row(
             children: [
-              Container(
+              VideoThumb(
+                video: video,
                 width: 88,
                 height: 58,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: gradient,
-                  ),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(Icons.play_arrow_rounded,
-                    color: Colors.white, size: 30),
+                playBadge: true,
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -142,7 +127,7 @@ class _VideoTile extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      title,
+                      video.title,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
@@ -163,7 +148,7 @@ class _VideoTile extends StatelessWidget {
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
-                            isLocal ? '本机' : '网络',
+                            video.isLocal ? '本机' : '网络',
                             style: TextStyle(
                                 fontSize: 11, color: scheme.onPrimaryContainer),
                           ),
