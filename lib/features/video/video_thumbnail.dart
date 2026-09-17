@@ -14,8 +14,8 @@ const MethodChannel _thumbChannel = MethodChannel('xedu/video');
 /// 缩略图存放的子目录（App 私有目录下）。
 const String kThumbDirName = 'xedu_thumbs';
 
-/// 抽出来的缩略图宽度上限：列表里那一小块用不着原尺寸。
-const int kThumbMaxWidth = 480;
+/// 抽出来的缩略图宽度上限：卡片上那块够用就行，用不着原尺寸。
+const int kThumbMaxWidth = 720;
 
 /// 本机视频的缩略图：抽一帧存成 jpg 放在 App 私有目录，下次直接读文件。
 ///

@@ -21,7 +21,8 @@ import 'qa_speech.dart';
 ///   语速由家长在「我的 → 偏好设置」里设好（`QaRateChips`）；
 /// - 四个选项可以是文字、图片或图文，点选项卡片右上角的小喇叭也能听一遍；
 /// - **答对**：音效 + 震动，稍作停留自动进入下一题；
-/// - **答错**：选项标红，可以接着再选，直到答对为止。成绩按「一次答对」算；
+/// - **答错**：选项红闪一下，四个选项随即重新打乱位置（答错的那个还在，可以再点），
+///   跟「看图找规律」的处理一致。成绩按「一次答对」算；
 /// - **没做完就想返回**：先过家长验证（见 [showExitGate]）。
 ///
 /// 题面文字**同时**是朗读文字和屏幕文字，三者必须一致语音高亮才对得上，
@@ -59,11 +60,17 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen> {
   late List<QaQuestion> _order;
   int _qi = 0;
   Timer? _nextTimer;
+  Timer? _retryTimer;
 
   // 当前回合
   bool _resolved = false;
   int _missedThis = 0;
-  final Set<int> _wrongPicks = {}; // 本题已经点错过的选项
+
+  /// 屏幕上的四个格子 → 题库里的原始选项下标。答错一次就整体打乱一次。
+  late List<int> _optOrder;
+  int _wrongPos = -1; // 刚点错的那个格子（红闪用），重排时清掉
+  bool _busy = false; // 红闪 + 重排期间不许再点
+
   String _praise = _praises.first;
 
   // 统计
@@ -100,6 +107,7 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen> {
   @override
   void dispose() {
     _nextTimer?.cancel();
+    _retryTimer?.cancel();
     QaSpeech.instance.stop();
     QuizSfx.instance.dispose();
     super.dispose();
@@ -107,6 +115,7 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen> {
 
   void _restart() {
     _nextTimer?.cancel();
+    _retryTimer?.cancel();
     final all = [...widget.bank.forAges(widget.ages)]..shuffle(_rng);
     _order = all.take(QaQuizScreen.sessionSize).toList();
     _qi = 0;
@@ -121,9 +130,12 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen> {
   }
 
   void _begin() {
+    _retryTimer?.cancel();
     _resolved = false;
     _missedThis = 0;
-    _wrongPicks.clear();
+    _busy = false;
+    _wrongPos = -1;
+    _optOrder = [for (var i = 0; i < _q.options.length; i++) i];
     _praise = _praises.first;
     // 等这一帧画完再读，确保高亮能立刻跟上第一段。
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -140,11 +152,13 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen> {
     QaSpeech.instance.speak(q.clipKey, clip);
   }
 
-  void _toggleOptionSpeech(int i) {
+  /// [pos] 是屏幕上的格子下标，选项语音按**原始选项**取，免得重排后读错。
+  void _toggleOptionSpeech(int pos) {
     final q = _q;
-    final clip = widget.bank.optionClip(q, i);
+    final oi = _optOrder[pos];
+    final clip = widget.bank.optionClip(q, oi);
     if (clip == null) return;
-    final key = q.optionClipKey(i);
+    final key = q.optionClipKey(oi);
     if (QaSpeech.instance.isSpeaking(key)) {
       QaSpeech.instance.stop();
     } else {
@@ -152,11 +166,11 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen> {
     }
   }
 
-  void _pick(int i) {
-    if (_resolved || _wrongPicks.contains(i)) return;
+  void _pick(int pos) {
+    if (_resolved || _busy) return;
     QaSpeech.instance.stop();
 
-    if (i == _q.answer) {
+    if (_optOrder[pos] == _q.answer) {
       setState(() {
         _resolved = true;
         _praise = _praises[_rng.nextInt(_praises.length)];
@@ -175,7 +189,19 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen> {
       _missedThis++;
       QuizSfx.instance.playWrong();
       HapticFeedback.lightImpact();
-      setState(() => _wrongPicks.add(i));
+      // 红闪一下，然后把四个选项整体重排（答错的那个不删，位置换了而已）——
+      // 跟「看图找规律」一样，孩子不能靠位置记答案。
+      _busy = true;
+      setState(() => _wrongPos = pos);
+      _retryTimer?.cancel();
+      _retryTimer = Timer(const Duration(milliseconds: 650), () {
+        if (!mounted) return;
+        setState(() {
+          _optOrder = [..._optOrder]..shuffle(_rng);
+          _wrongPos = -1;
+          _busy = false;
+        });
+      });
     }
   }
 
@@ -510,11 +536,13 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen> {
     );
   }
 
-  Widget _optionCell(BuildContext context, QaQuestion q, int i) {
-    final o = q.options[i];
+  /// [pos] 是屏幕格子下标，实际画的是 `_optOrder[pos]` 那个选项。
+  Widget _optionCell(BuildContext context, QaQuestion q, int pos) {
+    final oi = _optOrder[pos];
+    final o = q.options[oi];
     final scheme = Theme.of(context).colorScheme;
-    final isRight = i == q.answer;
-    final wrong = _wrongPicks.contains(i);
+    final isRight = oi == q.answer;
+    final wrong = pos == _wrongPos;
     final revealRight = _resolved && isRight;
 
     Color? bg;
@@ -527,14 +555,14 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen> {
       border = scheme.error;
     }
 
-    final letter = String.fromCharCode(65 + i);
-    final clip = widget.bank.optionClip(q, i);
+    final letter = String.fromCharCode(65 + pos);
+    final clip = widget.bank.optionClip(q, oi);
 
     return Material(
       color: Colors.transparent,
       child: InkWell(
         borderRadius: BorderRadius.circular(14),
-        onTap: _resolved || wrong ? null : () => _pick(i),
+        onTap: _resolved || _busy ? null : () => _pick(pos),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 180),
           clipBehavior: Clip.antiAlias,
@@ -615,9 +643,9 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen> {
                     animation: QaSpeech.instance.speaking,
                     builder: (context, _) {
                       final playing =
-                          QaSpeech.instance.isSpeaking(q.optionClipKey(i));
+                          QaSpeech.instance.isSpeaking(q.optionClipKey(oi));
                       return IconButton(
-                        onPressed: () => _toggleOptionSpeech(i),
+                        onPressed: () => _toggleOptionSpeech(pos),
                         tooltip: playing ? '停止' : '读一读这个选项',
                         icon: Icon(playing
                             ? Icons.stop_circle_rounded

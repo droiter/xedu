@@ -14,6 +14,7 @@ import 'package:xedu/features/video/video_import.dart';
 import 'package:xedu/features/video/video_library_screen.dart';
 import 'package:xedu/features/video/video_manage_screen.dart';
 import 'package:xedu/features/video/video_player_screen.dart';
+import 'package:xedu/features/video/video_thumbnail.dart';
 import 'package:xedu/state/providers.dart';
 
 /// 铺好内存版 SharedPreferences 的容器。
@@ -603,6 +604,88 @@ void main() {
             PickedVideo(name: '佩奇.mp4', path: '${dir.path}/没有这个.mp4')),
         '',
       );
+    });
+  });
+
+  group('分类里的视频列表（方块网格）', () {
+    /// 铺一个有 [count] 个视频的分类。
+    String seedMany(int count) => jsonEncode({
+          'categories': [
+            {
+              'id': 'vc1',
+              'name': '动画片',
+              'videos': [
+                for (var i = 1; i <= count; i++)
+                  {
+                    'id': 'v$i',
+                    'title': '第 $i 集',
+                    'source': 'https://example.com/$i.mp4',
+                    'kind': 'link',
+                  },
+              ],
+            },
+          ],
+        });
+
+    Future<void> pumpAt(WidgetTester tester, Size size) async {
+      tester.view.physicalSize = size;
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(await _host(
+        const VideoCategoryScreen(categoryId: 'vc1'),
+        seed: {kVideoLibraryKey: seedMany(6)},
+      ));
+      await tester.pump();
+    }
+
+    /// 第一行排了几个方块：左边缘 x 相同的算一行。
+    int firstRowCount(WidgetTester tester) {
+      final rects = [
+        for (var i = 0; i < 6; i++)
+          tester.getRect(find.byType(VideoThumb).at(i))
+      ];
+      final top = rects.first.top;
+      return rects.where((r) => r.top == top).length;
+    }
+
+    testWidgets('手机窄屏一行两个，方块比原来的列表缩略图大', (tester) async {
+      await pumpAt(tester, const Size(360, 640));
+
+      expect(firstRowCount(tester), 2);
+      final thumb = tester.getRect(find.byType(VideoThumb).first);
+      expect(thumb.width, greaterThan(88)); // 老列表里的缩略图只有 88 宽
+      expect(thumb.width, greaterThanOrEqualTo(140));
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('平板上一行四个，方块左右铺满不留空', (tester) async {
+      await pumpAt(tester, const Size(1024, 768));
+
+      expect(firstRowCount(tester), 4);
+      final thumb = tester.getRect(find.byType(VideoThumb).first);
+      // 方块宽度 ÷ 高度是 16:9 的缩略图，底下再挂一块文字。
+      expect(thumb.height, closeTo(thumb.width * 9 / 16, 1));
+      // 一行排到最右：最后一列的右边缘贴着页边距，不再是一列窄条。
+      expect(tester.getRect(find.byType(VideoThumb).at(3)).right,
+          closeTo(1024 - 16, 0.5));
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('超宽屏也不把方块拉成一长条（最多四列）', (tester) async {
+      await pumpAt(tester, const Size(1600, 900));
+
+      expect(firstRowCount(tester), 4);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('方块还是能点开播放页', (tester) async {
+      await pumpAt(tester, const Size(360, 640));
+
+      await tester.tap(find.text('第 1 集'));
+      await _settle(tester);
+      expect(find.byType(VideoPlayerScreen), findsOneWidget);
     });
   });
 

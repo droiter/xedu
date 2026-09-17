@@ -61,22 +61,35 @@ class VideoCategoryScreen extends ConsumerWidget {
                 ],
               ),
             )
-          : ListView.separated(
-              padding: const EdgeInsets.fromLTRB(18, 14, 18, 28),
-              itemCount: videos.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 12),
-              itemBuilder: (context, i) {
-                final v = videos[i];
-                return _VideoTile(
-                  index: i + 1,
-                  video: v,
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => VideoPlayerScreen(video: v),
-                    ),
+          : Padding(
+              padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
+              child: LayoutBuilder(
+                builder: (context, constraints) => GridView.builder(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  itemCount: videos.length,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: _columns(constraints.maxWidth),
+                    mainAxisSpacing: _kGap,
+                    crossAxisSpacing: _kGap,
+                    // 缩略图占满卡片宽度、按 16:9 定高，底下留出固定的文字区，
+                    // 这样每张卡都填得满满当当，不会空一块。
+                    mainAxisExtent: _tileWidth(constraints.maxWidth) * 9 / 16 +
+                        _kTileTextHeight,
                   ),
-                );
-              },
+                  itemBuilder: (context, i) {
+                    final v = videos[i];
+                    return _VideoTile(
+                      index: i + 1,
+                      video: v,
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => VideoPlayerScreen(video: v),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
             ),
       bottomNavigationBar: videos.isEmpty
           ? null
@@ -89,6 +102,28 @@ class VideoCategoryScreen extends ConsumerWidget {
             ),
     );
   }
+}
+
+/// 卡片之间的横竖间距。
+const double _kGap = 14;
+
+/// 卡片里缩略图下面那块的高度：两行标题 + 一行「第几个」。
+const double _kTileTextHeight = 74;
+
+/// 每张卡片的宽度希望在 280 上下：手机上一行两个，平板上三到四个。
+const double _kMinTileWidth = 280;
+
+/// 最多排几列，屏幕再宽也把方块留得大大的。
+const int _kMaxColumns = 4;
+
+int _columns(double available) {
+  final count = (available / (_kMinTileWidth + _kGap)).ceil();
+  return count.clamp(1, _kMaxColumns);
+}
+
+double _tileWidth(double available) {
+  final count = _columns(available);
+  return (available - _kGap * (count - 1)) / count;
 }
 
 class _VideoTile extends StatelessWidget {
@@ -111,35 +146,45 @@ class _VideoTile extends StatelessWidget {
       color: scheme.surfaceContainerHigh,
       child: InkWell(
         onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Row(
-            children: [
-              VideoThumb(
-                video: video,
-                width: 88,
-                height: 58,
-                playBadge: true,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              // 缩略图按上面算好的尺寸铺满整块卡片宽度，抽帧、解码都要一个准数。
+              child: LayoutBuilder(
+                builder: (context, c) => VideoThumb(
+                  video: video,
+                  width: c.maxWidth,
+                  height: c.maxHeight,
+                  radius: 0,
+                  playBadge: true,
+                ),
               ),
-              const SizedBox(width: 12),
-              Expanded(
+            ),
+            SizedBox(
+              height: _kTileTextHeight,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(11, 9, 11, 9),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       video.title,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
-                          fontSize: 15, fontWeight: FontWeight.w700),
+                        fontSize: 15,
+                        height: 1.18,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
-                    const SizedBox(height: 5),
                     Row(
                       children: [
                         Text('第 $index 个',
                             style: TextStyle(
-                                fontSize: 12, color: scheme.onSurfaceVariant)),
-                        const SizedBox(width: 8),
+                                fontSize: 11.5, color: scheme.onSurfaceVariant)),
+                        const Spacer(),
                         Container(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 6, vertical: 2),
@@ -158,9 +203,8 @@ class _VideoTile extends StatelessWidget {
                   ],
                 ),
               ),
-              Icon(Icons.chevron_right_rounded, color: scheme.outline),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

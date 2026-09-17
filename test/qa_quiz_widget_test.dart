@@ -168,7 +168,7 @@ void main() {
       }
     });
 
-    testWidgets('答错标红留在原地，答对后自动进成绩页', (tester) async {
+    testWidgets('答错红闪后重排，答错的那个还能再点，答对后自动进成绩页', (tester) async {
       final q = _q('baby', 'dog');
       await tester.pumpWidget(await _host(
         QaQuizScreen(ages: {q.age}, bank: _single(q)),
@@ -176,22 +176,59 @@ void main() {
       ));
       await tester.pump();
 
-      final wrong = String.fromCharCode(65 + (q.answer == 0 ? 1 : 0));
-      await tester.tap(find.text(wrong));
+      final rightText = q.options[q.answer].text;
+      final wrongText =
+          q.options.firstWhere((o) => o.text != rightText).text;
+      final rightAt = tester.getRect(find.text(rightText)).topLeft;
+
+      await tester.tap(find.text(wrongText));
       await tester.pump(const Duration(milliseconds: 300));
-      // 还在这道题上，没有跳到成绩页
+      // 还在这道题上，没有跳到成绩页；红闪期间位置先不动
       expect(find.textContaining('第 1 / 1 题'), findsOneWidget);
       expect(find.text('再玩一局'), findsNothing);
+      expect(tester.getRect(find.text(rightText)).topLeft, rightAt,
+          reason: '红闪还没结束就重排了');
 
-      final right = String.fromCharCode(65 + q.answer);
-      await tester.tap(find.text(right));
+      // 红闪结束后：答错的选项没被删掉，四个都还在
+      await tester.pump(const Duration(milliseconds: 500));
+      expect(find.text(wrongText), findsOneWidget, reason: '答错的选项被删了');
+      expect(find.text(rightText), findsOneWidget);
+
+      // 同一个选项再点一次还是错 —— 说明答错后没有被禁用
+      await tester.tap(find.text(wrongText));
+      await tester.pump(const Duration(milliseconds: 700));
+      await tester.tap(find.text(rightText));
       await tester.pump(const Duration(milliseconds: 300));
       expect(find.textContaining('马上看成绩'), findsOneWidget);
 
-      // 停留一会儿后进成绩页；因为答错过一次，是 0 分
+      // 停留一会儿后进成绩页；答错两次，一次答对 0 分
       await tester.pump(const Duration(seconds: 2));
       expect(find.text('再玩一局'), findsOneWidget);
       expect(find.textContaining('一次答对 0 / 1 题'), findsOneWidget);
+      expect(find.textContaining('累计答错 2 次'), findsOneWidget);
+    });
+
+    testWidgets('答错会把四个选项换个位置', (tester) async {
+      final q = _q('baby', 'dog');
+      await tester.pumpWidget(await _host(
+        QaQuizScreen(ages: {q.age}, bank: _single(q)),
+        size: _tablet,
+      ));
+      await tester.pump();
+
+      final rightText = q.options[q.answer].text;
+      final wrongText =
+          q.options.firstWhere((o) => o.text != rightText).text;
+
+      // 每次答错都重排一次：正确选项待过的格子不止一个，才叫「重排」。
+      final spots = <Offset>{};
+      for (var i = 0; i < 8; i++) {
+        await tester.tap(find.text(wrongText));
+        await tester.pump(const Duration(milliseconds: 700));
+        spots.add(tester.getRect(find.text(rightText)).topLeft);
+      }
+      expect(spots.length, greaterThan(1), reason: '答错后选项没重排');
+      expect(find.text(wrongText), findsOneWidget, reason: '答错的选项没了');
     });
 
     testWidgets('一次答对得满分', (tester) async {
