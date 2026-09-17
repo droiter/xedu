@@ -149,8 +149,8 @@ class PicView extends StatelessWidget {
 
         final Widget art = switch (pic.kind) {
           PicKind.dots => _dots(box),
-          PicKind.emojiCount =>
-            _glyphs(box, pic.emoji, pic.n > 0 ? pic.n : 1, scale: 0.62),
+          PicKind.emojiCount => _glyphs(box, pic.emoji, pic.n > 0 ? pic.n : 1,
+              scale: 0.62, photoFraction: 1.0),
           PicKind.emojiSingle => _glyphs(box, pic.emoji, 1, scale: 1.0),
           PicKind.emojiSize =>
             _glyphs(box, pic.emoji, 1, scale: _sizeScale(_level01(pic.level))),
@@ -218,24 +218,48 @@ class PicView extends StatelessWidget {
     );
   }
 
-  /// 画 [count] 个 [emoji]：有实拍素材就并排放照片，否则退回原来的字形串。
-  Widget _glyphs(double box, String emoji, int count, {required double scale}) {
+  /// 画 [count] 个 [emoji]：有实拍素材就按方框排照片，否则退回原来的字形串。
+  ///
+  /// 照片没有字形那样的行高留白，边长直接就是画面尺寸，所以按方框本身来排：
+  /// 单个就铺满（大小题按 [photoFraction] 缩档），多个排成近方形的网格
+  /// —— 并排 count 张的话每张只有 box/count 宽，方框上下都空着。
+  ///
+  /// [scale] 只作用于字形串。[photoFraction] 缺省与 [scale] 同档（大小题要的
+  /// 就是这个），而数量题的 0.62 是给字形串留的，照片要铺满得显式给 1.0。
+  Widget _glyphs(double box, String emoji, int count,
+      {required double scale, double? photoFraction}) {
     final path = kEmojiPhotos[emoji];
     if (path == null) return _text(box, emoji * count, scale: scale);
-    final unit = box * 0.5 * scale;
+    final side = box * 0.92 * (photoFraction ?? scale);
+    if (count <= 1) return _photo(path, side, emoji);
+
+    final cols = math.sqrt(count).ceil();
+    final rows = (count / cols).ceil();
+    final unit = side / math.max(cols, rows);
+    final gap = unit * 0.08;
     return SizedBox(
       width: box,
       height: box,
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Row(
+      child: Center(
+        child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            for (var i = 0; i < count; i++)
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: unit * 0.08),
-                child: _photo(path, unit, emoji),
+            for (var r = 0; r < rows; r++) ...[
+              if (r > 0) SizedBox(height: gap),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  for (var c = 0; c < cols; c++) ...[
+                    if (c > 0) SizedBox(width: gap),
+                    // 空位补上等大的占位，几个并排的格子才对得齐（好数）。
+                    if (r * cols + c < count)
+                      _photo(path, unit, emoji)
+                    else
+                      SizedBox(width: unit, height: unit),
+                  ],
+                ],
               ),
+            ],
           ],
         ),
       ),
@@ -243,14 +267,17 @@ class PicView extends StatelessWidget {
   }
 
   /// 单个字形：有实拍素材就画照片，否则画字形本身。
-  Widget _glyph(String emoji, double size) {
+  ///
+  /// 照片边长默认按字号推 2 倍 —— 字号只有画面高度的一半左右，照片直接给字号
+  /// 就只占半格。调用处外面有 FittedBox 的（速度题、排队题）会再缩到实际可用
+  /// 范围，所以给大了不会溢出。
+  Widget _glyph(String emoji, double size, {double? photoSide}) {
     final path = kEmojiPhotos[emoji];
     if (path == null) return Text(emoji, style: TextStyle(fontSize: size));
-    return _photo(path, size * 1.2, emoji);
+    return _photo(path, photoSide ?? size * 2, emoji);
   }
 
-  /// 单个素材：定死边长，外层 FittedBox 才能按比例缩放（否则图片会撑满方格，
-  /// 大小题的四档就分不出来了）。加载失败退回字形。
+  /// 单个素材：边长由调用方按方框算好（照片不跟着字形字号走）。加载失败退回字形。
   Widget _photo(String path, double side, String emoji) {
     return SizedBox(
       width: side,
@@ -603,7 +630,8 @@ class PicView extends StatelessWidget {
           Expanded(
             child: FittedBox(
               fit: BoxFit.scaleDown,
-              child: _glyph(pic.emoji.isEmpty ? '🚗' : pic.emoji, box * 0.5),
+              child: _glyph(pic.emoji.isEmpty ? '🚗' : pic.emoji, box * 0.5,
+                  photoSide: box * 0.9),
             ),
           ),
         ],
