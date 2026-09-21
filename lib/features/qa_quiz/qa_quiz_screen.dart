@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../shared/back_guard.dart';
+import '../../shared/widgets/glow_border.dart';
 import '../pattern_quiz/celebration.dart';
 import '../pattern_quiz/exit_gate.dart';
 import '../pattern_quiz/pattern_quiz_models.dart';
@@ -17,9 +19,10 @@ import 'qa_speech.dart';
 
 /// 「看图问答」闯关：
 /// - 按 [ages] 取题库，可同时选多个年龄段一起出题，每局随机 [sessionSize] 道；
-/// - **展示题目时朗读题面文字**，读到哪个字哪个字就高亮，
-///   语速由家长在「我的 → 偏好设置」里设好（`QaRateChips`）；
-/// - 四个选项可以是文字、图片或图文，点选项卡片右上角的小喇叭也能听一遍；
+/// - **进题目就按顺序读一遍**：题面 →「答案有」→ 各个有文字的选项 →「你选择哪个」，
+///   读到哪个字哪个字就高亮（题面和选项都跟读）。选项全是图片的题没得读，
+///   读完题面就把四个选项的边框闪一下辉光；
+/// - 题面和选项卡片右上角的小喇叭可以单独听一遍，语速在「我的 → 偏好设置」里调；
 /// - **答对**：音效 + 震动，稍作停留自动进入下一题；
 /// - **答错**：选项红闪一下，四个选项随即重新打乱位置（答错的那个还在，可以再点），
 ///   跟「看图找规律」的处理一致。成绩按「一次答对」算；
@@ -43,7 +46,8 @@ class QaQuizScreen extends ConsumerStatefulWidget {
   ConsumerState<QaQuizScreen> createState() => _QaQuizScreenState();
 }
 
-class _QaQuizScreenState extends ConsumerState<QaQuizScreen> {
+class _QaQuizScreenState extends ConsumerState<QaQuizScreen>
+    with BackGuard<QaQuizScreen> {
   static const Duration _celebrateFor = Duration(milliseconds: 1150);
 
   static const List<String> _praises = [
@@ -81,6 +85,14 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen> {
   /// 通过家长验证后置真，放行这一次返回。
   bool _exiting = false;
 
+  // 题面读完时给四个选项闪一下辉光
+  bool _cueOn = false;
+  Timer? _cueTimer;
+
+  /// 正等着「题面读完」这个节骨眼（读完就闪，闪一次就撤）。
+  bool _cueArmed = false;
+  int _cueMark = 0;
+
   int get _total => _order.length;
   bool get _isLast => _qi >= _total - 1;
   QaQuestion get _q => _order[_qi];
@@ -101,6 +113,7 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen> {
   void initState() {
     super.initState();
     QuizSfx.instance.preload();
+    QaSpeech.instance.completed.addListener(_onSegmentDone);
     _restart();
   }
 
@@ -108,6 +121,8 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen> {
   void dispose() {
     _nextTimer?.cancel();
     _retryTimer?.cancel();
+    _cueTimer?.cancel();
+    QaSpeech.instance.completed.removeListener(_onSegmentDone);
     QaSpeech.instance.stop();
     QuizSfx.instance.dispose();
     super.dispose();
@@ -131,6 +146,7 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen> {
 
   void _begin() {
     _retryTimer?.cancel();
+    _dropCue();
     _resolved = false;
     _missedThis = 0;
     _busy = false;
@@ -139,21 +155,49 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen> {
     _praise = _praises.first;
     // 等这一帧画完再读，确保高亮能立刻跟上第一段。
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) _speakPrompt();
+      if (mounted) _startReading();
     });
   }
 
-  void _speakPrompt() {
-    if (_finished) return;
-    final q = _q;
-    if (!q.readPrompt) return;
-    final clip = widget.bank.promptClip(q);
-    if (clip == null) return;
-    QaSpeech.instance.speak(q.clipKey, clip);
+  /// 把这一题按顺序读一遍：题面 →「答案有」→ 各文字选项 →「你选择哪个」。
+  void _startReading() {
+    if (_finished || !ref.read(qaReadAloudProvider)) return;
+    final segs = widget.bank.readAlong(_q, _optOrder);
+    if (segs.isEmpty) return;
+    _cueArmed = true;
+    _cueMark = QaSpeech.instance.completed.value;
+    QaSpeech.instance.speakAll(segs);
+  }
+
+  /// 每读完一小节都会响：第一小节就是题面，读完把四个选项的边框闪一下。
+  void _onSegmentDone() {
+    if (!_cueArmed || !mounted) return;
+    if (QaSpeech.instance.completed.value == _cueMark) return;
+    _cueArmed = false;
+    _flashOptions();
+  }
+
+  /// 辉光闪烁：四个选项边框一起亮一下（选项是图的时候，这就是「答案在这」的提示）。
+  void _flashOptions() {
+    _cueTimer?.cancel();
+    setState(() => _cueOn = true);
+    _cueTimer = Timer(const Duration(milliseconds: 900), () {
+      if (!mounted) return;
+      setState(() => _cueOn = false);
+    });
+  }
+
+  /// 收起辉光（孩子已经动手了、或者换题了，别再闪）。调用处后面都有 setState。
+  void _dropCue() {
+    _cueTimer?.cancel();
+    _cueArmed = false;
+    _cueOn = false;
   }
 
   /// [pos] 是屏幕上的格子下标，选项语音按**原始选项**取，免得重排后读错。
   void _toggleOptionSpeech(int pos) {
+    // 单独听一个选项会把没读完的连读掐掉，那就不再等着闪辉光了。
+    _cueArmed = false;
     final q = _q;
     final oi = _optOrder[pos];
     final clip = widget.bank.optionClip(q, oi);
@@ -169,6 +213,7 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen> {
   void _pick(int pos) {
     if (_resolved || _busy) return;
     QaSpeech.instance.stop();
+    _dropCue();
 
     if (_optOrder[pos] == _q.answer) {
       setState(() {
@@ -240,10 +285,13 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen> {
   // ---------- UI ----------
   @override
   Widget build(BuildContext context) {
+    final readAloud = ref.watch(qaReadAloudProvider);
     return PopScope(
       canPop: _finished || _exiting,
       onPopInvokedWithResult: (didPop, _) {
         if (didPop) return;
+        // 合上平板再打开时系统会补一个返回键过来，那一下不算孩子按的。
+        if (!isRealBack()) return;
         _guardExit();
       },
       child: Scaffold(
@@ -258,12 +306,14 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen> {
           ],
         ),
         body: SafeArea(
-            child: _finished ? _resultView(context) : _gameView(context)),
+            child: _finished
+                ? _resultView(context)
+                : _gameView(context, readAloud)),
       ),
     );
   }
 
-  Widget _gameView(BuildContext context) {
+  Widget _gameView(BuildContext context, bool readAloud) {
     final q = _q;
     final scheme = Theme.of(context).colorScheme;
 
@@ -281,16 +331,16 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen> {
                 _sceneRow(context, q),
                 const SizedBox(height: 10),
               ],
-              _promptCard(context, q),
+              _promptCard(context, q, readAloud),
               const SizedBox(height: 10),
-              _readHint(context, q),
+              _readHint(context, readAloud),
               Text('请选择答案',
                   style: TextStyle(
                       fontSize: 13.5,
                       fontWeight: FontWeight.w700,
                       color: scheme.onSurfaceVariant)),
               const SizedBox(height: 8),
-              _optionGrid(context, q),
+              _optionGrid(context, q, readAloud),
               const SizedBox(height: 10),
               if (_resolved) _praiseBanner(context),
             ],
@@ -436,11 +486,11 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen> {
   }
 
   // ---------- 题面文字 ----------
-  /// 题面 + 重播键**同一行**：读完想再听一遍就点右边那个喇叭，
+  /// 题面 + 重播键**同一行**：读完想再听一遍就点右边那个喇叭（连答案一起再读一遍），
   /// 不用再去下面找一行按钮。语速由家长在「我的 → 偏好设置」里定，这里不给调。
-  Widget _promptCard(BuildContext context, QaQuestion q) {
+  Widget _promptCard(BuildContext context, QaQuestion q, bool readAloud) {
     final scheme = Theme.of(context).colorScheme;
-    final clip = q.readPrompt ? widget.bank.promptClip(q) : null;
+    final clip = readAloud ? widget.bank.promptClip(q) : null;
 
     return Container(
       width: double.infinity,
@@ -455,19 +505,20 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen> {
             child: QaKaraokeText(
               text: q.prompt,
               clipKey: q.clipKey,
-              clip: widget.bank.promptClip(q),
-              highlight: q.readPrompt,
+              clip: clip,
+              highlight: readAloud,
             ),
           ),
           if (clip != null)
             AnimatedBuilder(
               animation: QaSpeech.instance.speaking,
               builder: (context, _) {
-                final playing = QaSpeech.instance.isSpeaking(q.clipKey);
+                // 读题面 / 读「答案有」/ 读某个选项，都算「正在读这一题」。
+                final playing = QaSpeech.instance.speaking.value != null;
                 return IconButton.filledTonal(
                   onPressed: playing
                       ? () => QaSpeech.instance.stop()
-                      : () => QaSpeech.instance.speak(q.clipKey, clip),
+                      : _startReading,
                   tooltip: playing ? '停止' : '再读一遍',
                   icon: Icon(
                       playing ? Icons.stop_rounded : Icons.volume_up_rounded),
@@ -483,9 +534,9 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen> {
     );
   }
 
-  /// 不朗读的题（阅读选图）给一行小提示，朗读题不需要，占位为零。
-  Widget _readHint(BuildContext context, QaQuestion q) {
-    if (q.readPrompt) return const SizedBox.shrink();
+  /// 家长把朗读关掉时提示一句：这题得自己读。
+  Widget _readHint(BuildContext context, bool readAloud) {
+    if (readAloud) return const SizedBox.shrink();
     final scheme = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
@@ -495,7 +546,7 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen> {
           Icon(Icons.menu_book_rounded, size: 16, color: scheme.outline),
           const SizedBox(width: 6),
           Flexible(
-            child: Text('读一读题目，选出对应的图片',
+            child: Text('读一读题目，自己选一选',
                 style: TextStyle(fontSize: 12.5, color: scheme.outline)),
           ),
         ],
@@ -504,7 +555,7 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen> {
   }
 
   // ---------- 选项 ----------
-  Widget _optionGrid(BuildContext context, QaQuestion q) {
+  Widget _optionGrid(BuildContext context, QaQuestion q, bool readAloud) {
     final n = q.options.length;
     final cols = n <= 2 ? n : 2;
     final rows = (n / cols).ceil();
@@ -524,7 +575,7 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen> {
                   if (c > 0) const SizedBox(width: 10),
                   Expanded(
                     child: r * cols + c < n
-                        ? _optionCell(context, q, r * cols + c)
+                        ? _optionCell(context, q, r * cols + c, readAloud)
                         : const SizedBox.shrink(),
                   ),
                 ],
@@ -537,7 +588,8 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen> {
   }
 
   /// [pos] 是屏幕格子下标，实际画的是 `_optOrder[pos]` 那个选项。
-  Widget _optionCell(BuildContext context, QaQuestion q, int pos) {
+  Widget _optionCell(BuildContext context, QaQuestion q, int pos,
+      bool readAloud) {
     final oi = _optOrder[pos];
     final o = q.options[oi];
     final scheme = Theme.of(context).colorScheme;
@@ -556,9 +608,9 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen> {
     }
 
     final letter = String.fromCharCode(65 + pos);
-    final clip = widget.bank.optionClip(q, oi);
+    final clip = readAloud ? widget.bank.optionClip(q, oi) : null;
 
-    return Material(
+    final cell = Material(
       color: Colors.transparent,
       child: InkWell(
         borderRadius: BorderRadius.circular(14),
@@ -591,13 +643,17 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen> {
                         ),
                       if (o.hasPic && o.hasText) const SizedBox(height: 4),
                       if (o.hasText)
-                        Text(
-                          o.text,
-                          textAlign: TextAlign.center,
+                        // 读到这个选项时，它自己的文字跟着亮。
+                        QaKaraokeText(
+                          text: o.text,
+                          clipKey: q.optionClipKey(oi),
+                          clip: clip,
+                          highlight: readAloud,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w800,
+                          height: 1.2,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w800),
                         ),
                     ],
                   ),
@@ -664,6 +720,23 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen> {
           ),
         ),
       ),
+    );
+
+    return _withCue(cell);
+  }
+
+  /// 题面读完的那一下，四个选项的边框一起闪辉光。
+  ///
+  /// 选项是图的时候没得读，这一闪就是「答案在这几个格子里」的唯一提示，
+  /// 所以对每一道题都做，不分题型。亮的是淡蓝色，闪一下就收，别抢孩子的注意力。
+  Widget _withCue(Widget cell) {
+    if (!_cueOn) return cell;
+    return GlowBorder(
+      radius: 14,
+      strokeWidth: 3,
+      colors: kAnswerGlowColors,
+      period: const Duration(milliseconds: 800),
+      child: cell,
     );
   }
 

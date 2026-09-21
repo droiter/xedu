@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'qa_models.dart';
 import 'qa_speech.dart';
 
-/// 题面文字。朗读到哪个字，哪个字就跟着亮起来。
+/// 题面 / 选项文字。朗读到哪个字，哪个字就跟着亮起来。
 ///
 /// 时间轴来自预生成语音（见 `scripts/gen_qa_voice.py`），所以高亮和读音是
 /// 严格对上的；[clip] 为空或 [highlight] 为假时就是一段普通文字。
@@ -15,6 +15,10 @@ class QaKaraokeText extends StatelessWidget {
     required this.clip,
     this.highlight = true,
     this.fontSize = 21,
+    this.fontWeight = FontWeight.w700,
+    this.height = 1.35,
+    this.maxLines,
+    this.overflow,
   });
 
   final String text;
@@ -25,10 +29,16 @@ class QaKaraokeText extends StatelessWidget {
   /// 语音与时间轴；null 表示这段不朗读。
   final QaVoiceClip? clip;
 
-  /// 是否做跟读高亮（阅读选图题不朗读，也就不高亮）。
+  /// 是否做跟读高亮（家长关掉朗读、或这段没有语音时就不高亮）。
   final bool highlight;
 
   final double fontSize;
+  final FontWeight fontWeight;
+  final double height;
+
+  /// 选项格子地方小，允许限制行数并省略。
+  final int? maxLines;
+  final TextOverflow? overflow;
 
   bool get _active => highlight && clip != null;
 
@@ -48,31 +58,28 @@ class QaKaraokeText extends StatelessWidget {
     );
   }
 
+  TextStyle get _style => TextStyle(
+        fontSize: fontSize,
+        fontWeight: fontWeight,
+        height: height,
+      );
+
   Widget _plain(BuildContext context) => Text(
         text,
         textAlign: TextAlign.center,
-        style: TextStyle(
-          fontSize: fontSize,
-          fontWeight: FontWeight.w700,
-          height: 1.35,
-        ),
+        maxLines: maxLines,
+        overflow: overflow,
+        style: _style,
       );
 
   Widget _rich(BuildContext context, QaSpan? active) {
     final scheme = Theme.of(context).colorScheme;
     final spans = clip!.spans;
-    final base = TextStyle(
-      fontSize: fontSize,
-      fontWeight: FontWeight.w700,
-      height: 1.35,
-      color: scheme.onSurface,
-    );
+    final base = _style.copyWith(color: scheme.onSurface);
 
-    // 还没开始读：先把整句按未读状态显示出来，高度不会跳。
-    if (spans.isEmpty || active == null) {
-      return Text.rich(TextSpan(text: text, style: base),
-          textAlign: TextAlign.center);
-    }
+    // 还没开始读：按普通文字显示（不拆 span），高度不会跳，
+    // 外层 `find.text` 之类的也还能按整串找到它。
+    if (spans.isEmpty || active == null) return _plain(context);
 
     final children = <InlineSpan>[];
     var cursor = 0;

@@ -27,6 +27,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final dark = ref.watch(themeControllerProvider);
     final lib = ref.watch(videoLibraryProvider);
     final rate = ref.watch(qaSpeechRateProvider);
+    final readAloud = ref.watch(qaReadAloudProvider);
     final scheme = Theme.of(context).colorScheme;
 
     if (!_remindLoaded) {
@@ -84,6 +85,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     setState(() => _remind = v);
                     ref.read(prefsProvider).setBool(kRemindKey, v);
                   },
+                ),
+                SwitchListTile(
+                  secondary: const Icon(Icons.volume_up_outlined),
+                  title: const Text('朗读题目和答案'),
+                  subtitle: const Text('看图问答读题面和文字答案'),
+                  value: readAloud,
+                  onChanged: (v) =>
+                      ref.read(qaReadAloudProvider.notifier).set(v),
                 ),
                 ListTile(
                   leading: const Icon(Icons.record_voice_over_outlined),

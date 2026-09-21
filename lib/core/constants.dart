@@ -38,6 +38,9 @@ const Set<int> kOpenTabs = {kQuizTab, kQaTab, kVideoTab, kProfileTab};
 /// 「看图问答」的朗读语速（倍速，1.0 为原速）。
 const String kQaSpeechRateKey = 'xedu_qa_speech_rate';
 
+/// 「看图问答」是否把题目和文字答案读出来（缺省读）。
+const String kQaReadAloudKey = 'xedu_qa_read_aloud';
+
 // 课程封面渐变调色板（seed 取模得到稳定配色）
 const List<List<Color>> kCoverPalette = [
   [Color(0xFF4F6BFF), Color(0xFF9A5CFF)], // 靛紫

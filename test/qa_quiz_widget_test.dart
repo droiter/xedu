@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:xedu/core/constants.dart';
 import 'package:xedu/features/pattern_quiz/pattern_quiz_models.dart';
 import 'package:xedu/features/qa_quiz/qa_age_select_screen.dart';
 import 'package:xedu/features/qa_quiz/qa_bank.dart';
 import 'package:xedu/features/qa_quiz/qa_models.dart';
 import 'package:xedu/features/qa_quiz/qa_quiz_screen.dart';
 import 'package:xedu/features/qa_quiz/qa_speech.dart';
+import 'package:xedu/shared/widgets/glow_border.dart';
 import 'package:xedu/state/providers.dart';
 
 /// 全量题库（直接读磁盘，绕开 rootBundle）。
@@ -28,8 +30,10 @@ QaBank _single(QaQuestion q) =>
     QaBank(questions: [q], clips: _full.clips);
 
 Future<Widget> _host(Widget child,
-    {required Size size, double bottomInset = 0}) async {
-  SharedPreferences.setMockInitialValues({});
+    {required Size size,
+    double bottomInset = 0,
+    Map<String, Object> initialPrefs = const {}}) async {
+  SharedPreferences.setMockInitialValues(initialPrefs);
   final prefs = await SharedPreferences.getInstance();
   return ProviderScope(
     overrides: [prefsProvider.overrideWithValue(prefs)],
@@ -58,11 +62,12 @@ void main() {
     '五张题面图 + 图文选项': _q('baby', 'one-plus-one-obj'),
     '两张题面图 + 两个选项': _q('baby', 'two-dogs'),
     '无题面图 + 纯图选项': _q('baby', 'tallest-tree'),
-    '阅读选图（不朗读）': _q('toddler', 'read-apple'),
+    '阅读选图（选项全是图）': _q('toddler', 'read-apple'),
     '找不一样的（重复选项）': _q('baby', 'find-diff-fruit'),
     '排队图（前后）': _q('lowerGrade', 'front-animal'),
     '快慢图': _q('preschool', 'fastest-car'),
     '深浅图': _q('preschool', 'deepest-well'),
+    '粗细图（蜡烛）': _q('toddler', 'thickest-candle'),
     '纯文字长选项': _q('upperGrade', 'nine-plus-eight'),
   };
 
@@ -129,29 +134,130 @@ void main() {
   });
 
   group('答题流程', () {
-    testWidgets('阅读选图不朗读，也不显示重播按钮', (tester) async {
+    testWidgets('题面读完，四个选项的边框闪一下辉光，闪完就收（选项是图也闪）', (tester) async {
+      // 图片选项没得读，这一闪就是「答案在这几个格子里」的全部提示，所以每道题都要闪。
+      for (final q in [_q('baby', 'dog'), _q('toddler', 'read-apple')]) {
+        await tester.pumpWidget(await _host(
+          QaQuizScreen(ages: {q.age}, bank: _single(q)),
+          size: _tablet,
+        ));
+        await tester.pump();
+
+        // 测试环境里没有音频插件（audioplayers 的通道调用永远不返回），
+        // 所以这里直接告诉页面「第一节读完了」—— 真机上这一下由题面语音读完触发。
+        QaSpeech.instance.completed.value++;
+        await tester.pump();
+
+        expect(find.byType(GlowBorder), findsNWidgets(q.options.length),
+            reason: '${q.qid} 没有闪辉光');
+        // 淡蓝色，跟入口那种暖色流光区分开。
+        expect(
+            tester.widget<GlowBorder>(find.byType(GlowBorder).first).colors,
+            kAnswerGlowColors);
+
+        // 闪一下就走：一秒钟已经收干净了（以前要闪 1.5 秒）。
+        await tester.pump(const Duration(milliseconds: 1000));
+        expect(find.byType(GlowBorder), findsNothing,
+            reason: '${q.qid} 的辉光没停下来');
+
+        // 后面还有「答案有」「各个选项」好几节读完，不该再闪。
+        QaSpeech.instance.completed.value++;
+        await tester.pump();
+        expect(find.byType(GlowBorder), findsNothing,
+            reason: '${q.qid} 读完一节又闪了一次');
+
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pump();
+      }
+    });
+
+    testWidgets('阅读选图也朗读题面，有重播键；选项是图所以没有小喇叭', (tester) async {
       final q = _q('toddler', 'read-apple');
-      expect(q.readPrompt, isFalse);
+      await tester.pumpWidget(await _host(
+        QaQuizScreen(ages: {q.age}, bank: _single(q)),
+        size: _tablet,
+      ));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
+
+      expect(_full.promptClip(q), isNotNull, reason: '阅读选图也该有题面语音');
+      expect(find.byTooltip('再读一遍'), findsOneWidget);
+      expect(find.byTooltip('读一读这个选项'), findsNothing);
+      expect(find.text('读一读题目，自己选一选'), findsNothing);
+    });
+
+    testWidgets('读到哪个选项，哪个选项的文字才跟着亮', (tester) async {
+      final q = _q('baby', 'dog');
       await tester.pumpWidget(await _host(
         QaQuizScreen(ages: {q.age}, bank: _single(q)),
         size: _tablet,
       ));
       await tester.pump();
 
-      expect(find.text('读一读题目，选出对应的图片'), findsOneWidget);
-      // 题面在，但没有「再读一遍」那个按钮
+      // 跟读高亮会把文字拆成一段段富文本；没在读的就是普通文字。
+      List<String> richTexts() => tester
+          .widgetList<Text>(find.byWidgetPredicate(
+              (w) => w is Text && w.textSpan != null))
+          .map((t) => t.textSpan!.toPlainText())
+          .toList();
+
+      expect(richTexts(), isEmpty, reason: '没在读的时候不该有跟读高亮');
+
+      // 模拟读到第 2 个选项
+      QaSpeech.instance.speaking.value = q.optionClipKey(1);
+      QaSpeech.instance.activeSpan.value =
+          QaSpan(0, q.options[1].text.length, 0.1, 0.5);
+      await tester.pump();
+      // 只有被读的那个选项亮（读选项时题面不该跟着亮）
+      expect(richTexts(), [q.options[1].text]);
+
+      // 读到下一个：高亮跟着换，不会两个一起亮
+      QaSpeech.instance.speaking.value = q.optionClipKey(3);
+      QaSpeech.instance.activeSpan.value =
+          QaSpan(0, q.options[3].text.length, 0.1, 0.5);
+      await tester.pump();
+      expect(richTexts(), [q.options[3].text]);
+
+      // 收尾：直接清通知器（测试环境里 stop() 会卡在播放器的通道调用上）
+      QaSpeech.instance.speaking.value = null;
+      QaSpeech.instance.activeSpan.value = null;
+      await tester.pump();
+      expect(richTexts(), isEmpty);
+    });
+
+    testWidgets('家长关掉朗读：不自动读、没有小喇叭，只提示自己读', (tester) async {
+      final q = _q('baby', 'dog');
+      await tester.pumpWidget(await _host(
+        QaQuizScreen(ages: {q.age}, bank: _single(q)),
+        size: _tablet,
+        initialPrefs: const {kQaReadAloudKey: false},
+      ));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
+
+      expect(find.text('读一读题目，自己选一选'), findsOneWidget);
       expect(find.byTooltip('再读一遍'), findsNothing);
-      expect(find.text('语速'), findsNothing);
+      expect(find.byTooltip('读一读这个选项'), findsNothing);
+      expect(QaSpeech.instance.speaking.value, isNull);
+      // 没朗读就没有「题面读完」这回事，也就不会闪辉光
+      QaSpeech.instance.completed.value++;
+      await tester.pump();
+      expect(find.byType(GlowBorder), findsNothing, reason: '没朗读就不该闪辉光');
+
+      // 选项照样能点能答
+      await tester.tap(find.text(q.options[q.answer].text));
+      await tester.pump(const Duration(seconds: 2));
+      expect(find.textContaining('一次答对 1 / 1 题'), findsOneWidget);
     });
 
     testWidgets('朗读题只有重播按钮，语速档位不在这里', (tester) async {
       final q = _q('baby', 'dog');
-      expect(q.readPrompt, isTrue);
       await tester.pumpWidget(await _host(
         QaQuizScreen(ages: {q.age}, bank: _single(q)),
         size: _tablet,
       ));
       await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
 
       expect(find.byTooltip('再读一遍'), findsOneWidget);
       // 重播键就贴在题面文字右边，同一行
@@ -255,7 +361,12 @@ void main() {
       SharedPreferences.setMockInitialValues({});
       final prefs = await SharedPreferences.getInstance();
       await tester.pumpWidget(ProviderScope(
-        overrides: [prefsProvider.overrideWithValue(prefs)],
+        overrides: [
+          prefsProvider.overrideWithValue(prefs),
+          // 题库直接喂给页面，不走 rootBundle：清单超过 50KB 后
+          // `loadString` 会派给 isolate 解码，widget 测试的假时钟里等不到。
+          qaBankProvider.overrideWith((ref) => _full),
+        ],
         child: MaterialApp(home: const QaAgeSelectScreen()),
       ));
       // 题库是异步加载的，要多泵几帧

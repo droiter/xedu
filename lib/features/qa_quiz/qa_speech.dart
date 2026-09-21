@@ -31,9 +31,13 @@ class QaSpeech {
   /// 当前正在读的字符区间；没在读时为 null。
   final ValueNotifier<QaSpan?> activeSpan = ValueNotifier<QaSpan?>(null);
 
+  /// 每读完一小节 +1。答题页靠它认出「题面刚读完」，
+  /// 好在这个节骨眼把四个选项的边框闪一下辉光。
+  final ValueNotifier<int> completed = ValueNotifier<int>(0);
+
   final AudioPlayer _player = AudioPlayer(playerId: 'xedu_qa_voice');
 
-  /// 播放语速，1.0 为原速。由 [QaSpeedController] 写入。
+  /// 播放语速，1.0 为原速。由 [QaSpeechRateController] 写入。
   double rate = 1.0;
 
   StreamSubscription<Duration>? _posSub;
@@ -44,6 +48,12 @@ class QaSpeech {
   Timer? _ticker;
   Timer? _stopAt;
   final Stopwatch _clock = Stopwatch();
+
+  /// 还排在这一节后面、等着读的片段（整段跟读用，见 [speakAll]）。
+  List<QaReadSeg> _pending = const [];
+
+  /// 播放代际：换一节或停下都 +1，用来丢掉上一节迟到的回调。
+  int _gen = 0;
 
   /// 本段的语速。
   double _speed = 1.0;
@@ -61,22 +71,40 @@ class QaSpeech {
   /// 设备放不出声时不能把答题也带崩。
   Future<void> init() async {
     try {
-      _doneSub ??= _player.onPlayerComplete.listen((_) => _finish());
       await _player.setReleaseMode(ReleaseMode.stop);
     } catch (e) {
       debugPrint('QaSpeech: 播放器初始化失败：$e');
     }
   }
 
-  /// 朗读 [clip]。[key] 用来在 UI 上标记「是哪一条在读」。
+  /// 朗读 [clip] 一段。[key] 用来在 UI 上标记「是哪一条在读」。
   ///
   /// 出错只降级成「这一遍没声音」，不清空 [speaking] 以外的状态、也不永久停用 ——
   /// 下一题还会再试一次。
   Future<void> speak(String key, QaVoiceClip clip,
       {double? rateOverride}) async {
-    final speed = (rateOverride ?? rate).clamp(minRate, maxRate);
     await init();
     await stop();
+    await _play(key, clip, (rateOverride ?? rate).clamp(minRate, maxRate));
+  }
+
+  /// 连着朗读好几小节（题面 →「答案有」→ 各选项 →「你选择哪个」），
+  /// 一节读完自动接下一节。中途 [stop] 或单段 [speak] 会把没读到的那几节丢掉。
+  Future<void> speakAll(Iterable<QaReadSeg> segs) async {
+    final list = segs.toList();
+    await init();
+    await stop();
+    if (list.isEmpty) return;
+    _pending = list.sublist(1);
+    await _play(list.first.key, list.first.clip, rate);
+  }
+
+  /// 播放一小节。[speed] 是这一节的语速。
+  Future<void> _play(String key, QaVoiceClip clip, double speed) async {
+    final gen = ++_gen;
+    await _halt();
+    // 等停播放器的这点时间里有别的朗读插进来（或页面被关掉）就作废。
+    if (gen != _gen) return;
 
     _key = key;
     _clip = clip;
@@ -89,24 +117,30 @@ class QaSpeech {
 
     try {
       _posSub = _player.onPositionChanged.listen(_onPosition, onError: (_) {});
+      _doneSub = _player.onPlayerComplete.listen((_) {
+        if (gen == _gen) _finish();
+      });
       await _player.play(AssetSource(clip.asset));
     } catch (e) {
       debugPrint('QaSpeech: 播放失败，这一段静音：$e');
-      _finish();
+      if (gen == _gen) _finish();
       return;
     }
+    if (gen != _gen) return;
 
     _clock
       ..reset()
       ..start();
-    _ticker?.cancel();
-    _ticker = Timer.periodic(const Duration(milliseconds: 40), (_) => _tick());
+    _ticker = Timer.periodic(const Duration(milliseconds: 40), (_) {
+      if (gen == _gen) _tick();
+    });
 
     // 末尾有半秒多的静音，读完就停，不用等它播完。
-    _stopAt?.cancel();
     _stopAt = Timer(
       Duration(milliseconds: ((clip.voiced / speed) * 1000).round() + 280),
-      _finish,
+      () {
+        if (gen == _gen) _finish();
+      },
     );
   }
 
@@ -164,9 +198,12 @@ class QaSpeech {
     }
   }
 
-  Future<void> stop() async {
+  /// 停下播放器，并撤掉上一节的监听与计时（末尾的静音尾巴不听）。
+  Future<void> _halt() async {
     await _posSub?.cancel();
+    await _doneSub?.cancel();
     _posSub = null;
+    _doneSub = null;
     _ticker?.cancel();
     _ticker = null;
     _stopAt?.cancel();
@@ -174,22 +211,30 @@ class QaSpeech {
     _clock
       ..stop()
       ..reset();
-    _spans = const [];
-    _key = null;
-    _clip = null;
-    _base = 0;
-    speaking.value = null;
-    activeSpan.value = null;
     try {
       await _player.stop();
     } catch (_) {/* 没在播时 stop 会抛，忽略 */}
   }
 
-  /// 读完（或被打断）后只清状态，不 stop 播放器：剩下的静音尾巴无所谓，
-  /// 下次 [speak] 开头会 stop。
+  Future<void> stop() async {
+    _gen++;
+    _pending = const [];
+    await _halt();
+    _spans = const [];
+    _key = null;
+    _clip = null;
+    _base = 0;
+    speaking.value = null;
+    activeSpan.value = null;
+  }
+
+  /// 一节读完（或被截停）：清状态，接着读排队里的下一节；没有下一节就收工。
+  /// 不 stop 播放器 —— 剩下的静音尾巴无所谓，下一节开头会 stop。
   void _finish() {
     _posSub?.cancel();
     _posSub = null;
+    _doneSub?.cancel();
+    _doneSub = null;
     _ticker?.cancel();
     _ticker = null;
     _stopAt?.cancel();
@@ -203,18 +248,24 @@ class QaSpeech {
     _base = 0;
     speaking.value = null;
     activeSpan.value = null;
+    completed.value++;
+
+    final next = _pending;
+    if (next.isEmpty) return;
+    _pending = next.sublist(1);
+    unawaited(_play(next.first.key, next.first.clip, _speed));
   }
 
   /// 正在朗读的是不是 [key]。
   bool isSpeaking(String key) => speaking.value == key;
 
-  /// 语速变了：正在读的这段按新语速从头再读一遍，听感才连贯。
+  /// 语速变了：正在读的这节按新语速从头再读一遍，后面没读完的接着排，听感才连贯。
   Future<void> applyRate(double next) async {
     rate = next.clamp(minRate, maxRate);
     final clip = _clip;
     final key = _key;
     if (clip == null || key == null) return;
-    await speak(key, clip, rateOverride: rate);
+    await speakAll([QaReadSeg(key, clip), ..._pending]);
   }
 
   Future<void> dispose() async {
@@ -247,6 +298,23 @@ class QaSpeechRateController extends Notifier<double> {
 
 final qaSpeechRateProvider = NotifierProvider<QaSpeechRateController, double>(
     QaSpeechRateController.new);
+
+/// 要不要朗读：家长在「我的 → 偏好设置」里定，全机一份，**缺省朗读**。
+///
+/// 关掉之后进题目不自动读，题面和选项上的小喇叭也不再出现 —— 孩子自己读。
+class QaReadAloudController extends Notifier<bool> {
+  @override
+  bool build() => ref.watch(prefsProvider).getBool(kQaReadAloudKey) ?? true;
+
+  void set(bool value) {
+    ref.read(prefsProvider).setBool(kQaReadAloudKey, value);
+    state = value;
+    if (!value) QaSpeech.instance.stop();
+  }
+}
+
+final qaReadAloudProvider =
+    NotifierProvider<QaReadAloudController, bool>(QaReadAloudController.new);
 
 /// 语速档位：慢到快四档，够用又不至于让家长挑花眼。
 const List<double> kQaSpeechRates = [0.6, 0.8, 1.0, 1.3];

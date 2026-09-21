@@ -36,11 +36,47 @@ class QaBank {
 
   QaVoiceClip? clipOf(String key) => clips[key];
 
-  /// 某题的题面语音（阅读选图题没有）。
+  /// 某题的题面语音。
   QaVoiceClip? promptClip(QaQuestion q) => clips[q.clipKey];
 
-  /// 某题第 [i] 个选项的语音（选项没文字就没有）。
+  /// 某题第 [i] 个选项的语音（选项只有图、没有文字时就没有）。
   QaVoiceClip? optionClip(QaQuestion q, int i) => clips[q.optionClipKey(i)];
+
+  /// 「答案有」/「你选择哪个」这两句连接语，所有题共用。
+  QaVoiceClip? get answerHeadClip => clips[kQaAnswerHeadKey];
+  QaVoiceClip? get answerTailClip => clips[kQaAnswerTailKey];
+
+  /// 这道题有没有读得出来的答案（选项全是图就没得读）。
+  bool hasSpokenAnswers(QaQuestion q) =>
+      [for (var i = 0; i < q.options.length; i++) i]
+          .any((i) => q.options[i].hasText && optionClip(q, i) != null);
+
+  /// 进一道题要依次朗读的片段：
+  /// 题面 →「答案有」→ 有文字的选项（按 [order] 的屏幕顺序）→「你选择哪个」。
+  ///
+  /// [order] 是「屏幕格子 → 选项下标」，和答题页的选项重排同一套；不给就按题库原序。
+  /// 选项全是图的题（比如「请选出苹果」）只读题面 —— 答案改用边框辉光提示。
+  List<QaReadSeg> readAlong(QaQuestion q, [List<int>? order]) {
+    final prompt = promptClip(q);
+    if (prompt == null) return const [];
+
+    final head = answerHeadClip;
+    final tail = answerTailClip;
+    final idx = order ?? [for (var i = 0; i < q.options.length; i++) i];
+    final spoken = [
+      for (final i in idx)
+        if (q.options[i].hasText && optionClip(q, i) != null) i,
+    ];
+    if (spoken.isEmpty || head == null || tail == null) {
+      return [QaReadSeg(q.clipKey, prompt)];
+    }
+    return [
+      QaReadSeg(q.clipKey, prompt),
+      QaReadSeg(kQaAnswerHeadKey, head),
+      for (final i in spoken) QaReadSeg(q.optionClipKey(i), optionClip(q, i)!),
+      QaReadSeg(kQaAnswerTailKey, tail),
+    ];
+  }
 
   static QaBank parse(String questionsJson, String voiceJson) {
     final qs = jsonDecode(questionsJson) as Map<String, dynamic>;
