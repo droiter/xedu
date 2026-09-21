@@ -9,6 +9,13 @@ const List<Color> kGlowColors = [
   Color(0xFFFF3D6E),
 ];
 
+/// 「答案就在这几个格子里」用的淡蓝流光，比默认那套暖色收敛一些。
+const List<Color> kAnswerGlowColors = [
+  Color(0xFFB3E5FC),
+  Color(0xFF4FC3F7),
+  Color(0xFF039BE5),
+];
+
 /// 沿边框转圈的光辉：在子组件四周的圆角描边上画一段走动的高光。
 ///
 /// 用来把「现在能玩的那一个入口」从一堆置灰入口里挑出来。

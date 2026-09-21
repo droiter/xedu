@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../shared/back_guard.dart';
 import 'celebration.dart';
 import 'exit_gate.dart';
 import 'pattern_quiz_bank.dart';
@@ -38,7 +39,7 @@ class PatternQuizScreen extends ConsumerStatefulWidget {
 }
 
 class _PatternQuizScreenState extends ConsumerState<PatternQuizScreen>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, BackGuard<PatternQuizScreen> {
   static const int _optionCount = 4; // 1 个正确 + 3 个干扰项
   static const int _wrongSlots = _optionCount - 1;
   static const Duration _celebrateFor = Duration(milliseconds: 950);
@@ -275,6 +276,8 @@ class _PatternQuizScreenState extends ConsumerState<PatternQuizScreen>
       canPop: _finished || _exiting,
       onPopInvokedWithResult: (didPop, _) {
         if (didPop) return;
+        // 合上平板再打开时系统会补一个返回键过来，那一下不算孩子按的。
+        if (!isRealBack()) return;
         _guardExit();
       },
       child: Scaffold(

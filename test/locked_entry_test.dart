@@ -40,7 +40,7 @@ Future<void> _pumpShell(WidgetTester tester,
     ],
     child: const XeduApp(),
   ));
-  // 底部选项卡的流光一直在转，不能用 pumpAndSettle。
+  // 首页有入场动画，统一用显式 pump 推进（别用 pumpAndSettle）。
   await tester.pump();
   await tester.pump(const Duration(milliseconds: 600));
 }
@@ -49,6 +49,19 @@ Future<void> _pumpShell(WidgetTester tester,
 /// 不能看元素在不在，得直接读外壳当前的下标。
 int? _currentTab(WidgetTester tester) =>
     tester.widget<IndexedStack>(find.byType(IndexedStack).first).index;
+
+/// 某一格选项卡里的光辉（刚切过去的那一下才有）。
+Finder _tabGlow(int i) => find.descendant(
+      of: find.byKey(ValueKey('tab-$i')),
+      matching: find.byType(GlowBorder),
+    );
+
+/// 某一格选项卡的图标颜色：当前那格是主色，别的不是。
+Color _tabColor(WidgetTester tester, int i) => tester
+    .widget<Icon>(find
+        .descendant(of: find.byKey(ValueKey('tab-$i')), matching: find.byType(Icon))
+        .first)
+    .color!;
 
 void main() {
   testWidgets('课程 / 进度选项卡仍然点不进去', (tester) async {
@@ -113,8 +126,8 @@ void main() {
   testWidgets('「看图找规律」入口有光辉且可以进入', (tester) async {
     await _pumpShell(tester);
 
-    // 首页入口卡 + 底部选项卡各一圈光辉。
-    expect(find.byType(GlowBorder), findsNWidgets(2));
+    // 就首页那张入口卡一圈光辉 —— 底部选项卡不再常驻转光（见下一条）。
+    expect(find.byType(GlowBorder), findsOneWidget);
 
     // 首页那张入口卡（底部选项卡那格点了不跳转）。
     // Ink 只负责画渐变、不参与命中测试，真正接手势的是它外面的 InkWell。
@@ -123,5 +136,33 @@ void main() {
     await tester.pump(const Duration(milliseconds: 600));
 
     expect(find.byType(PatternAgeSelectScreen), findsOneWidget);
+  });
+
+  testWidgets('选项卡用高亮表示当前分类，光辉只在切过去时闪一下', (tester) async {
+    await _pumpShell(tester);
+
+    // 一上来没有任何一格在转光辉。
+    for (var i = 0; i < 6; i++) {
+      expect(_tabGlow(i), findsNothing, reason: '第 $i 格不该常驻光辉');
+    }
+
+    // 当前（看图找规律）那格是主色，别的格子不是。
+    final selectedColor = _tabColor(tester, kQuizTab);
+    final otherColor = _tabColor(tester, kVideoTab);
+    expect(selectedColor, isNot(otherColor));
+
+    await tester.tap(find.byIcon(Icons.ondemand_video_rounded));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+
+    // 高亮跟着走到「看视频」；刚进去的那一下这一格亮起光辉。
+    expect(_tabColor(tester, kVideoTab), selectedColor);
+    expect(_tabColor(tester, kQuizTab), otherColor);
+    expect(_tabGlow(kVideoTab), findsOneWidget);
+
+    // 闪完就收，不一直转。
+    await tester.pump(const Duration(milliseconds: 1400));
+    expect(_tabGlow(kVideoTab), findsNothing);
+    expect(_tabColor(tester, kVideoTab), selectedColor);
   });
 }
