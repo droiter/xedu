@@ -51,6 +51,9 @@ enum PicKind {
   /// 粗细：竖向圆棒，[Pic.level] 为粗细档（0 最细 … 4 最粗）。
   widthBar,
 
+  /// 粗细（蜡烛）：蜡烛身子的粗细随档位变化（0 最细 … 4 最粗），火苗大小不变。
+  candle,
+
   /// 胖瘦：椭圆，[Pic.level] 为胖瘦档（0 最瘦 … 4 最胖）。
   blob,
 
@@ -103,11 +106,11 @@ class Pic {
 
   /// 档位：emojiSize 的大小档、arrowQuarter 的朝向(0上 1右 2下 3左)、
   /// colorRamp 的深浅档、shape 的旋转格数、shapeCount 的颜色编号，
-  /// 以及 lengthBar/thickness/widthBar/blob/distance 的属性档（0..4）。
+  /// 以及 lengthBar/thickness/widthBar/candle/blob/distance 的属性档（0..4）。
   final int level;
 
   /// 底座下标：dots / colorRamp 的调色板编号、shape/shapeCount 的图形编号、
-  /// colorBlock 与各属性条的颜色编号。
+  /// colorBlock 与各属性条（含 candle）的颜色编号。
   final int base;
 
   /// 资源路径（asset 类型用）。
@@ -236,6 +239,16 @@ class Pic {
   static Pic widthBar(int level, {int base = 0}) => Pic(
         kind: PicKind.widthBar,
         id: 'wid:$base:$level',
+        level: level,
+        base: base,
+        label: '粗细',
+      );
+
+  /// 粗细（蜡烛）：蜡烛身子的粗细随档位增长。
+  /// [level] 0 最细 … 4 最粗；[base] 为颜色编号。
+  static Pic candle(int level, {int base = 0}) => Pic(
+        kind: PicKind.candle,
+        id: 'cnd:$base:$level',
         level: level,
         base: base,
         label: '粗细',

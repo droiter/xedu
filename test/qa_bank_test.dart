@@ -12,13 +12,6 @@ QaBank _load() => QaBank.parse(
       File('assets/data/qa_voice.json').readAsStringSync(),
     );
 
-/// 只有还不认字的年龄段才给选项配音，和 scripts/gen_qa_voice.py 保持一致。
-const _speakOptionAges = {
-  PatternAgeGroup.baby,
-  PatternAgeGroup.toddler,
-  PatternAgeGroup.preschool,
-};
-
 void main() {
   final bank = _load();
 
@@ -89,31 +82,105 @@ void main() {
       }
     });
 
-    test('新旧三种属性图形都能构造出来', () {
+    test('算一算（物品）题的选项图和题面用同一种物品，孩子才能对着数', () {
+      const ops = {'➕', '＝', '❓'};
+      for (final q in bank.questions.where(
+          (q) => q.kind == QaKind.add && q.sub == 'OBJ')) {
+        final objects = [
+          for (final s in q.scene)
+            if (s.kind == PicKind.emojiCount || s.kind == PicKind.emojiSingle)
+              if (!ops.contains(s.emoji)) s.emoji,
+        ];
+        expect(objects, isNotEmpty, reason: '${q.qid} 题面没有物品');
+        expect(objects.toSet().length, 1, reason: '${q.qid} 题面物品不统一');
+        for (final o in q.options) {
+          expect(o.pic?.kind, PicKind.emojiCount, reason: '${q.qid} 选项不是物品图');
+          expect(o.pic?.emoji, objects.first, reason: '${q.qid} 选项物品和题面不一致');
+          expect(o.pic!.n, greaterThan(0), reason: q.qid);
+        }
+      }
+    });
+
+    test('几种属性图形都能构造出来', () {
       expect(Pic.speed(2).kind, PicKind.speed);
       expect(Pic.depth(3).kind, PicKind.depth);
       expect(Pic.queue(const ['🐼', '🐰']).kind, PicKind.queue);
       expect(Pic.queue(const ['🐼', '🐰']).emojis.length, 2);
+      expect(Pic.candle(4).kind, PicKind.candle);
+    });
+
+    test('比粗细的题用蜡烛图标：光秃秃的竖条看不出是绳子还是蜡烛', () {
+      final thick = [
+        for (final q in bank.questions)
+          if (q.kind == QaKind.compare && q.sub == 'THICK') q,
+      ];
+      expect(thick, isNotEmpty);
+      for (final q in thick) {
+        for (final o in q.options) {
+          expect(o.pic?.kind, PicKind.candle, reason: '${q.qid} 选项不是蜡烛图');
+        }
+      }
     });
   });
 
   group('语音时间轴', () {
-    test('朗读题的题面都有音频，选项图文题才有选项音频', () {
+    test('每道题都有题面音频，有文字的选项才有选项音频', () {
       for (final q in bank.questions) {
-        if (q.readPrompt) {
-          expect(bank.promptClip(q), isNotNull, reason: '${q.qid} 缺题面语音');
-        } else {
-          expect(bank.promptClip(q), isNull,
-              reason: '${q.qid} 是阅读题，不该有题面语音');
-        }
+        expect(bank.promptClip(q), isNotNull, reason: '${q.qid} 缺题面语音');
         for (var i = 0; i < q.options.length; i++) {
-          final clip = bank.optionClip(q, i);
-          final expectClip =
-              _speakOptionAges.contains(q.age) && q.options[i].hasText;
-          expect(clip != null, expectClip,
-              reason: '${q.qid} 选项 $i 的语音不该${expectClip ? '缺' : '有'}');
+          final want = q.options[i].hasText;
+          expect(bank.optionClip(q, i) != null, want,
+              reason: '${q.qid} 选项 $i 的语音不该${want ? '缺' : '有'}');
         }
       }
+    });
+
+    test('连读顺序：题面 →「答案有」→ 各文字选项 →「你选择哪个」', () {
+      final q = bank.questions
+          .firstWhere((q) => q.kind == QaKind.describe && q.options.length == 4);
+      expect(
+          [for (final s in bank.readAlong(q)) s.key],
+          [
+            q.clipKey,
+            kQaAnswerHeadKey,
+            for (var i = 0; i < q.options.length; i++) q.optionClipKey(i),
+            kQaAnswerTailKey,
+          ]);
+
+      // 顺序跟着屏幕格子走：答错重排之后再读，读的还是打乱后的顺序。
+      final flipped = [for (var i = q.options.length - 1; i >= 0; i--) i];
+      expect(
+          [for (final s in bank.readAlong(q, flipped)) s.key],
+          [
+            q.clipKey,
+            kQaAnswerHeadKey,
+            for (final i in flipped) q.optionClipKey(i),
+            kQaAnswerTailKey,
+          ]);
+    });
+
+    test('选项全是图的题只读题面（图没得读，答案靠边框辉光提示）', () {
+      final pics = [
+        for (final q in bank.questions)
+          if (!q.options.any((o) => o.hasText)) q,
+      ];
+      expect(pics, isNotEmpty);
+      for (final q in pics) {
+        expect(bank.hasSpokenAnswers(q), isFalse, reason: q.qid);
+        expect([for (final s in bank.readAlong(q)) s.key], [q.clipKey],
+            reason: q.qid);
+      }
+      // 有文字选项的题就得有「答案有 … 你选择哪个」这一套
+      for (final q in bank.questions.where((q) => q.options.any((o) => o.hasText))) {
+        expect(bank.hasSpokenAnswers(q), isTrue, reason: q.qid);
+        expect(bank.readAlong(q).length, greaterThan(2), reason: q.qid);
+      }
+    });
+
+    test('「答案有」「你选择哪个」两句共用一份音频', () {
+      expect(bank.answerHeadClip, isNotNull);
+      expect(bank.answerTailClip, isNotNull);
+      expect(bank.answerHeadClip!.spans, isNotEmpty);
     });
 
     test('时间轴落在题面文字范围内，且随时间单调向前', () {
@@ -141,13 +208,11 @@ void main() {
     });
 
     test('语音清单里没有多余片段（改了题库没重跑生成脚本会在这里暴露）', () {
-      final wanted = <String>{};
+      final wanted = <String>{kQaAnswerHeadKey, kQaAnswerTailKey};
       for (final q in bank.questions) {
-        if (q.readPrompt) wanted.add(q.clipKey);
-        if (_speakOptionAges.contains(q.age)) {
-          for (var i = 0; i < q.options.length; i++) {
-            if (q.options[i].hasText) wanted.add(q.optionClipKey(i));
-          }
+        wanted.add(q.clipKey);
+        for (var i = 0; i < q.options.length; i++) {
+          if (q.options[i].hasText) wanted.add(q.optionClipKey(i));
         }
       }
       expect(bank.clips.keys.toSet(), wanted);

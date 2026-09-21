@@ -1,7 +1,7 @@
 {
  "voice": "zh-CN-XiaoxiaoNeural",
  "rate": "+0%",
- "generated": 137,
+ "generated": 199,
  "clips": {
   "QA_B_ADD_DIG_one-plus-one-dig": {
    "f": "audio/qa/QA_B_ADD_DIG_one-plus-one-dig.mp3",
@@ -1041,6 +1041,62 @@
    "h": "0cc01f49c0e9c15d",
    "t": "八加七等于几？"
   },
+  "QA_L_ADD_DIG_eight-plus-seven.o0": {
+   "f": "audio/qa/QA_L_ADD_DIG_eight-plus-seven.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7625
+    ]
+   ],
+   "h": "babdeda64358d922",
+   "t": "十四"
+  },
+  "QA_L_ADD_DIG_eight-plus-seven.o1": {
+   "f": "audio/qa/QA_L_ADD_DIG_eight-plus-seven.o1.mp3",
+   "d": 1.32,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7625
+    ]
+   ],
+   "h": "863e8a392d5ea03c",
+   "t": "十五"
+  },
+  "QA_L_ADD_DIG_eight-plus-seven.o2": {
+   "f": "audio/qa/QA_L_ADD_DIG_eight-plus-seven.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7875
+    ]
+   ],
+   "h": "0387bd3221877fae",
+   "t": "十六"
+  },
+  "QA_L_ADD_DIG_eight-plus-seven.o3": {
+   "f": "audio/qa/QA_L_ADD_DIG_eight-plus-seven.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.775
+    ]
+   ],
+   "h": "f3de5cd4e407acce",
+   "t": "十七"
+  },
   "QA_L_ADD_DIG_nine-plus-six": {
    "f": "audio/qa/QA_L_ADD_DIG_nine-plus-six.mp3",
    "d": 1.992,
@@ -1067,6 +1123,62 @@
    "h": "308efde60159d432",
    "t": "九加六等于几？"
   },
+  "QA_L_ADD_DIG_nine-plus-six.o0": {
+   "f": "audio/qa/QA_L_ADD_DIG_nine-plus-six.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7375
+    ]
+   ],
+   "h": "dc1e424473742d80",
+   "t": "十三"
+  },
+  "QA_L_ADD_DIG_nine-plus-six.o1": {
+   "f": "audio/qa/QA_L_ADD_DIG_nine-plus-six.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7625
+    ]
+   ],
+   "h": "babdeda64358d922",
+   "t": "十四"
+  },
+  "QA_L_ADD_DIG_nine-plus-six.o2": {
+   "f": "audio/qa/QA_L_ADD_DIG_nine-plus-six.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7625
+    ]
+   ],
+   "h": "863e8a392d5ea03c",
+   "t": "十五"
+  },
+  "QA_L_ADD_DIG_nine-plus-six.o3": {
+   "f": "audio/qa/QA_L_ADD_DIG_nine-plus-six.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7875
+    ]
+   ],
+   "h": "0387bd3221877fae",
+   "t": "十六"
+  },
   "QA_L_ADD_DIG_seven-plus-five": {
    "f": "audio/qa/QA_L_ADD_DIG_seven-plus-five.mp3",
    "d": 1.968,
@@ -1092,6 +1204,62 @@
    ],
    "h": "d9cb93f883f60e13",
    "t": "七加五等于几？"
+  },
+  "QA_L_ADD_DIG_seven-plus-five.o0": {
+   "f": "audio/qa/QA_L_ADD_DIG_seven-plus-five.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.75
+    ]
+   ],
+   "h": "75dafb25e465bfad",
+   "t": "十一"
+  },
+  "QA_L_ADD_DIG_seven-plus-five.o1": {
+   "f": "audio/qa/QA_L_ADD_DIG_seven-plus-five.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7
+    ]
+   ],
+   "h": "75f99aa528fa92d3",
+   "t": "十二"
+  },
+  "QA_L_ADD_DIG_seven-plus-five.o2": {
+   "f": "audio/qa/QA_L_ADD_DIG_seven-plus-five.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7375
+    ]
+   ],
+   "h": "dc1e424473742d80",
+   "t": "十三"
+  },
+  "QA_L_ADD_DIG_seven-plus-five.o3": {
+   "f": "audio/qa/QA_L_ADD_DIG_seven-plus-five.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7625
+    ]
+   ],
+   "h": "babdeda64358d922",
+   "t": "十四"
   },
   "QA_L_ADD_OBJ_five-plus-four-obj": {
    "f": "audio/qa/QA_L_ADD_OBJ_five-plus-four-obj.mp3",
@@ -1154,6 +1322,86 @@
    ],
    "h": "aa1ceb2ff6b2ebf6",
    "t": "五个苹果加四个苹果，一共几个？"
+  },
+  "QA_L_ADD_OBJ_five-plus-four-obj.o0": {
+   "f": "audio/qa/QA_L_ADD_OBJ_five-plus-four-obj.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.4
+    ],
+    [
+     1,
+     2,
+     0.4,
+     0.7
+    ]
+   ],
+   "h": "9dafdfa66224690f",
+   "t": "七个"
+  },
+  "QA_L_ADD_OBJ_five-plus-four-obj.o1": {
+   "f": "audio/qa/QA_L_ADD_OBJ_five-plus-four-obj.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.325
+    ],
+    [
+     1,
+     2,
+     0.325,
+     0.65
+    ]
+   ],
+   "h": "653c18e7815edd7a",
+   "t": "八个"
+  },
+  "QA_L_ADD_OBJ_five-plus-four-obj.o2": {
+   "f": "audio/qa/QA_L_ADD_OBJ_five-plus-four-obj.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3625
+    ],
+    [
+     1,
+     2,
+     0.3625,
+     0.6625
+    ]
+   ],
+   "h": "9cde94c64e3bdcd9",
+   "t": "九个"
+  },
+  "QA_L_ADD_OBJ_five-plus-four-obj.o3": {
+   "f": "audio/qa/QA_L_ADD_OBJ_five-plus-four-obj.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.4625
+    ],
+    [
+     1,
+     2,
+     0.4625,
+     0.7875
+    ]
+   ],
+   "h": "89ec1237ed616f5c",
+   "t": "十个"
   },
   "QA_L_CMP_BACK_back-animal": {
    "f": "audio/qa/QA_L_CMP_BACK_back-animal.mp3",
@@ -1393,6 +1641,86 @@
    "h": "0cfa08a9659a563d",
    "t": "图上有几个三角形？"
   },
+  "QA_L_DESC_COUNT_triangle-count.o0": {
+   "f": "audio/qa/QA_L_DESC_COUNT_triangle-count.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.425
+    ],
+    [
+     1,
+     2,
+     0.425,
+     0.725
+    ]
+   ],
+   "h": "6389ca171ffe229e",
+   "t": "四个"
+  },
+  "QA_L_DESC_COUNT_triangle-count.o1": {
+   "f": "audio/qa/QA_L_DESC_COUNT_triangle-count.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.325
+    ],
+    [
+     1,
+     2,
+     0.325,
+     0.65
+    ]
+   ],
+   "h": "2b9eafcc3f6a21cb",
+   "t": "五个"
+  },
+  "QA_L_DESC_COUNT_triangle-count.o2": {
+   "f": "audio/qa/QA_L_DESC_COUNT_triangle-count.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3875
+    ],
+    [
+     1,
+     2,
+     0.3875,
+     0.6875
+    ]
+   ],
+   "h": "9087ad2f6a2dedd7",
+   "t": "六个"
+  },
+  "QA_L_DESC_COUNT_triangle-count.o3": {
+   "f": "audio/qa/QA_L_DESC_COUNT_triangle-count.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.4
+    ],
+    [
+     1,
+     2,
+     0.4,
+     0.7
+    ]
+   ],
+   "h": "9dafdfa66224690f",
+   "t": "七个"
+  },
   "QA_L_DESC_SHAPE_hexagon-sides": {
    "f": "audio/qa/QA_L_DESC_SHAPE_hexagon-sides.mp3",
    "d": 2.256,
@@ -1436,6 +1764,188 @@
    ],
    "h": "57554e87cc9d81e6",
    "t": "这个图形有几条边？"
+  },
+  "QA_L_DESC_SHAPE_hexagon-sides.o0": {
+   "f": "audio/qa/QA_L_DESC_SHAPE_hexagon-sides.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.275
+    ],
+    [
+     1,
+     2,
+     0.275,
+     0.6625
+    ]
+   ],
+   "h": "dc26c12174fc9ee0",
+   "t": "五条"
+  },
+  "QA_L_DESC_SHAPE_hexagon-sides.o1": {
+   "f": "audio/qa/QA_L_DESC_SHAPE_hexagon-sides.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.35
+    ],
+    [
+     1,
+     2,
+     0.35,
+     0.7375
+    ]
+   ],
+   "h": "08baa99f8b9ecdf9",
+   "t": "六条"
+  },
+  "QA_L_DESC_SHAPE_hexagon-sides.o2": {
+   "f": "audio/qa/QA_L_DESC_SHAPE_hexagon-sides.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.35
+    ],
+    [
+     1,
+     2,
+     0.35,
+     0.725
+    ]
+   ],
+   "h": "a4d9a0e88e516472",
+   "t": "七条"
+  },
+  "QA_L_DESC_SHAPE_hexagon-sides.o3": {
+   "f": "audio/qa/QA_L_DESC_SHAPE_hexagon-sides.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3125
+    ],
+    [
+     1,
+     2,
+     0.3125,
+     0.7125
+    ]
+   ],
+   "h": "6b5c2a47d2cfb68d",
+   "t": "八条"
+  },
+  "QA_L_PICK_CMP_read-tallest-bar": {
+   "f": "audio/qa/QA_L_PICK_CMP_read-tallest-bar.mp3",
+   "d": 2.28,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3
+    ],
+    [
+     1,
+     3,
+     0.3125,
+     0.7
+    ],
+    [
+     3,
+     5,
+     0.725,
+     1.1375
+    ],
+    [
+     5,
+     6,
+     1.1375,
+     1.2375
+    ],
+    [
+     6,
+     9,
+     1.25,
+     1.7
+    ]
+   ],
+   "h": "1433e77e1f5d8089",
+   "t": "请选出最高的柱子。"
+  },
+  "QA_L_PICK_COUNT_read-five-stars": {
+   "f": "audio/qa/QA_L_PICK_COUNT_read-five-stars.mp3",
+   "d": 2.304,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.2875
+    ],
+    [
+     1,
+     3,
+     0.3,
+     0.775
+    ],
+    [
+     3,
+     4,
+     0.8,
+     0.9625
+    ],
+    [
+     4,
+     5,
+     0.9625,
+     1.0625
+    ],
+    [
+     5,
+     9,
+     1.075,
+     1.725
+    ]
+   ],
+   "h": "c9c02f94500ac922",
+   "t": "请选出五个五角星。"
+  },
+  "QA_L_PICK_SHAPE_read-triangle": {
+   "f": "audio/qa/QA_L_PICK_SHAPE_read-triangle.mp3",
+   "d": 2.112,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3125
+    ],
+    [
+     1,
+     3,
+     0.325,
+     0.7375
+    ],
+    [
+     3,
+     7,
+     0.7625,
+     1.525
+    ]
+   ],
+   "h": "18bff48d5f2ce815",
+   "t": "请选出三角形。"
   },
   "QA_L_SAME_DIFFPICK_find-diff-count": {
    "f": "audio/qa/QA_L_SAME_DIFFPICK_find-diff-count.mp3",
@@ -2417,6 +2927,164 @@
    "h": "a78638a2e0e6583d",
    "t": "菱形"
   },
+  "QA_P_PICK_CMP_read-tallest": {
+   "f": "audio/qa/QA_P_PICK_CMP_read-tallest.mp3",
+   "d": 2.28,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3
+    ],
+    [
+     1,
+     3,
+     0.3125,
+     0.7
+    ],
+    [
+     3,
+     5,
+     0.725,
+     1.1375
+    ],
+    [
+     5,
+     6,
+     1.1375,
+     1.2375
+    ],
+    [
+     6,
+     9,
+     1.25,
+     1.7
+    ]
+   ],
+   "h": "1433e77e1f5d8089",
+   "t": "请选出最高的柱子。"
+  },
+  "QA_P_PICK_COLOR_read-deepest-blue": {
+   "f": "audio/qa/QA_P_PICK_COLOR_read-deepest-blue.mp3",
+   "d": 3.144,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.2875
+    ],
+    [
+     1,
+     3,
+     0.3,
+     0.65
+    ],
+    [
+     3,
+     5,
+     0.675,
+     1.15
+    ],
+    [
+     5,
+     6,
+     1.1625,
+     1.3875
+    ],
+    [
+     6,
+     7,
+     1.3875,
+     1.5875
+    ],
+    [
+     7,
+     8,
+     1.5875,
+     1.675
+    ],
+    [
+     8,
+     10,
+     1.7,
+     2.0625
+    ],
+    [
+     10,
+     13,
+     2.075,
+     2.55
+    ]
+   ],
+   "h": "620ddb10e551a179",
+   "t": "请选出颜色最深的蓝色方块。"
+  },
+  "QA_P_PICK_COUNT_read-five-dots": {
+   "f": "audio/qa/QA_P_PICK_COUNT_read-five-dots.mp3",
+   "d": 2.064,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.2875
+    ],
+    [
+     1,
+     3,
+     0.3,
+     0.7
+    ],
+    [
+     3,
+     4,
+     0.725,
+     0.875
+    ],
+    [
+     4,
+     5,
+     0.875,
+     0.9625
+    ],
+    [
+     5,
+     8,
+     0.975,
+     1.4875
+    ]
+   ],
+   "h": "8e8d72044b2195c3",
+   "t": "请选出五个圆点。"
+  },
+  "QA_P_PICK_SHAPE_read-hexagon": {
+   "f": "audio/qa/QA_P_PICK_SHAPE_read-hexagon.mp3",
+   "d": 2.04,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3125
+    ],
+    [
+     1,
+     3,
+     0.325,
+     0.7125
+    ],
+    [
+     3,
+     7,
+     0.7375,
+     1.4625
+    ]
+   ],
+   "h": "649b7abf8ac50c03",
+   "t": "请选出六边形。"
+  },
   "QA_P_SAME_DIFFPICK_find-diff-block": {
    "f": "audio/qa/QA_P_SAME_DIFFPICK_find-diff-block.mp3",
    "d": 2.832,
@@ -2887,9 +3555,9 @@
    "h": "22ae3002704a5beb",
    "t": "哪一根小棒最短？"
   },
-  "QA_T_CMP_THICK_thickest-rope": {
-   "f": "audio/qa/QA_T_CMP_THICK_thickest-rope.mp3",
-   "d": 2.088,
+  "QA_T_CMP_THICK_thickest-candle": {
+   "f": "audio/qa/QA_T_CMP_THICK_thickest-candle.mp3",
+   "d": 2.04,
    "s": [
     [
      0,
@@ -2907,29 +3575,29 @@
      2,
      3,
      0.4375,
-     0.6
+     0.5625
     ],
     [
      3,
      5,
-     0.6125,
-     0.9375
+     0.575,
+     0.9125
     ],
     [
      5,
      6,
-     0.95,
-     1.1625
+     0.9375,
+     1.1375
     ],
     [
      6,
      8,
-     1.1625,
-     1.525
+     1.1375,
+     1.475
     ]
    ],
-   "h": "7785cb05d320cd0a",
-   "t": "哪一根绳子最粗？"
+   "h": "bde19dec5dc4297b",
+   "t": "哪一根蜡烛最粗？"
   },
   "QA_T_DESC_COLOR_block-color": {
    "f": "audio/qa/QA_T_DESC_COLOR_block-color.mp3",
@@ -3255,6 +3923,70 @@
    "h": "a5f1fb54c32fd902",
    "t": "青蛙"
   },
+  "QA_T_PICK_COUNT_read-three-apples": {
+   "f": "audio/qa/QA_T_PICK_COUNT_read-three-apples.mp3",
+   "d": 2.184,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3
+    ],
+    [
+     1,
+     3,
+     0.3125,
+     0.725
+    ],
+    [
+     3,
+     4,
+     0.75,
+     0.975
+    ],
+    [
+     4,
+     5,
+     0.975,
+     1.05
+    ],
+    [
+     5,
+     8,
+     1.0625,
+     1.5875
+    ]
+   ],
+   "h": "1be7a6f78b4d64e9",
+   "t": "请选出三个苹果。"
+  },
+  "QA_T_PICK_WORD_read-apple": {
+   "f": "audio/qa/QA_T_PICK_WORD_read-apple.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3125
+    ],
+    [
+     1,
+     3,
+     0.325,
+     0.6625
+    ],
+    [
+     3,
+     6,
+     0.675,
+     1.225
+    ]
+   ],
+   "h": "afb37ad37c8511ab",
+   "t": "请选出苹果。"
+  },
   "QA_T_SAME_DIFFPICK_find-diff-shape": {
    "f": "audio/qa/QA_T_SAME_DIFFPICK_find-diff-shape.mp3",
    "d": 2.808,
@@ -3459,6 +4191,62 @@
    "h": "e5705e310cebd153",
    "t": "九加八等于几？"
   },
+  "QA_U_ADD_DIG_nine-plus-eight.o0": {
+   "f": "audio/qa/QA_U_ADD_DIG_nine-plus-eight.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7875
+    ]
+   ],
+   "h": "0387bd3221877fae",
+   "t": "十六"
+  },
+  "QA_U_ADD_DIG_nine-plus-eight.o1": {
+   "f": "audio/qa/QA_U_ADD_DIG_nine-plus-eight.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.775
+    ]
+   ],
+   "h": "f3de5cd4e407acce",
+   "t": "十七"
+  },
+  "QA_U_ADD_DIG_nine-plus-eight.o2": {
+   "f": "audio/qa/QA_U_ADD_DIG_nine-plus-eight.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7125
+    ]
+   ],
+   "h": "602fd815d929bc92",
+   "t": "十八"
+  },
+  "QA_U_ADD_DIG_nine-plus-eight.o3": {
+   "f": "audio/qa/QA_U_ADD_DIG_nine-plus-eight.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7875
+    ]
+   ],
+   "h": "e4b040364c36bf2f",
+   "t": "十九"
+  },
   "QA_U_ADD_DIG_nine-plus-nine": {
    "f": "audio/qa/QA_U_ADD_DIG_nine-plus-nine.mp3",
    "d": 1.968,
@@ -3484,6 +4272,62 @@
    ],
    "h": "a7814d5b6a656c72",
    "t": "九加九等于几？"
+  },
+  "QA_U_ADD_DIG_nine-plus-nine.o0": {
+   "f": "audio/qa/QA_U_ADD_DIG_nine-plus-nine.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.775
+    ]
+   ],
+   "h": "f3de5cd4e407acce",
+   "t": "十七"
+  },
+  "QA_U_ADD_DIG_nine-plus-nine.o1": {
+   "f": "audio/qa/QA_U_ADD_DIG_nine-plus-nine.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7125
+    ]
+   ],
+   "h": "602fd815d929bc92",
+   "t": "十八"
+  },
+  "QA_U_ADD_DIG_nine-plus-nine.o2": {
+   "f": "audio/qa/QA_U_ADD_DIG_nine-plus-nine.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7875
+    ]
+   ],
+   "h": "e4b040364c36bf2f",
+   "t": "十九"
+  },
+  "QA_U_ADD_DIG_nine-plus-nine.o3": {
+   "f": "audio/qa/QA_U_ADD_DIG_nine-plus-nine.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.75
+    ]
+   ],
+   "h": "75e299b6b77e76b5",
+   "t": "二十"
   },
   "QA_U_ADD_DIG_seven-plus-six": {
    "f": "audio/qa/QA_U_ADD_DIG_seven-plus-six.mp3",
@@ -3511,61 +4355,203 @@
    "h": "38fa164b9bc81186",
    "t": "七加六等于几？"
   },
-  "QA_U_ADD_OBJ_eight-plus-nine-obj": {
-   "f": "audio/qa/QA_U_ADD_OBJ_eight-plus-nine-obj.mp3",
-   "d": 3.312,
+  "QA_U_ADD_DIG_seven-plus-six.o0": {
+   "f": "audio/qa/QA_U_ADD_DIG_seven-plus-six.o0.mp3",
+   "d": 1.872,
    "s": [
     [
      0,
      2,
      0.1,
-     0.35
+     0.7
+    ]
+   ],
+   "h": "75f99aa528fa92d3",
+   "t": "十二"
+  },
+  "QA_U_ADD_DIG_seven-plus-six.o1": {
+   "f": "audio/qa/QA_U_ADD_DIG_seven-plus-six.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7375
+    ]
+   ],
+   "h": "dc1e424473742d80",
+   "t": "十三"
+  },
+  "QA_U_ADD_DIG_seven-plus-six.o2": {
+   "f": "audio/qa/QA_U_ADD_DIG_seven-plus-six.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7625
+    ]
+   ],
+   "h": "babdeda64358d922",
+   "t": "十四"
+  },
+  "QA_U_ADD_DIG_seven-plus-six.o3": {
+   "f": "audio/qa/QA_U_ADD_DIG_seven-plus-six.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7625
+    ]
+   ],
+   "h": "863e8a392d5ea03c",
+   "t": "十五"
+  },
+  "QA_U_ADD_OBJ_six-plus-two-obj": {
+   "f": "audio/qa/QA_U_ADD_OBJ_six-plus-two-obj.mp3",
+   "d": 3.336,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3
+    ],
+    [
+     1,
+     2,
+     0.3,
+     0.3875
     ],
     [
      2,
      4,
-     0.3625,
-     0.725
+     0.4,
+     0.825
     ],
     [
      4,
      5,
-     0.75,
-     0.9375
+     0.85,
+     1.0125
     ],
     [
      5,
      6,
-     0.95,
-     1.1375
+     1.025,
+     1.2
     ],
     [
      6,
      7,
-     1.1375,
-     1.2125
+     1.2,
+     1.2625
     ],
     [
      7,
      10,
-     1.225,
-     1.975
+     1.275,
+     2.025
     ],
     [
      10,
      12,
-     1.975,
-     2.2875
+     2.025,
+     2.325
     ],
     [
      12,
      15,
-     2.3,
-     2.725
+     2.3375,
+     2.75
     ]
    ],
-   "h": "c1ff5733825885a0",
-   "t": "八个苹果加九个苹果，一共几个？"
+   "h": "702ccc3a08db574c",
+   "t": "六个苹果加两个苹果，一共几个？"
+  },
+  "QA_U_ADD_OBJ_six-plus-two-obj.o0": {
+   "f": "audio/qa/QA_U_ADD_OBJ_six-plus-two-obj.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3875
+    ],
+    [
+     1,
+     2,
+     0.3875,
+     0.6875
+    ]
+   ],
+   "h": "9087ad2f6a2dedd7",
+   "t": "六个"
+  },
+  "QA_U_ADD_OBJ_six-plus-two-obj.o1": {
+   "f": "audio/qa/QA_U_ADD_OBJ_six-plus-two-obj.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.4
+    ],
+    [
+     1,
+     2,
+     0.4,
+     0.7
+    ]
+   ],
+   "h": "9dafdfa66224690f",
+   "t": "七个"
+  },
+  "QA_U_ADD_OBJ_six-plus-two-obj.o2": {
+   "f": "audio/qa/QA_U_ADD_OBJ_six-plus-two-obj.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.325
+    ],
+    [
+     1,
+     2,
+     0.325,
+     0.65
+    ]
+   ],
+   "h": "653c18e7815edd7a",
+   "t": "八个"
+  },
+  "QA_U_ADD_OBJ_six-plus-two-obj.o3": {
+   "f": "audio/qa/QA_U_ADD_OBJ_six-plus-two-obj.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3625
+    ],
+    [
+     1,
+     2,
+     0.3625,
+     0.6625
+    ]
+   ],
+   "h": "9cde94c64e3bdcd9",
+   "t": "九个"
   },
   "QA_U_CMP_BACK_back-animal": {
    "f": "audio/qa/QA_U_CMP_BACK_back-animal.mp3",
@@ -3791,9 +4777,9 @@
    "h": "84003d55bc6b372d",
    "t": "哪一辆车开得最慢？"
   },
-  "QA_U_CMP_THICK_thickest-rope": {
-   "f": "audio/qa/QA_U_CMP_THICK_thickest-rope.mp3",
-   "d": 2.088,
+  "QA_U_CMP_THICK_thickest-candle": {
+   "f": "audio/qa/QA_U_CMP_THICK_thickest-candle.mp3",
+   "d": 2.04,
    "s": [
     [
      0,
@@ -3811,29 +4797,29 @@
      2,
      3,
      0.4375,
-     0.6
+     0.5625
     ],
     [
      3,
      5,
-     0.6125,
-     0.9375
+     0.575,
+     0.9125
     ],
     [
      5,
      6,
-     0.95,
-     1.1625
+     0.9375,
+     1.1375
     ],
     [
      6,
      8,
-     1.1625,
-     1.525
+     1.1375,
+     1.475
     ]
    ],
-   "h": "7785cb05d320cd0a",
-   "t": "哪一根绳子最粗？"
+   "h": "bde19dec5dc4297b",
+   "t": "哪一根蜡烛最粗？"
   },
   "QA_U_DESC_COUNT_circle-count-seven": {
    "f": "audio/qa/QA_U_DESC_COUNT_circle-count-seven.mp3",
@@ -3873,6 +4859,86 @@
    "h": "2929c38d767c8060",
    "t": "图上有几个圆形？"
   },
+  "QA_U_DESC_COUNT_circle-count-seven.o0": {
+   "f": "audio/qa/QA_U_DESC_COUNT_circle-count-seven.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3875
+    ],
+    [
+     1,
+     2,
+     0.3875,
+     0.6875
+    ]
+   ],
+   "h": "9087ad2f6a2dedd7",
+   "t": "六个"
+  },
+  "QA_U_DESC_COUNT_circle-count-seven.o1": {
+   "f": "audio/qa/QA_U_DESC_COUNT_circle-count-seven.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.4
+    ],
+    [
+     1,
+     2,
+     0.4,
+     0.7
+    ]
+   ],
+   "h": "9dafdfa66224690f",
+   "t": "七个"
+  },
+  "QA_U_DESC_COUNT_circle-count-seven.o2": {
+   "f": "audio/qa/QA_U_DESC_COUNT_circle-count-seven.o2.mp3",
+   "d": 1.224,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.325
+    ],
+    [
+     1,
+     2,
+     0.325,
+     0.65
+    ]
+   ],
+   "h": "653c18e7815edd7a",
+   "t": "八个"
+  },
+  "QA_U_DESC_COUNT_circle-count-seven.o3": {
+   "f": "audio/qa/QA_U_DESC_COUNT_circle-count-seven.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3625
+    ],
+    [
+     1,
+     2,
+     0.3625,
+     0.6625
+    ]
+   ],
+   "h": "9cde94c64e3bdcd9",
+   "t": "九个"
+  },
   "QA_U_DESC_SHAPE_cross": {
    "f": "audio/qa/QA_U_DESC_SHAPE_cross.mp3",
    "d": 2.088,
@@ -3910,6 +4976,206 @@
    ],
    "h": "bfeb718e4ccca8d9",
    "t": "图上是什么图形？"
+  },
+  "QA_U_DESC_SHAPE_cross.o0": {
+   "f": "audio/qa/QA_U_DESC_SHAPE_cross.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7375
+    ]
+   ],
+   "h": "81dde2b7a7f2d4e6",
+   "t": "圆形"
+  },
+  "QA_U_DESC_SHAPE_cross.o1": {
+   "f": "audio/qa/QA_U_DESC_SHAPE_cross.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7375
+    ]
+   ],
+   "h": "fecf598ce06da72a",
+   "t": "十字"
+  },
+  "QA_U_DESC_SHAPE_cross.o2": {
+   "f": "audio/qa/QA_U_DESC_SHAPE_cross.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7375
+    ]
+   ],
+   "h": "a78638a2e0e6583d",
+   "t": "菱形"
+  },
+  "QA_U_DESC_SHAPE_cross.o3": {
+   "f": "audio/qa/QA_U_DESC_SHAPE_cross.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     3,
+     0.1,
+     0.9
+    ]
+   ],
+   "h": "5fc78f808817bbd7",
+   "t": "五边形"
+  },
+  "QA_U_PICK_DEEP_read-deepest-cup": {
+   "f": "audio/qa/QA_U_PICK_DEEP_read-deepest-cup.mp3",
+   "d": 2.52,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3
+    ],
+    [
+     1,
+     3,
+     0.3125,
+     0.6875
+    ],
+    [
+     3,
+     4,
+     0.6875,
+     0.95
+    ],
+    [
+     4,
+     5,
+     0.9625,
+     1.1875
+    ],
+    [
+     5,
+     6,
+     1.1875,
+     1.4125
+    ],
+    [
+     6,
+     7,
+     1.4125,
+     1.5
+    ],
+    [
+     7,
+     8,
+     1.5125,
+     1.6875
+    ],
+    [
+     8,
+     10,
+     1.6875,
+     1.95
+    ]
+   ],
+   "h": "1256a5cd87c36a1c",
+   "t": "请选出水最深的那杯。"
+  },
+  "QA_U_PICK_ORD_read-ordinal-third": {
+   "f": "audio/qa/QA_U_PICK_ORD_read-ordinal-third.mp3",
+   "d": 3.024,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3
+    ],
+    [
+     1,
+     3,
+     0.3125,
+     0.8375
+    ],
+    [
+     3,
+     4,
+     0.8625,
+     1.0625
+    ],
+    [
+     4,
+     5,
+     1.0625,
+     1.2125
+    ],
+    [
+     5,
+     7,
+     1.2375,
+     1.5875
+    ],
+    [
+     7,
+     8,
+     1.5875,
+     1.725
+    ],
+    [
+     8,
+     9,
+     1.725,
+     1.8
+    ],
+    [
+     9,
+     10,
+     1.8125,
+     2.0125
+    ],
+    [
+     10,
+     13,
+     2.0125,
+     2.4625
+    ]
+   ],
+   "h": "99864af991c45cfc",
+   "t": "请选出排在第三位的小动物。"
+  },
+  "QA_U_PICK_SHAPE_read-cross": {
+   "f": "audio/qa/QA_U_PICK_SHAPE_read-cross.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3125
+    ],
+    [
+     1,
+     3,
+     0.325,
+     0.7
+    ],
+    [
+     3,
+     6,
+     0.7125,
+     1.2375
+    ]
+   ],
+   "h": "3dbd07b2110cc201",
+   "t": "请选出十字。"
   },
   "QA_U_SAME_DIFFPICK_find-diff-speed": {
    "f": "audio/qa/QA_U_SAME_DIFFPICK_find-diff-speed.mp3",
@@ -3966,6 +5232,52 @@
    ],
    "h": "85eaffaa570f932f",
    "t": "哪一辆车和其他不一样？"
+  },
+  "common_answer_head": {
+   "f": "audio/qa/common_answer_head.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.475
+    ],
+    [
+     2,
+     3,
+     0.475,
+     0.8125
+    ]
+   ],
+   "h": "fb5e8e8b8007e9a8",
+   "t": "答案有"
+  },
+  "common_answer_tail": {
+   "f": "audio/qa/common_answer_tail.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.2375
+    ],
+    [
+     1,
+     3,
+     0.25,
+     0.5875
+    ],
+    [
+     3,
+     6,
+     0.6,
+     1.1125
+    ]
+   ],
+   "h": "1e3a217a5fec0c35",
+   "t": "你选择哪个？"
   }
  }
 }

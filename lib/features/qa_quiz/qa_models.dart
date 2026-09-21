@@ -7,7 +7,7 @@ enum QaKind {
   /// 看图说话：看着图，选出说得对的那句话。
   describe('看图说话', 'DESC'),
 
-  /// 阅读选图：读题目文字（**不朗读**，这是阅读练习），选出对应的图片。
+  /// 阅读选图：看题目文字，选出对应的图片（题面也朗读，选项是图没法读）。
   pickImage('阅读选图', 'PICK'),
 
   /// 一样 / 不一样：比一比、找出一样的、找出不一样的。
@@ -54,7 +54,6 @@ class QaQuestion {
     required this.kind,
     required this.sub,
     required this.prompt,
-    required this.readPrompt,
     required this.scene,
     required this.options,
     required this.answer,
@@ -73,9 +72,6 @@ class QaQuestion {
   /// 题面文字。**它同时也是朗读文字和屏幕上显示的文字**，三者必须一致，
   /// 语音高亮才能对得上（所以题面里不要出现阿拉伯数字）。
   final String prompt;
-
-  /// 是否朗读题面。阅读选图题不朗读 —— 那是给孩子的阅读练习。
-  final bool readPrompt;
 
   /// 题面配图（0~3 张，横排展示）。
   final List<Pic> scene;
@@ -105,6 +101,23 @@ class QaQuestion {
 
   /// 第 [i] 个选项的音频键。
   String optionClipKey(int i) => '$clipKey.o$i';
+}
+
+/// 一题的朗读顺序里，题面之后紧接着说的那句「答案有」。
+const String kQaAnswerHeadKey = 'common_answer_head';
+
+/// 选项读完之后说的那句「你选择哪个」。
+const String kQaAnswerTailKey = 'common_answer_tail';
+
+/// 整段跟读里的一小节：题面 / 「答案有」/ 某个选项 / 「你选择哪个」。
+@immutable
+class QaReadSeg {
+  const QaReadSeg(this.key, this.clip);
+
+  /// 片段键，和 [QaQuestion.clipKey] / [QaQuestion.optionClipKey] 同一套。
+  final String key;
+
+  final QaVoiceClip clip;
 }
 
 /// 年龄段编码，和找规律题库保持一致。
@@ -150,6 +163,7 @@ Pic picFromJson(Map<String, dynamic> j) {
     'lengthBar' => Pic.lengthBar(_int(j['level']), base: _int(j['base'])),
     'thickness' => Pic.thickness(_int(j['level']), base: _int(j['base'])),
     'widthBar' => Pic.widthBar(_int(j['level']), base: _int(j['base'])),
+    'candle' => Pic.candle(_int(j['level']), base: _int(j['base'])),
     'blob' => Pic.blob(_int(j['level']), base: _int(j['base'])),
     'distance' => Pic.distance(_int(j['level']), base: _int(j['base'])),
     'speed' => Pic.speed(_int(j['level']),
@@ -183,7 +197,6 @@ QaQuestion qaQuestionFromJson(Map<String, dynamic> j) {
     kind: QaKind.parse(j['kind'] as String),
     sub: (j['sub'] as String?) ?? '',
     prompt: j['prompt'] as String,
-    readPrompt: (j['read'] as bool?) ?? true,
     scene: [
       for (final s in (j['scene'] as List?) ?? const [])
         picFromJson(Map<String, dynamic>.from(s as Map)),

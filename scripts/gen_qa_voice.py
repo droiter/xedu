@@ -3,8 +3,12 @@
 
 输入 `assets/data/qa_questions.json`（题目唯一真源），为每道题生成：
 
-  - `assets/audio/qa/<file>.mp3`        题面朗读
-  - `assets/audio/qa/<file>.o<i>.mp3`   选项朗读（仅低龄段，孩子还不认字）
+  - `assets/audio/qa/<file>.mp3`        题面朗读（所有题都读）
+  - `assets/audio/qa/<file>.o<i>.mp3`   选项朗读（只有带文字的选项才有）
+
+另外生成两句共用的连接语：`common_answer_head`（「答案有」）、
+`common_answer_tail`（「你选择哪个」）—— 一题的朗读顺序是
+题面 → 答案有 → 各文字选项 → 你选择哪个。
 
 同时写出 `assets/data/qa_voice.json`，里面是每个音频的时长和**逐词起止时间**，
 App 靠它做「朗读时文字跟随高亮」。时间轴按字符下标存，直接对应题面文字。
@@ -38,8 +42,9 @@ RATE = "+0%"
 CONCURRENCY = 6
 RETRIES = 3
 
-# 只有还不认字的年龄段才给选项配音，大孩子自己读题。
-SPEAK_OPTION_AGES = {"baby", "toddler", "preschool"}
+# 题面之后、选项之前/之后的两句连接语，所有题共用同一份音频。
+HEAD_TEXT = "答案有"
+TAIL_TEXT = "你选择哪个？"
 
 # 中文标点，做兜底均分时权重比汉字低。
 PUNCT = set("，。？！、；：,.?!;:…—～~ 「」『』（）()《》\"'")
@@ -208,16 +213,16 @@ async def build_clip(sem, key: str, text: str, cached: dict, force: bool):
 
 
 def clips_of(q: dict) -> list[tuple[str, str]]:
-    """一道题要生成的音频片段：先题面，后选项（低龄段才配）。"""
+    """一道题要生成的音频片段：先题面，后所有带文字的选项。
+
+    纯图片的选项没得读（App 里改用边框辉光提示），所以不给它配音。
+    """
     base = file_base(qid_of(q))
-    out: list[tuple[str, str]] = []
-    if q.get("read", True):
-        out.append((base, q["prompt"]))
-    if q["age"] in SPEAK_OPTION_AGES:
-        for i, opt in enumerate(q["options"]):
-            label = (opt.get("text") or "").strip()
-            if label:
-                out.append((f"{base}.o{i}", label))
+    out: list[tuple[str, str]] = [(base, q["prompt"])]
+    for i, opt in enumerate(q["options"]):
+        label = (opt.get("text") or "").strip()
+        if label:
+            out.append((f"{base}.o{i}", label))
     return out
 
 
@@ -234,8 +239,11 @@ async def main() -> int:
     if MANIFEST.exists():
         cached = json.loads(MANIFEST.read_text(encoding="utf-8")).get("clips", {})
 
-    wanted: list[tuple[str, str]] = []
-    seen: set[str] = set()
+    wanted: list[tuple[str, str]] = [
+        ("common_answer_head", HEAD_TEXT),
+        ("common_answer_tail", TAIL_TEXT),
+    ]
+    seen: set[str] = {k for k, _ in wanted}
     for q in questions:
         for key, text in clips_of(q):
             if key in seen:

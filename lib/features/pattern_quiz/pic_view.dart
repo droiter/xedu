@@ -165,6 +165,7 @@ class PicView extends StatelessWidget {
           PicKind.lengthBar => _lengthBar(box),
           PicKind.thickness => _thickness(box),
           PicKind.widthBar => _widthBar(box),
+          PicKind.candle => _candle(box),
           PicKind.blob => _blob(box),
           PicKind.distance => _distance(box, scheme),
           PicKind.speed => _speed(box, scheme),
@@ -537,6 +538,48 @@ class PicView extends StatelessWidget {
     );
   }
 
+  // 粗细（蜡烛）：蜡烛身子的宽度随档位增长（0..4）。
+  //
+  // 火苗、灯芯、身高都不跟着变 —— 比「粗细」时只有粗细能变，否则成了比高矮。
+  Widget _candle(double box) {
+    const frac = [0.15, 0.25, 0.37, 0.50, 0.64];
+    final lvl = _lvl5(pic.level);
+    final color = _barColor();
+    final w = box * frac[lvl];
+    return SizedBox(
+      width: box,
+      height: box,
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              width: box * 0.15,
+              height: box * 0.19,
+              child: CustomPaint(painter: _FlamePainter()),
+            ),
+            Container(
+              width: box * 0.035,
+              height: box * 0.06,
+              color: const Color(0xFF6D4C41),
+            ),
+            Container(
+              width: w,
+              height: box * 0.66,
+              decoration: BoxDecoration(
+                color: color,
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(w * 0.5),
+                  bottom: Radius.circular(w * 0.12),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   // 胖瘦：椭圆（高度固定），宽度随档位增长（0..4）。
   Widget _blob(double box) {
     const frac = [0.30, 0.45, 0.62, 0.80, 0.96];
@@ -742,6 +785,39 @@ class PicView extends StatelessWidget {
       child: Icon(Icons.image_outlined, size: box * 0.45, color: Colors.black38),
     );
   }
+}
+
+/// 蜡烛火苗：水滴形，外焰橙、内焰黄。
+class _FlamePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final flame = Path()
+      ..moveTo(w / 2, 0)
+      ..cubicTo(w, h * 0.46, w * 0.9, h, w / 2, h)
+      ..cubicTo(w * 0.1, h, 0, h * 0.46, w / 2, 0)
+      ..close();
+    canvas.drawPath(
+      flame,
+      Paint()
+        ..color = const Color(0xFFFF9800)
+        ..isAntiAlias = true,
+    );
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: Offset(w / 2, h * 0.70),
+        width: w * 0.44,
+        height: h * 0.42,
+      ),
+      Paint()
+        ..color = const Color(0xFFFFE082)
+        ..isAntiAlias = true,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_FlamePainter oldDelegate) => false;
 }
 
 /// 绘制内置几何图形，可绕中心旋转 90° 的整数倍。

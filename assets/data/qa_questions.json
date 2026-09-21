@@ -141,10 +141,10 @@
         { "kind": "emojiSingle", "emoji": "❓" }
       ],
       "options": [
-        { "pic": { "kind": "dots", "n": 1, "base": 0 }, "text": "一个" },
-        { "pic": { "kind": "dots", "n": 2, "base": 0 }, "text": "两个" },
-        { "pic": { "kind": "dots", "n": 3, "base": 0 }, "text": "三个" },
-        { "pic": { "kind": "dots", "n": 4, "base": 0 }, "text": "四个" }
+        { "pic": { "kind": "emojiCount", "emoji": "🍎", "n": 1 }, "text": "一个" },
+        { "pic": { "kind": "emojiCount", "emoji": "🍎", "n": 2 }, "text": "两个" },
+        { "pic": { "kind": "emojiCount", "emoji": "🍎", "n": 3 }, "text": "三个" },
+        { "pic": { "kind": "emojiCount", "emoji": "🍎", "n": 4 }, "text": "四个" }
       ],
       "answer": 1
     },
@@ -320,7 +320,6 @@
       "sub": "WORD",
       "stars": 1,
       "prompt": "请选出苹果。",
-      "read": false,
       "scene": [],
       "options": [
         { "pic": { "kind": "emojiSingle", "emoji": "🍎" } },
@@ -337,7 +336,6 @@
       "sub": "COUNT",
       "stars": 2,
       "prompt": "请选出三个苹果。",
-      "read": false,
       "scene": [],
       "options": [
         { "pic": { "kind": "emojiCount", "emoji": "🍎", "n": 2 } },
@@ -362,10 +360,10 @@
         { "kind": "emojiSingle", "emoji": "❓" }
       ],
       "options": [
-        { "pic": { "kind": "dots", "n": 1, "base": 1 }, "text": "一个" },
-        { "pic": { "kind": "dots", "n": 2, "base": 1 }, "text": "两个" },
-        { "pic": { "kind": "dots", "n": 3, "base": 1 }, "text": "三个" },
-        { "pic": { "kind": "dots", "n": 4, "base": 1 }, "text": "四个" }
+        { "pic": { "kind": "emojiCount", "emoji": "🍎", "n": 1 }, "text": "一个" },
+        { "pic": { "kind": "emojiCount", "emoji": "🍎", "n": 2 }, "text": "两个" },
+        { "pic": { "kind": "emojiCount", "emoji": "🍎", "n": 3 }, "text": "三个" },
+        { "pic": { "kind": "emojiCount", "emoji": "🍎", "n": 4 }, "text": "四个" }
       ],
       "answer": 2
     },
@@ -424,18 +422,18 @@
       "answer": 2
     },
     {
-      "id": "thickest-rope",
+      "id": "thickest-candle",
       "age": "toddler",
       "kind": "compare",
       "sub": "THICK",
       "stars": 2,
-      "prompt": "哪一根绳子最粗？",
+      "prompt": "哪一根蜡烛最粗？",
       "scene": [],
       "options": [
-        { "pic": { "kind": "widthBar", "level": 1, "base": 0 } },
-        { "pic": { "kind": "widthBar", "level": 3, "base": 0 } },
-        { "pic": { "kind": "widthBar", "level": 2, "base": 0 } },
-        { "pic": { "kind": "widthBar", "level": 0, "base": 0 } }
+        { "pic": { "kind": "candle", "level": 1, "base": 0 } },
+        { "pic": { "kind": "candle", "level": 3, "base": 0 } },
+        { "pic": { "kind": "candle", "level": 2, "base": 0 } },
+        { "pic": { "kind": "candle", "level": 0, "base": 0 } }
       ],
       "answer": 1
     },
@@ -511,7 +509,6 @@
       "sub": "COUNT",
       "stars": 2,
       "prompt": "请选出五个圆点。",
-      "read": false,
       "scene": [],
       "options": [
         { "pic": { "kind": "dots", "n": 3, "base": 0 } },
@@ -528,7 +525,6 @@
       "sub": "SHAPE",
       "stars": 2,
       "prompt": "请选出六边形。",
-      "read": false,
       "scene": [],
       "options": [
         { "pic": { "kind": "shape", "base": 0 } },
@@ -545,7 +541,6 @@
       "sub": "COLOR",
       "stars": 2,
       "prompt": "请选出颜色最深的蓝色方块。",
-      "read": false,
       "scene": [],
       "options": [
         { "pic": { "kind": "colorRamp", "base": 0, "level": 1 } },
@@ -562,7 +557,6 @@
       "sub": "CMP",
       "stars": 2,
       "prompt": "请选出最高的柱子。",
-      "read": false,
       "scene": [],
       "options": [
         { "pic": { "kind": "bar", "n": 2 } },
@@ -663,10 +657,10 @@
         { "kind": "emojiSingle", "emoji": "❓" }
       ],
       "options": [
-        { "pic": { "kind": "dots", "n": 4, "base": 4 }, "text": "四个" },
-        { "pic": { "kind": "dots", "n": 5, "base": 4 }, "text": "五个" },
-        { "pic": { "kind": "dots", "n": 6, "base": 4 }, "text": "六个" },
-        { "pic": { "kind": "dots", "n": 7, "base": 4 }, "text": "七个" }
+        { "pic": { "kind": "emojiCount", "emoji": "🍎", "n": 4 }, "text": "四个" },
+        { "pic": { "kind": "emojiCount", "emoji": "🍎", "n": 5 }, "text": "五个" },
+        { "pic": { "kind": "emojiCount", "emoji": "🍎", "n": 6 }, "text": "六个" },
+        { "pic": { "kind": "emojiCount", "emoji": "🍎", "n": 7 }, "text": "七个" }
       ],
       "answer": 1
     },
@@ -812,7 +806,6 @@
       "sub": "SHAPE",
       "stars": 2,
       "prompt": "请选出三角形。",
-      "read": false,
       "scene": [],
       "options": [
         { "pic": { "kind": "shape", "base": 0 } },
@@ -829,7 +822,6 @@
       "sub": "COUNT",
       "stars": 3,
       "prompt": "请选出五个五角星。",
-      "read": false,
       "scene": [],
       "options": [
         { "pic": { "kind": "shapeCount", "base": 3, "n": 4, "level": 0 } },
@@ -846,7 +838,6 @@
       "sub": "CMP",
       "stars": 2,
       "prompt": "请选出最高的柱子。",
-      "read": false,
       "scene": [],
       "options": [
         { "pic": { "kind": "bar", "n": 3 } },
@@ -969,10 +960,10 @@
         { "kind": "emojiSingle", "emoji": "❓" }
       ],
       "options": [
-        { "pic": { "kind": "dots", "n": 7, "base": 3 }, "text": "七个" },
-        { "pic": { "kind": "dots", "n": 8, "base": 3 }, "text": "八个" },
-        { "pic": { "kind": "dots", "n": 9, "base": 3 }, "text": "九个" },
-        { "pic": { "kind": "dots", "n": 10, "base": 3 }, "text": "十个" }
+        { "pic": { "kind": "emojiCount", "emoji": "🍎", "n": 7 }, "text": "七个" },
+        { "pic": { "kind": "emojiCount", "emoji": "🍎", "n": 8 }, "text": "八个" },
+        { "pic": { "kind": "emojiCount", "emoji": "🍎", "n": 9 }, "text": "九个" },
+        { "pic": { "kind": "emojiCount", "emoji": "🍎", "n": 10 }, "text": "十个" }
       ],
       "answer": 2
     },
@@ -1080,7 +1071,6 @@
       "sub": "SHAPE",
       "stars": 2,
       "prompt": "请选出十字。",
-      "read": false,
       "scene": [],
       "options": [
         { "pic": { "kind": "shape", "base": 0 } },
@@ -1097,7 +1087,6 @@
       "sub": "ORD",
       "stars": 3,
       "prompt": "请选出排在第三位的小动物。",
-      "read": false,
       "scene": [{ "kind": "queue", "emojis": ["🐼", "🐻", "🐱", "🦊", "🐰"] }],
       "options": [
         { "pic": { "kind": "emojiSingle", "emoji": "🐼" } },
@@ -1114,7 +1103,6 @@
       "sub": "DEEP",
       "stars": 3,
       "prompt": "请选出水最深的那杯。",
-      "read": false,
       "scene": [],
       "options": [
         { "pic": { "kind": "depth", "level": 1, "base": 1 } },
@@ -1207,40 +1195,40 @@
       "answer": 1
     },
     {
-      "id": "eight-plus-nine-obj",
+      "id": "six-plus-two-obj",
       "age": "upperGrade",
       "kind": "add",
       "sub": "OBJ",
-      "stars": 3,
-      "prompt": "八个苹果加九个苹果，一共几个？",
+      "stars": 2,
+      "prompt": "六个苹果加两个苹果，一共几个？",
       "scene": [
-        { "kind": "emojiCount", "emoji": "🍎", "n": 8 },
+        { "kind": "emojiCount", "emoji": "🍎", "n": 6 },
         { "kind": "emojiSingle", "emoji": "➕" },
-        { "kind": "emojiCount", "emoji": "🍎", "n": 9 },
+        { "kind": "emojiCount", "emoji": "🍎", "n": 2 },
         { "kind": "emojiSingle", "emoji": "＝" },
         { "kind": "emojiSingle", "emoji": "❓" }
       ],
       "options": [
-        { "pic": { "kind": "number", "n": 16 }, "text": "十六个" },
-        { "pic": { "kind": "number", "n": 17 }, "text": "十七个" },
-        { "pic": { "kind": "number", "n": 18 }, "text": "十八个" },
-        { "pic": { "kind": "number", "n": 19 }, "text": "十九个" }
+        { "pic": { "kind": "emojiCount", "emoji": "🍎", "n": 6 }, "text": "六个" },
+        { "pic": { "kind": "emojiCount", "emoji": "🍎", "n": 7 }, "text": "七个" },
+        { "pic": { "kind": "emojiCount", "emoji": "🍎", "n": 8 }, "text": "八个" },
+        { "pic": { "kind": "emojiCount", "emoji": "🍎", "n": 9 }, "text": "九个" }
       ],
-      "answer": 1
+      "answer": 2
     },
     {
-      "id": "thickest-rope",
+      "id": "thickest-candle",
       "age": "upperGrade",
       "kind": "compare",
       "sub": "THICK",
       "stars": 3,
-      "prompt": "哪一根绳子最粗？",
+      "prompt": "哪一根蜡烛最粗？",
       "scene": [],
       "options": [
-        { "pic": { "kind": "widthBar", "level": 2, "base": 7 } },
-        { "pic": { "kind": "widthBar", "level": 0, "base": 7 } },
-        { "pic": { "kind": "widthBar", "level": 1, "base": 7 } },
-        { "pic": { "kind": "widthBar", "level": 3, "base": 7 } }
+        { "pic": { "kind": "candle", "level": 2, "base": 7 } },
+        { "pic": { "kind": "candle", "level": 0, "base": 7 } },
+        { "pic": { "kind": "candle", "level": 1, "base": 7 } },
+        { "pic": { "kind": "candle", "level": 3, "base": 7 } }
       ],
       "answer": 3
     },
