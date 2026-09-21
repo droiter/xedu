@@ -8,7 +8,7 @@ import '../../state/providers.dart';
 /// 视频播放页。
 ///
 /// 这里**不做任何返回拦截**：按返回键随时退回到上一页，
-/// 不弹家长验证，也不受播放进度影响。
+/// 不弹家长验证，也不受播放进度影响。放完则自动退回视频列表。
 class VideoPlayerScreen extends StatefulWidget {
   const VideoPlayerScreen({super.key, required this.video});
 
@@ -21,6 +21,9 @@ class VideoPlayerScreen extends StatefulWidget {
 class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   VideoPlayerController? _controller;
   String? _error;
+
+  /// 已经因为播完退回去过了，别再退第二次。
+  bool _leftAfterEnd = false;
 
   @override
   void initState() {
@@ -38,6 +41,8 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
       await controller.initialize();
       if (!mounted) return;
       setState(() {});
+      // 挂在播放器上而不是写在 build 里：build 期间动导航栈会直接断言失败。
+      controller.addListener(_onPlaybackChanged);
       await controller.play();
     } catch (_) {
       if (!mounted) return;
@@ -56,6 +61,28 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
     });
     await old?.dispose();
     await _init();
+  }
+
+  /// 放完就退回视频列表。
+  void _onPlaybackChanged() {
+    final c = _controller;
+    if (c == null || !mounted || _leftAfterEnd) return;
+    if (!c.value.isCompleted) return;
+    // 先按住声音再退，不然退出去的瞬间还响着。
+    c.pause();
+    _leftAfterEnd = true;
+    Navigator.of(context).maybePop();
+  }
+
+  /// 点画面只用来「接着播」。
+  ///
+  /// 播放中碰到画面**不暂停**：小孩看视频手总在屏幕上摸，一按画面就断了；
+  /// 要暂停请用下面的控制条。
+  void _resumeByTouch() {
+    final c = _controller;
+    if (c == null || !c.value.isInitialized || c.value.isPlaying) return;
+    if (c.value.isCompleted) c.seekTo(Duration.zero);
+    c.play();
   }
 
   @override
@@ -121,29 +148,33 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
         fit: StackFit.expand,
         children: [
           VideoPlayer(c),
-          // 点画面任意位置播放 / 暂停。
+          // 点画面任意位置接着播（播放中点它不做任何事）。
           GestureDetector(
             behavior: HitTestBehavior.opaque,
-            onTap: _togglePlay,
+            onTap: _resumeByTouch,
           ),
           ValueListenableBuilder<VideoPlayerValue>(
             valueListenable: c,
             builder: (context, value, _) => value.isPlaying
                 ? const SizedBox.shrink()
-                : Center(
-                    child: Container(
-                      width: 72,
-                      height: 72,
-                      decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.45),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        value.isCompleted
-                            ? Icons.replay_rounded
-                            : Icons.play_arrow_rounded,
-                        color: Colors.white,
-                        size: 44,
+                // 正中这个圆钮是「指示」，不是按钮：不吃点击，
+                // 点它和点画面别处一样，都交给下面那层 GestureDetector。
+                : IgnorePointer(
+                    child: Center(
+                      child: Container(
+                        width: 72,
+                        height: 72,
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.45),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          value.isCompleted
+                              ? Icons.replay_rounded
+                              : Icons.play_arrow_rounded,
+                          color: Colors.white,
+                          size: 44,
+                        ),
                       ),
                     ),
                   ),
