@@ -170,6 +170,8 @@ Pic picFromJson(Map<String, dynamic> j) {
         emoji: (j['emoji'] as String?) ?? '🚗', base: _int(j['base'])),
     'depth' => Pic.depth(_int(j['level']), base: _int(j['base'])),
     'queue' => Pic.queue([for (final e in j['emojis'] as List) e as String]),
+    'place' => Pic.place(_int(j['level'])),
+    'clock' => Pic.clock(_int(j['n']), minute: _int(j['minute'])),
     'asset' => Pic.asset(j['path'] as String, label: j['label'] as String?),
     _ => throw FormatException('未知的图片类型：$kind'),
   };

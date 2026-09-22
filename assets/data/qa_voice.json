@@ -1,7 +1,7 @@
 {
  "voice": "zh-CN-XiaoxiaoNeural",
  "rate": "+0%",
- "generated": 199,
+ "generated": 542,
  "clips": {
   "QA_B_ADD_DIG_one-plus-one-dig": {
    "f": "audio/qa/QA_B_ADD_DIG_one-plus-one-dig.mp3",
@@ -96,6 +96,300 @@
    ],
    "h": "48b572dfc103eb03",
    "t": "四"
+  },
+  "QA_B_ADD_DIG_one-plus-three-dig": {
+   "f": "audio/qa/QA_B_ADD_DIG_one-plus-three-dig.mp3",
+   "d": 1.944,
+   "s": [
+    [
+     0,
+     3,
+     0.1,
+     0.6875
+    ],
+    [
+     3,
+     5,
+     0.7125,
+     1.025
+    ],
+    [
+     5,
+     7,
+     1.025,
+     1.375
+    ]
+   ],
+   "h": "81c7d51246038270",
+   "t": "一加三等于几？"
+  },
+  "QA_B_ADD_DIG_one-plus-three-dig.o0": {
+   "f": "audio/qa/QA_B_ADD_DIG_one-plus-three-dig.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.5125
+    ]
+   ],
+   "h": "4089c1e626c96ced",
+   "t": "二"
+  },
+  "QA_B_ADD_DIG_one-plus-three-dig.o1": {
+   "f": "audio/qa/QA_B_ADD_DIG_one-plus-three-dig.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.55
+    ]
+   ],
+   "h": "04d597ccb4eac395",
+   "t": "三"
+  },
+  "QA_B_ADD_DIG_one-plus-three-dig.o2": {
+   "f": "audio/qa/QA_B_ADD_DIG_one-plus-three-dig.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.5625
+    ]
+   ],
+   "h": "48b572dfc103eb03",
+   "t": "四"
+  },
+  "QA_B_ADD_DIG_one-plus-three-dig.o3": {
+   "f": "audio/qa/QA_B_ADD_DIG_one-plus-three-dig.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.475
+    ]
+   ],
+   "h": "72225d699db16bbb",
+   "t": "五"
+  },
+  "QA_B_ADD_DIG_two-plus-one-dig": {
+   "f": "audio/qa/QA_B_ADD_DIG_two-plus-one-dig.mp3",
+   "d": 1.968,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.5375
+    ],
+    [
+     2,
+     3,
+     0.55,
+     0.6875
+    ],
+    [
+     3,
+     5,
+     0.7125,
+     1.025
+    ],
+    [
+     5,
+     7,
+     1.025,
+     1.4
+    ]
+   ],
+   "h": "a10ae20da73fe27b",
+   "t": "二加一等于几？"
+  },
+  "QA_B_ADD_DIG_two-plus-one-dig.o0": {
+   "f": "audio/qa/QA_B_ADD_DIG_two-plus-one-dig.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.475
+    ]
+   ],
+   "h": "f62cfe40ad4485eb",
+   "t": "一"
+  },
+  "QA_B_ADD_DIG_two-plus-one-dig.o1": {
+   "f": "audio/qa/QA_B_ADD_DIG_two-plus-one-dig.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.5125
+    ]
+   ],
+   "h": "4089c1e626c96ced",
+   "t": "二"
+  },
+  "QA_B_ADD_DIG_two-plus-one-dig.o2": {
+   "f": "audio/qa/QA_B_ADD_DIG_two-plus-one-dig.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.55
+    ]
+   ],
+   "h": "04d597ccb4eac395",
+   "t": "三"
+  },
+  "QA_B_ADD_DIG_two-plus-one-dig.o3": {
+   "f": "audio/qa/QA_B_ADD_DIG_two-plus-one-dig.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.5625
+    ]
+   ],
+   "h": "48b572dfc103eb03",
+   "t": "四"
+  },
+  "QA_B_ADD_OBJ_one-plus-one-ball": {
+   "f": "audio/qa/QA_B_ADD_OBJ_one-plus-one-ball.mp3",
+   "d": 2.928,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.35
+    ],
+    [
+     2,
+     3,
+     0.3625,
+     0.5625
+    ],
+    [
+     3,
+     4,
+     0.5625,
+     0.7625
+    ],
+    [
+     4,
+     6,
+     0.775,
+     1.0
+    ],
+    [
+     6,
+     8,
+     1.0,
+     1.575
+    ],
+    [
+     8,
+     10,
+     1.575,
+     1.8875
+    ],
+    [
+     10,
+     13,
+     1.9,
+     2.35
+    ]
+   ],
+   "h": "a42dbb138eb1605c",
+   "t": "一个球加一个球，一共几个？"
+  },
+  "QA_B_ADD_OBJ_one-plus-one-ball.o0": {
+   "f": "audio/qa/QA_B_ADD_OBJ_one-plus-one-ball.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.6625
+    ]
+   ],
+   "h": "04b0695f9e2bdcec",
+   "t": "一个"
+  },
+  "QA_B_ADD_OBJ_one-plus-one-ball.o1": {
+   "f": "audio/qa/QA_B_ADD_OBJ_one-plus-one-ball.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.375
+    ],
+    [
+     1,
+     2,
+     0.375,
+     0.6875
+    ]
+   ],
+   "h": "6eac9cba331d0935",
+   "t": "二个"
+  },
+  "QA_B_ADD_OBJ_one-plus-one-ball.o2": {
+   "f": "audio/qa/QA_B_ADD_OBJ_one-plus-one-ball.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.45
+    ],
+    [
+     1,
+     2,
+     0.45,
+     0.7125
+    ]
+   ],
+   "h": "0541603f980c5071",
+   "t": "三个"
+  },
+  "QA_B_ADD_OBJ_one-plus-one-ball.o3": {
+   "f": "audio/qa/QA_B_ADD_OBJ_one-plus-one-ball.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.425
+    ],
+    [
+     1,
+     2,
+     0.425,
+     0.725
+    ]
+   ],
+   "h": "6389ca171ffe229e",
+   "t": "四个"
   },
   "QA_B_ADD_OBJ_one-plus-one-obj": {
    "f": "audio/qa/QA_B_ADD_OBJ_one-plus-one-obj.mp3",
@@ -209,6 +503,446 @@
    "h": "6389ca171ffe229e",
    "t": "四个"
   },
+  "QA_B_ADD_OBJ_one-plus-two-obj": {
+   "f": "audio/qa/QA_B_ADD_OBJ_one-plus-two-obj.mp3",
+   "d": 3.336,
+   "s": [
+    [
+     0,
+     4,
+     0.1,
+     0.7875
+    ],
+    [
+     4,
+     5,
+     0.8125,
+     0.975
+    ],
+    [
+     5,
+     6,
+     0.9875,
+     1.1625
+    ],
+    [
+     6,
+     7,
+     1.1625,
+     1.2375
+    ],
+    [
+     7,
+     10,
+     1.25,
+     1.9875
+    ],
+    [
+     10,
+     12,
+     1.9875,
+     2.3
+    ],
+    [
+     12,
+     15,
+     2.3125,
+     2.75
+    ]
+   ],
+   "h": "c528a2db5678e23a",
+   "t": "一个苹果加两个苹果，一共几个？"
+  },
+  "QA_B_ADD_OBJ_one-plus-two-obj.o0": {
+   "f": "audio/qa/QA_B_ADD_OBJ_one-plus-two-obj.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.375
+    ],
+    [
+     1,
+     2,
+     0.375,
+     0.6875
+    ]
+   ],
+   "h": "6eac9cba331d0935",
+   "t": "二个"
+  },
+  "QA_B_ADD_OBJ_one-plus-two-obj.o1": {
+   "f": "audio/qa/QA_B_ADD_OBJ_one-plus-two-obj.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.45
+    ],
+    [
+     1,
+     2,
+     0.45,
+     0.7125
+    ]
+   ],
+   "h": "0541603f980c5071",
+   "t": "三个"
+  },
+  "QA_B_ADD_OBJ_one-plus-two-obj.o2": {
+   "f": "audio/qa/QA_B_ADD_OBJ_one-plus-two-obj.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.425
+    ],
+    [
+     1,
+     2,
+     0.425,
+     0.725
+    ]
+   ],
+   "h": "6389ca171ffe229e",
+   "t": "四个"
+  },
+  "QA_B_ADD_OBJ_one-plus-two-obj.o3": {
+   "f": "audio/qa/QA_B_ADD_OBJ_one-plus-two-obj.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.325
+    ],
+    [
+     1,
+     2,
+     0.325,
+     0.65
+    ]
+   ],
+   "h": "2b9eafcc3f6a21cb",
+   "t": "五个"
+  },
+  "QA_B_ADD_OBJ_two-plus-one-star": {
+   "f": "audio/qa/QA_B_ADD_OBJ_two-plus-one-star.mp3",
+   "d": 3.288,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3
+    ],
+    [
+     1,
+     2,
+     0.3,
+     0.375
+    ],
+    [
+     2,
+     4,
+     0.3875,
+     0.775
+    ],
+    [
+     4,
+     5,
+     0.8,
+     0.9625
+    ],
+    [
+     5,
+     7,
+     0.975,
+     1.1625
+    ],
+    [
+     7,
+     10,
+     1.175,
+     1.95
+    ],
+    [
+     10,
+     12,
+     1.95,
+     2.2625
+    ],
+    [
+     12,
+     15,
+     2.275,
+     2.7125
+    ]
+   ],
+   "h": "8be83108b699531c",
+   "t": "两个星星加一个星星，一共几个？"
+  },
+  "QA_B_ADD_OBJ_two-plus-one-star.o0": {
+   "f": "audio/qa/QA_B_ADD_OBJ_two-plus-one-star.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.6625
+    ]
+   ],
+   "h": "04b0695f9e2bdcec",
+   "t": "一个"
+  },
+  "QA_B_ADD_OBJ_two-plus-one-star.o1": {
+   "f": "audio/qa/QA_B_ADD_OBJ_two-plus-one-star.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.375
+    ],
+    [
+     1,
+     2,
+     0.375,
+     0.6875
+    ]
+   ],
+   "h": "6eac9cba331d0935",
+   "t": "二个"
+  },
+  "QA_B_ADD_OBJ_two-plus-one-star.o2": {
+   "f": "audio/qa/QA_B_ADD_OBJ_two-plus-one-star.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.45
+    ],
+    [
+     1,
+     2,
+     0.45,
+     0.7125
+    ]
+   ],
+   "h": "0541603f980c5071",
+   "t": "三个"
+  },
+  "QA_B_ADD_OBJ_two-plus-one-star.o3": {
+   "f": "audio/qa/QA_B_ADD_OBJ_two-plus-one-star.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.425
+    ],
+    [
+     1,
+     2,
+     0.425,
+     0.725
+    ]
+   ],
+   "h": "6389ca171ffe229e",
+   "t": "四个"
+  },
+  "QA_B_ADD_OBJ_two-plus-two-obj": {
+   "f": "audio/qa/QA_B_ADD_OBJ_two-plus-two-obj.mp3",
+   "d": 3.36,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3125
+    ],
+    [
+     1,
+     2,
+     0.3125,
+     0.3875
+    ],
+    [
+     2,
+     4,
+     0.4,
+     0.8375
+    ],
+    [
+     4,
+     5,
+     0.8625,
+     1.025
+    ],
+    [
+     5,
+     6,
+     1.0375,
+     1.2125
+    ],
+    [
+     6,
+     7,
+     1.2125,
+     1.275
+    ],
+    [
+     7,
+     10,
+     1.2875,
+     2.0375
+    ],
+    [
+     10,
+     12,
+     2.0375,
+     2.3375
+    ],
+    [
+     12,
+     15,
+     2.35,
+     2.775
+    ]
+   ],
+   "h": "b9c7de34a821c59e",
+   "t": "两个苹果加两个苹果，一共几个？"
+  },
+  "QA_B_ADD_OBJ_two-plus-two-obj.o0": {
+   "f": "audio/qa/QA_B_ADD_OBJ_two-plus-two-obj.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.375
+    ],
+    [
+     1,
+     2,
+     0.375,
+     0.6875
+    ]
+   ],
+   "h": "6eac9cba331d0935",
+   "t": "二个"
+  },
+  "QA_B_ADD_OBJ_two-plus-two-obj.o1": {
+   "f": "audio/qa/QA_B_ADD_OBJ_two-plus-two-obj.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.45
+    ],
+    [
+     1,
+     2,
+     0.45,
+     0.7125
+    ]
+   ],
+   "h": "0541603f980c5071",
+   "t": "三个"
+  },
+  "QA_B_ADD_OBJ_two-plus-two-obj.o2": {
+   "f": "audio/qa/QA_B_ADD_OBJ_two-plus-two-obj.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.425
+    ],
+    [
+     1,
+     2,
+     0.425,
+     0.725
+    ]
+   ],
+   "h": "6389ca171ffe229e",
+   "t": "四个"
+  },
+  "QA_B_ADD_OBJ_two-plus-two-obj.o3": {
+   "f": "audio/qa/QA_B_ADD_OBJ_two-plus-two-obj.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.325
+    ],
+    [
+     1,
+     2,
+     0.325,
+     0.65
+    ]
+   ],
+   "h": "2b9eafcc3f6a21cb",
+   "t": "五个"
+  },
+  "QA_B_CMP_HIGH_tallest-house": {
+   "f": "audio/qa/QA_B_CMP_HIGH_tallest-house.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3125
+    ],
+    [
+     1,
+     2,
+     0.3125,
+     0.4125
+    ],
+    [
+     2,
+     3,
+     0.4125,
+     0.5875
+    ],
+    [
+     3,
+     4,
+     0.5875,
+     0.725
+    ],
+    [
+     4,
+     7,
+     0.7375,
+     1.225
+    ]
+   ],
+   "h": "883e743f776c9cca",
+   "t": "哪一座楼最高？"
+  },
   "QA_B_CMP_HIGH_tallest-tree": {
    "f": "audio/qa/QA_B_CMP_HIGH_tallest-tree.mp3",
    "d": 1.872,
@@ -291,6 +1025,120 @@
    "h": "f4b8d4e524dc3f38",
    "t": "哪一支铅笔最长？"
   },
+  "QA_B_CMP_MORE_more-apples": {
+   "f": "audio/qa/QA_B_CMP_MORE_more-apples.mp3",
+   "d": 1.968,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.35
+    ],
+    [
+     1,
+     3,
+     0.35,
+     0.625
+    ],
+    [
+     3,
+     4,
+     0.625,
+     0.6875
+    ],
+    [
+     4,
+     6,
+     0.7,
+     1.0875
+    ],
+    [
+     6,
+     8,
+     1.0875,
+     1.3875
+    ]
+   ],
+   "h": "9d09bc0e1189f349",
+   "t": "哪一边的苹果多？"
+  },
+  "QA_B_CMP_MORE_more-balls": {
+   "f": "audio/qa/QA_B_CMP_MORE_more-balls.mp3",
+   "d": 1.824,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.35
+    ],
+    [
+     1,
+     3,
+     0.35,
+     0.65
+    ],
+    [
+     3,
+     4,
+     0.65,
+     0.725
+    ],
+    [
+     4,
+     7,
+     0.7375,
+     1.25
+    ]
+   ],
+   "h": "c493d713ff827e23",
+   "t": "哪一边的球多？"
+  },
+  "QA_B_CMP_SHORT_shortest-rod": {
+   "f": "audio/qa/QA_B_CMP_SHORT_shortest-rod.mp3",
+   "d": 2.088,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.325
+    ],
+    [
+     1,
+     2,
+     0.325,
+     0.425
+    ],
+    [
+     2,
+     3,
+     0.425,
+     0.5875
+    ],
+    [
+     3,
+     5,
+     0.6,
+     0.9625
+    ],
+    [
+     5,
+     6,
+     0.9875,
+     1.1875
+    ],
+    [
+     6,
+     8,
+     1.1875,
+     1.5125
+    ]
+   ],
+   "h": "22ae3002704a5beb",
+   "t": "哪一根小棒最短？"
+  },
   "QA_B_CMP_SIZE_biggest-ball": {
    "f": "audio/qa/QA_B_CMP_SIZE_biggest-ball.mp3",
    "d": 1.872,
@@ -322,6 +1170,50 @@
    ],
    "h": "434ddd2e73c7b7ce",
    "t": "哪一个球最大？"
+  },
+  "QA_B_CMP_SIZE_biggest-bear": {
+   "f": "audio/qa/QA_B_CMP_SIZE_biggest-bear.mp3",
+   "d": 2.064,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3375
+    ],
+    [
+     1,
+     2,
+     0.3375,
+     0.4625
+    ],
+    [
+     2,
+     3,
+     0.4625,
+     0.6125
+    ],
+    [
+     3,
+     4,
+     0.625,
+     0.825
+    ],
+    [
+     4,
+     5,
+     0.825,
+     1.0375
+    ],
+    [
+     5,
+     8,
+     1.05,
+     1.4875
+    ]
+   ],
+   "h": "a06c4e484e71f92c",
+   "t": "哪一只小熊最大？"
   },
   "QA_B_DESC_COLOR_balloon-color": {
    "f": "audio/qa/QA_B_DESC_COLOR_balloon-color.mp3",
@@ -528,6 +1420,286 @@
    ],
    "h": "6389ca171ffe229e",
    "t": "四个"
+  },
+  "QA_B_DESC_COUNT_balloon-count": {
+   "f": "audio/qa/QA_B_DESC_COUNT_balloon-count.mp3",
+   "d": 2.112,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3125
+    ],
+    [
+     1,
+     2,
+     0.3125,
+     0.5125
+    ],
+    [
+     2,
+     3,
+     0.5375,
+     0.6625
+    ],
+    [
+     3,
+     5,
+     0.675,
+     0.925
+    ],
+    [
+     5,
+     8,
+     0.9375,
+     1.5375
+    ]
+   ],
+   "h": "9f443e9f2a3ac978",
+   "t": "图上有几个气球？"
+  },
+  "QA_B_DESC_COUNT_balloon-count.o0": {
+   "f": "audio/qa/QA_B_DESC_COUNT_balloon-count.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.6625
+    ]
+   ],
+   "h": "04b0695f9e2bdcec",
+   "t": "一个"
+  },
+  "QA_B_DESC_COUNT_balloon-count.o1": {
+   "f": "audio/qa/QA_B_DESC_COUNT_balloon-count.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.375
+    ],
+    [
+     1,
+     2,
+     0.375,
+     0.6875
+    ]
+   ],
+   "h": "bc3ee9a37e5f21b8",
+   "t": "两个"
+  },
+  "QA_B_DESC_COUNT_balloon-count.o2": {
+   "f": "audio/qa/QA_B_DESC_COUNT_balloon-count.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.45
+    ],
+    [
+     1,
+     2,
+     0.45,
+     0.7125
+    ]
+   ],
+   "h": "0541603f980c5071",
+   "t": "三个"
+  },
+  "QA_B_DESC_COUNT_balloon-count.o3": {
+   "f": "audio/qa/QA_B_DESC_COUNT_balloon-count.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.425
+    ],
+    [
+     1,
+     2,
+     0.425,
+     0.725
+    ]
+   ],
+   "h": "6389ca171ffe229e",
+   "t": "四个"
+  },
+  "QA_B_DESC_DAY_day-or-night": {
+   "f": "audio/qa/QA_B_DESC_DAY_day-or-night.mp3",
+   "d": 3.336,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.4625
+    ],
+    [
+     2,
+     4,
+     0.475,
+     0.7375
+    ],
+    [
+     4,
+     5,
+     0.7375,
+     0.825
+    ],
+    [
+     5,
+     7,
+     0.8375,
+     1.3375
+    ],
+    [
+     7,
+     8,
+     1.425,
+     1.5625
+    ],
+    [
+     8,
+     10,
+     1.575,
+     1.975
+    ],
+    [
+     10,
+     12,
+     2.0,
+     2.2375
+    ],
+    [
+     12,
+     15,
+     2.25,
+     2.7625
+    ]
+   ],
+   "h": "f6bfc24aafa84237",
+   "t": "太阳出来的时候是白天还是晚上？"
+  },
+  "QA_B_DESC_DAY_day-or-night.o0": {
+   "f": "audio/qa/QA_B_DESC_DAY_day-or-night.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7375
+    ]
+   ],
+   "h": "fc1dd1d8137dd23a",
+   "t": "白天"
+  },
+  "QA_B_DESC_DAY_day-or-night.o1": {
+   "f": "audio/qa/QA_B_DESC_DAY_day-or-night.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.675
+    ]
+   ],
+   "h": "16251322521c1e94",
+   "t": "晚上"
+  },
+  "QA_B_DESC_DAY_moon-or-sun": {
+   "f": "audio/qa/QA_B_DESC_DAY_moon-or-sun.mp3",
+   "d": 3.6,
+   "s": [
+    [
+     0,
+     3,
+     0.1,
+     0.6375
+    ],
+    [
+     3,
+     5,
+     0.65,
+     1.0
+    ],
+    [
+     5,
+     6,
+     1.0,
+     1.075
+    ],
+    [
+     6,
+     8,
+     1.0875,
+     1.5875
+    ],
+    [
+     8,
+     9,
+     1.675,
+     1.825
+    ],
+    [
+     9,
+     11,
+     1.8375,
+     2.2625
+    ],
+    [
+     11,
+     13,
+     2.2875,
+     2.5375
+    ],
+    [
+     13,
+     16,
+     2.55,
+     3.025
+    ]
+   ],
+   "h": "a658607f3d6521ff",
+   "t": "天上有月亮的时候是白天还是晚上？"
+  },
+  "QA_B_DESC_DAY_moon-or-sun.o0": {
+   "f": "audio/qa/QA_B_DESC_DAY_moon-or-sun.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7375
+    ]
+   ],
+   "h": "fc1dd1d8137dd23a",
+   "t": "白天"
+  },
+  "QA_B_DESC_DAY_moon-or-sun.o1": {
+   "f": "audio/qa/QA_B_DESC_DAY_moon-or-sun.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.675
+    ]
+   ],
+   "h": "16251322521c1e94",
+   "t": "晚上"
   },
   "QA_B_DESC_WHAT_apple": {
    "f": "audio/qa/QA_B_DESC_WHAT_apple.mp3",
@@ -741,6 +1913,448 @@
    "h": "5049ff93aa11ed21",
    "t": "小鸭子"
   },
+  "QA_B_DESC_WHAT_grapes": {
+   "f": "audio/qa/QA_B_DESC_WHAT_grapes.mp3",
+   "d": 2.064,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3125
+    ],
+    [
+     1,
+     2,
+     0.3125,
+     0.525
+    ],
+    [
+     2,
+     3,
+     0.525,
+     0.6375
+    ],
+    [
+     3,
+     5,
+     0.65,
+     0.9
+    ],
+    [
+     5,
+     8,
+     0.9125,
+     1.475
+    ]
+   ],
+   "h": "eae4a06311a2fd25",
+   "t": "图上是什么水果？"
+  },
+  "QA_B_DESC_WHAT_grapes.o0": {
+   "f": "audio/qa/QA_B_DESC_WHAT_grapes.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.6875
+    ]
+   ],
+   "h": "faed388c4744b718",
+   "t": "葡萄"
+  },
+  "QA_B_DESC_WHAT_grapes.o1": {
+   "f": "audio/qa/QA_B_DESC_WHAT_grapes.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.75
+    ]
+   ],
+   "h": "10c049652481e4de",
+   "t": "苹果"
+  },
+  "QA_B_DESC_WHAT_grapes.o2": {
+   "f": "audio/qa/QA_B_DESC_WHAT_grapes.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7
+    ]
+   ],
+   "h": "4206a8f561162242",
+   "t": "西瓜"
+  },
+  "QA_B_DESC_WHAT_grapes.o3": {
+   "f": "audio/qa/QA_B_DESC_WHAT_grapes.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7375
+    ]
+   ],
+   "h": "3da51fe85df05e02",
+   "t": "香蕉"
+  },
+  "QA_B_PICK_COLOR_read-yellow-block": {
+   "f": "audio/qa/QA_B_PICK_COLOR_read-yellow-block.mp3",
+   "d": 2.256,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3
+    ],
+    [
+     1,
+     3,
+     0.3125,
+     0.6625
+    ],
+    [
+     3,
+     5,
+     0.6875,
+     1.1125
+    ],
+    [
+     5,
+     6,
+     1.1125,
+     1.2
+    ],
+    [
+     6,
+     9,
+     1.2125,
+     1.675
+    ]
+   ],
+   "h": "63d46887a265bed7",
+   "t": "请选出黄色的方块。"
+  },
+  "QA_B_PICK_COUNT_read-one-balloon": {
+   "f": "audio/qa/QA_B_PICK_COUNT_read-one-balloon.mp3",
+   "d": 2.112,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3125
+    ],
+    [
+     1,
+     3,
+     0.325,
+     0.6875
+    ],
+    [
+     3,
+     5,
+     0.7,
+     0.9
+    ],
+    [
+     5,
+     8,
+     0.9125,
+     1.5375
+    ]
+   ],
+   "h": "b0754d18076dc53c",
+   "t": "请选出一个气球。"
+  },
+  "QA_B_PICK_COUNT_read-two-apples": {
+   "f": "audio/qa/QA_B_PICK_COUNT_read-two-apples.mp3",
+   "d": 2.16,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3125
+    ],
+    [
+     1,
+     3,
+     0.325,
+     0.725
+    ],
+    [
+     3,
+     4,
+     0.75,
+     0.925
+    ],
+    [
+     4,
+     5,
+     0.925,
+     1.0
+    ],
+    [
+     5,
+     8,
+     1.0125,
+     1.575
+    ]
+   ],
+   "h": "98d679a7fd7bc62b",
+   "t": "请选出两个苹果。"
+  },
+  "QA_B_PICK_LIFE_read-can-eat": {
+   "f": "audio/qa/QA_B_PICK_LIFE_read-can-eat.mp3",
+   "d": 2.376,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3
+    ],
+    [
+     1,
+     3,
+     0.3125,
+     0.775
+    ],
+    [
+     3,
+     5,
+     0.8,
+     1.0375
+    ],
+    [
+     5,
+     6,
+     1.05,
+     1.225
+    ],
+    [
+     6,
+     7,
+     1.225,
+     1.3125
+    ],
+    [
+     7,
+     10,
+     1.325,
+     1.7875
+    ]
+   ],
+   "h": "c2cca26c2859dc6a",
+   "t": "请选出可以吃的东西。"
+  },
+  "QA_B_PICK_LIFE_read-can-fly": {
+   "f": "audio/qa/QA_B_PICK_LIFE_read-can-fly.mp3",
+   "d": 2.616,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3
+    ],
+    [
+     1,
+     3,
+     0.3125,
+     0.775
+    ],
+    [
+     3,
+     4,
+     0.8,
+     0.9625
+    ],
+    [
+     4,
+     5,
+     0.9625,
+     1.175
+    ],
+    [
+     5,
+     7,
+     1.1875,
+     1.45
+    ],
+    [
+     7,
+     8,
+     1.45,
+     1.5375
+    ],
+    [
+     8,
+     11,
+     1.55,
+     2.025
+    ]
+   ],
+   "h": "ee456227ae141470",
+   "t": "请选出能吹起来的东西。"
+  },
+  "QA_B_PICK_SHAPE_read-round-shape": {
+   "f": "audio/qa/QA_B_PICK_SHAPE_read-round-shape.mp3",
+   "d": 2.304,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3
+    ],
+    [
+     1,
+     3,
+     0.3125,
+     0.6875
+    ],
+    [
+     3,
+     5,
+     0.7125,
+     1.1
+    ],
+    [
+     5,
+     6,
+     1.1,
+     1.1875
+    ],
+    [
+     6,
+     9,
+     1.2,
+     1.7125
+    ]
+   ],
+   "h": "d8d81b8bd51fbc35",
+   "t": "请选出圆圆的图形。"
+  },
+  "QA_B_PICK_WORD_read-animal-baby": {
+   "f": "audio/qa/QA_B_PICK_WORD_read-animal-baby.mp3",
+   "d": 1.944,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3125
+    ],
+    [
+     1,
+     3,
+     0.325,
+     0.65
+    ],
+    [
+     3,
+     4,
+     0.675,
+     0.8875
+    ],
+    [
+     4,
+     7,
+     0.8875,
+     1.3625
+    ]
+   ],
+   "h": "d300e729e1f90168",
+   "t": "请选出小动物。"
+  },
+  "QA_B_PICK_WORD_read-fruit": {
+   "f": "audio/qa/QA_B_PICK_WORD_read-fruit.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3125
+    ],
+    [
+     1,
+     3,
+     0.325,
+     0.675
+    ],
+    [
+     3,
+     6,
+     0.6875,
+     1.225
+    ]
+   ],
+   "h": "fa49e2f129744ffe",
+   "t": "请选出水果。"
+  },
+  "QA_B_SAME_DIFFPICK_find-diff-dog": {
+   "f": "audio/qa/QA_B_SAME_DIFFPICK_find-diff-dog.mp3",
+   "d": 2.736,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3375
+    ],
+    [
+     1,
+     3,
+     0.3375,
+     0.525
+    ],
+    [
+     3,
+     5,
+     0.5375,
+     1.025
+    ],
+    [
+     5,
+     6,
+     1.125,
+     1.2625
+    ],
+    [
+     6,
+     8,
+     1.275,
+     1.625
+    ],
+    [
+     8,
+     9,
+     1.6375,
+     1.7625
+    ],
+    [
+     9,
+     12,
+     1.7625,
+     2.175
+    ]
+   ],
+   "h": "6b4bc141e681b685",
+   "t": "哪一个动物和其他不一样？"
+  },
   "QA_B_SAME_DIFFPICK_find-diff-fruit": {
    "f": "audio/qa/QA_B_SAME_DIFFPICK_find-diff-fruit.mp3",
    "d": 2.832,
@@ -790,6 +2404,162 @@
    ],
    "h": "24a717d3a0146f84",
    "t": "哪一个水果和其他不一样？"
+  },
+  "QA_B_SAME_EQ_apple-banana-pair": {
+   "f": "audio/qa/QA_B_SAME_EQ_apple-banana-pair.mp3",
+   "d": 2.04,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.2625
+    ],
+    [
+     1,
+     2,
+     0.275,
+     0.4375
+    ],
+    [
+     2,
+     3,
+     0.4375,
+     0.5
+    ],
+    [
+     3,
+     5,
+     0.5125,
+     0.875
+    ],
+    [
+     5,
+     7,
+     0.9,
+     1.225
+    ],
+    [
+     7,
+     9,
+     1.225,
+     1.475
+    ]
+   ],
+   "h": "c62e64d8f9701cc9",
+   "t": "这两个水果一样吗？"
+  },
+  "QA_B_SAME_EQ_apple-banana-pair.o0": {
+   "f": "audio/qa/QA_B_SAME_EQ_apple-banana-pair.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.625
+    ]
+   ],
+   "h": "cfde66c0eb4e5d56",
+   "t": "一样"
+  },
+  "QA_B_SAME_EQ_apple-banana-pair.o1": {
+   "f": "audio/qa/QA_B_SAME_EQ_apple-banana-pair.o1.mp3",
+   "d": 1.32,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.25
+    ],
+    [
+     1,
+     3,
+     0.25,
+     0.7375
+    ]
+   ],
+   "h": "b13b11ce3b5c77ac",
+   "t": "不一样"
+  },
+  "QA_B_SAME_EQ_balloon-pair": {
+   "f": "audio/qa/QA_B_SAME_EQ_balloon-pair.mp3",
+   "d": 2.112,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.2625
+    ],
+    [
+     1,
+     2,
+     0.275,
+     0.4375
+    ],
+    [
+     2,
+     3,
+     0.4375,
+     0.5125
+    ],
+    [
+     3,
+     5,
+     0.525,
+     0.9
+    ],
+    [
+     5,
+     7,
+     0.925,
+     1.275
+    ],
+    [
+     7,
+     9,
+     1.275,
+     1.5375
+    ]
+   ],
+   "h": "6c8afb549d1ec7bb",
+   "t": "这两个气球一样吗？"
+  },
+  "QA_B_SAME_EQ_balloon-pair.o0": {
+   "f": "audio/qa/QA_B_SAME_EQ_balloon-pair.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.625
+    ]
+   ],
+   "h": "cfde66c0eb4e5d56",
+   "t": "一样"
+  },
+  "QA_B_SAME_EQ_balloon-pair.o1": {
+   "f": "audio/qa/QA_B_SAME_EQ_balloon-pair.o1.mp3",
+   "d": 1.32,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.25
+    ],
+    [
+     1,
+     3,
+     0.25,
+     0.7375
+    ]
+   ],
+   "h": "b13b11ce3b5c77ac",
+   "t": "不一样"
   },
   "QA_B_SAME_EQ_cat-dog": {
    "f": "audio/qa/QA_B_SAME_EQ_cat-dog.mp3",
@@ -959,6 +2729,56 @@
    "h": "b13b11ce3b5c77ac",
    "t": "不一样"
   },
+  "QA_B_SAME_SAMEPICK_find-banana": {
+   "f": "audio/qa/QA_B_SAME_SAMEPICK_find-banana.mp3",
+   "d": 2.472,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3375
+    ],
+    [
+     1,
+     3,
+     0.3375,
+     0.5375
+    ],
+    [
+     3,
+     4,
+     0.5625,
+     0.675
+    ],
+    [
+     4,
+     6,
+     0.6875,
+     1.0125
+    ],
+    [
+     6,
+     7,
+     1.0125,
+     1.0875
+    ],
+    [
+     7,
+     9,
+     1.1125,
+     1.45
+    ],
+    [
+     9,
+     12,
+     1.4625,
+     1.8875
+    ]
+   ],
+   "h": "b4e2e32359e3dbd8",
+   "t": "哪一个和上面的水果一样？"
+  },
   "QA_B_SAME_SAMEPICK_find-dog": {
    "f": "audio/qa/QA_B_SAME_SAMEPICK_find-dog.mp3",
    "d": 2.544,
@@ -1014,6 +2834,88 @@
    ],
    "h": "2dc8f719fbbd725f",
    "t": "哪一个和上面的小动物一样？"
+  },
+  "QA_L_ADD_DIG_eight-plus-four-dig": {
+   "f": "audio/qa/QA_L_ADD_DIG_eight-plus-four-dig.mp3",
+   "d": 1.968,
+   "s": [
+    [
+     0,
+     3,
+     0.1,
+     0.7
+    ],
+    [
+     3,
+     5,
+     0.725,
+     1.05
+    ],
+    [
+     5,
+     7,
+     1.05,
+     1.4
+    ]
+   ],
+   "h": "e842861e8fa13933",
+   "t": "八加四等于几？"
+  },
+  "QA_L_ADD_DIG_eight-plus-four-dig.o0": {
+   "f": "audio/qa/QA_L_ADD_DIG_eight-plus-four-dig.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.5875
+    ]
+   ],
+   "h": "9606465b5b435cd3",
+   "t": "十"
+  },
+  "QA_L_ADD_DIG_eight-plus-four-dig.o1": {
+   "f": "audio/qa/QA_L_ADD_DIG_eight-plus-four-dig.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.75
+    ]
+   ],
+   "h": "75dafb25e465bfad",
+   "t": "十一"
+  },
+  "QA_L_ADD_DIG_eight-plus-four-dig.o2": {
+   "f": "audio/qa/QA_L_ADD_DIG_eight-plus-four-dig.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7
+    ]
+   ],
+   "h": "75f99aa528fa92d3",
+   "t": "十二"
+  },
+  "QA_L_ADD_DIG_eight-plus-four-dig.o3": {
+   "f": "audio/qa/QA_L_ADD_DIG_eight-plus-four-dig.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7375
+    ]
+   ],
+   "h": "dc1e424473742d80",
+   "t": "十三"
   },
   "QA_L_ADD_DIG_eight-plus-seven": {
    "f": "audio/qa/QA_L_ADD_DIG_eight-plus-seven.mp3",
@@ -1096,6 +2998,88 @@
    ],
    "h": "f3de5cd4e407acce",
    "t": "十七"
+  },
+  "QA_L_ADD_DIG_nine-plus-seven-dig": {
+   "f": "audio/qa/QA_L_ADD_DIG_nine-plus-seven-dig.mp3",
+   "d": 1.992,
+   "s": [
+    [
+     0,
+     3,
+     0.1,
+     0.725
+    ],
+    [
+     3,
+     5,
+     0.75,
+     1.0625
+    ],
+    [
+     5,
+     7,
+     1.0625,
+     1.4125
+    ]
+   ],
+   "h": "545ca1107ecb7b8f",
+   "t": "九加七等于几？"
+  },
+  "QA_L_ADD_DIG_nine-plus-seven-dig.o0": {
+   "f": "audio/qa/QA_L_ADD_DIG_nine-plus-seven-dig.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7625
+    ]
+   ],
+   "h": "863e8a392d5ea03c",
+   "t": "十五"
+  },
+  "QA_L_ADD_DIG_nine-plus-seven-dig.o1": {
+   "f": "audio/qa/QA_L_ADD_DIG_nine-plus-seven-dig.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7875
+    ]
+   ],
+   "h": "0387bd3221877fae",
+   "t": "十六"
+  },
+  "QA_L_ADD_DIG_nine-plus-seven-dig.o2": {
+   "f": "audio/qa/QA_L_ADD_DIG_nine-plus-seven-dig.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.775
+    ]
+   ],
+   "h": "f3de5cd4e407acce",
+   "t": "十七"
+  },
+  "QA_L_ADD_DIG_nine-plus-seven-dig.o3": {
+   "f": "audio/qa/QA_L_ADD_DIG_nine-plus-seven-dig.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7125
+    ]
+   ],
+   "h": "602fd815d929bc92",
+   "t": "十八"
   },
   "QA_L_ADD_DIG_nine-plus-six": {
    "f": "audio/qa/QA_L_ADD_DIG_nine-plus-six.mp3",
@@ -1261,6 +3245,88 @@
    "h": "babdeda64358d922",
    "t": "十四"
   },
+  "QA_L_ADD_DIG_six-plus-seven-dig": {
+   "f": "audio/qa/QA_L_ADD_DIG_six-plus-seven-dig.mp3",
+   "d": 1.992,
+   "s": [
+    [
+     0,
+     3,
+     0.1,
+     0.725
+    ],
+    [
+     3,
+     5,
+     0.75,
+     1.075
+    ],
+    [
+     5,
+     7,
+     1.075,
+     1.425
+    ]
+   ],
+   "h": "2092fe374d470a41",
+   "t": "六加七等于几？"
+  },
+  "QA_L_ADD_DIG_six-plus-seven-dig.o0": {
+   "f": "audio/qa/QA_L_ADD_DIG_six-plus-seven-dig.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7
+    ]
+   ],
+   "h": "75f99aa528fa92d3",
+   "t": "十二"
+  },
+  "QA_L_ADD_DIG_six-plus-seven-dig.o1": {
+   "f": "audio/qa/QA_L_ADD_DIG_six-plus-seven-dig.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7375
+    ]
+   ],
+   "h": "dc1e424473742d80",
+   "t": "十三"
+  },
+  "QA_L_ADD_DIG_six-plus-seven-dig.o2": {
+   "f": "audio/qa/QA_L_ADD_DIG_six-plus-seven-dig.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7625
+    ]
+   ],
+   "h": "babdeda64358d922",
+   "t": "十四"
+  },
+  "QA_L_ADD_DIG_six-plus-seven-dig.o3": {
+   "f": "audio/qa/QA_L_ADD_DIG_six-plus-seven-dig.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7625
+    ]
+   ],
+   "h": "863e8a392d5ea03c",
+   "t": "十五"
+  },
   "QA_L_ADD_OBJ_five-plus-four-obj": {
    "f": "audio/qa/QA_L_ADD_OBJ_five-plus-four-obj.mp3",
    "d": 3.312,
@@ -1403,6 +3469,148 @@
    "h": "89ec1237ed616f5c",
    "t": "十个"
   },
+  "QA_L_ADD_OBJ_three-plus-four-obj": {
+   "f": "audio/qa/QA_L_ADD_OBJ_three-plus-four-obj.mp3",
+   "d": 3.456,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.375
+    ],
+    [
+     1,
+     2,
+     0.375,
+     0.45
+    ],
+    [
+     2,
+     4,
+     0.4625,
+     0.875
+    ],
+    [
+     4,
+     5,
+     0.9,
+     1.075
+    ],
+    [
+     5,
+     6,
+     1.0875,
+     1.2875
+    ],
+    [
+     6,
+     7,
+     1.2875,
+     1.375
+    ],
+    [
+     7,
+     10,
+     1.3875,
+     2.1125
+    ],
+    [
+     10,
+     12,
+     2.1125,
+     2.425
+    ],
+    [
+     12,
+     15,
+     2.4375,
+     2.8625
+    ]
+   ],
+   "h": "54e18f286b1b8943",
+   "t": "三个苹果加四个苹果，一共几个？"
+  },
+  "QA_L_ADD_OBJ_three-plus-four-obj.o0": {
+   "f": "audio/qa/QA_L_ADD_OBJ_three-plus-four-obj.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3875
+    ],
+    [
+     1,
+     2,
+     0.3875,
+     0.6875
+    ]
+   ],
+   "h": "9087ad2f6a2dedd7",
+   "t": "六个"
+  },
+  "QA_L_ADD_OBJ_three-plus-four-obj.o1": {
+   "f": "audio/qa/QA_L_ADD_OBJ_three-plus-four-obj.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.4
+    ],
+    [
+     1,
+     2,
+     0.4,
+     0.7
+    ]
+   ],
+   "h": "9dafdfa66224690f",
+   "t": "七个"
+  },
+  "QA_L_ADD_OBJ_three-plus-four-obj.o2": {
+   "f": "audio/qa/QA_L_ADD_OBJ_three-plus-four-obj.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.325
+    ],
+    [
+     1,
+     2,
+     0.325,
+     0.65
+    ]
+   ],
+   "h": "653c18e7815edd7a",
+   "t": "八个"
+  },
+  "QA_L_ADD_OBJ_three-plus-four-obj.o3": {
+   "f": "audio/qa/QA_L_ADD_OBJ_three-plus-four-obj.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3625
+    ],
+    [
+     1,
+     2,
+     0.3625,
+     0.6625
+    ]
+   ],
+   "h": "9cde94c64e3bdcd9",
+   "t": "九个"
+  },
   "QA_L_CMP_BACK_back-animal": {
    "f": "audio/qa/QA_L_CMP_BACK_back-animal.mp3",
    "d": 2.88,
@@ -1465,6 +3673,106 @@
    "h": "a7de0e918ec52269",
    "t": "哪一只小动物排在最后面？"
   },
+  "QA_L_CMP_DEEP_deepest-cup-l": {
+   "f": "audio/qa/QA_L_CMP_DEEP_deepest-cup-l.mp3",
+   "d": 1.92,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.325
+    ],
+    [
+     1,
+     2,
+     0.325,
+     0.425
+    ],
+    [
+     2,
+     3,
+     0.425,
+     0.6125
+    ],
+    [
+     3,
+     4,
+     0.6125,
+     0.825
+    ],
+    [
+     4,
+     5,
+     0.8375,
+     1.025
+    ],
+    [
+     5,
+     7,
+     1.025,
+     1.35
+    ]
+   ],
+   "h": "22d173416d10482b",
+   "t": "哪一杯水最深？"
+  },
+  "QA_L_CMP_FAST_fastest-suv": {
+   "f": "audio/qa/QA_L_CMP_FAST_fastest-suv.mp3",
+   "d": 2.208,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.325
+    ],
+    [
+     1,
+     2,
+     0.325,
+     0.4125
+    ],
+    [
+     2,
+     3,
+     0.4125,
+     0.625
+    ],
+    [
+     3,
+     4,
+     0.625,
+     0.825
+    ],
+    [
+     4,
+     5,
+     0.85,
+     1.0125
+    ],
+    [
+     5,
+     6,
+     1.0125,
+     1.1
+    ],
+    [
+     6,
+     7,
+     1.1125,
+     1.3
+    ],
+    [
+     7,
+     9,
+     1.3,
+     1.6375
+    ]
+   ],
+   "h": "8354d2fc670464d0",
+   "t": "哪一辆车开得最快？"
+  },
   "QA_L_CMP_FRONT_front-animal": {
    "f": "audio/qa/QA_L_CMP_FRONT_front-animal.mp3",
    "d": 2.904,
@@ -1526,6 +3834,44 @@
    ],
    "h": "107ce9e44d8c4ba7",
    "t": "哪一只小动物排在最前面？"
+  },
+  "QA_L_CMP_HIGH_tallest-tower-l": {
+   "f": "audio/qa/QA_L_CMP_HIGH_tallest-tower-l.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.325
+    ],
+    [
+     1,
+     2,
+     0.325,
+     0.4375
+    ],
+    [
+     2,
+     3,
+     0.4375,
+     0.6
+    ],
+    [
+     3,
+     4,
+     0.6,
+     0.7625
+    ],
+    [
+     4,
+     7,
+     0.775,
+     1.2625
+    ]
+   ],
+   "h": "6c159feff0d461ee",
+   "t": "哪一座塔最高？"
   },
   "QA_L_CMP_LONG_longest-ribbon": {
    "f": "audio/qa/QA_L_CMP_LONG_longest-ribbon.mp3",
@@ -1602,6 +3948,232 @@
    ],
    "h": "efa8cd0f50605410",
    "t": "哪一个球离我们最近？"
+  },
+  "QA_L_CMP_THIN_thinnest-rod-l": {
+   "f": "audio/qa/QA_L_CMP_THIN_thinnest-rod-l.mp3",
+   "d": 2.064,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.325
+    ],
+    [
+     1,
+     2,
+     0.325,
+     0.425
+    ],
+    [
+     2,
+     3,
+     0.425,
+     0.5875
+    ],
+    [
+     3,
+     5,
+     0.6,
+     0.9625
+    ],
+    [
+     5,
+     6,
+     0.9875,
+     1.1625
+    ],
+    [
+     6,
+     8,
+     1.1625,
+     1.5
+    ]
+   ],
+   "h": "3bcc10b6666102eb",
+   "t": "哪一根小棒最细？"
+  },
+  "QA_L_DESC_CLOCK_clock-half-ten": {
+   "f": "audio/qa/QA_L_DESC_CLOCK_clock-half-ten.mp3",
+   "d": 2.208,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.6
+    ],
+    [
+     2,
+     3,
+     0.6,
+     0.8125
+    ],
+    [
+     3,
+     4,
+     0.8125,
+     0.9625
+    ],
+    [
+     4,
+     8,
+     0.975,
+     1.625
+    ]
+   ],
+   "h": "1eb6c03de142219d",
+   "t": "时钟上是几点半？"
+  },
+  "QA_L_DESC_CLOCK_clock-half-ten.o0": {
+   "f": "audio/qa/QA_L_DESC_CLOCK_clock-half-ten.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     3,
+     0.1,
+     0.8125
+    ]
+   ],
+   "h": "7027a8d8e83048c3",
+   "t": "八点半"
+  },
+  "QA_L_DESC_CLOCK_clock-half-ten.o1": {
+   "f": "audio/qa/QA_L_DESC_CLOCK_clock-half-ten.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     3,
+     0.1,
+     0.825
+    ]
+   ],
+   "h": "33361f9916fcc387",
+   "t": "九点半"
+  },
+  "QA_L_DESC_CLOCK_clock-half-ten.o2": {
+   "f": "audio/qa/QA_L_DESC_CLOCK_clock-half-ten.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     3,
+     0.1,
+     0.9125
+    ]
+   ],
+   "h": "275339deeb89cd86",
+   "t": "十点半"
+  },
+  "QA_L_DESC_CLOCK_clock-half-ten.o3": {
+   "f": "audio/qa/QA_L_DESC_CLOCK_clock-half-ten.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     4,
+     0.1,
+     1.05
+    ]
+   ],
+   "h": "d3f5b5c24b90aa0f",
+   "t": "十一点半"
+  },
+  "QA_L_DESC_CLOCK_clock-nine": {
+   "f": "audio/qa/QA_L_DESC_CLOCK_clock-nine.mp3",
+   "d": 2.28,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.5875
+    ],
+    [
+     2,
+     3,
+     0.5875,
+     0.8125
+    ],
+    [
+     3,
+     4,
+     0.8375,
+     0.975
+    ],
+    [
+     4,
+     5,
+     0.975,
+     1.0875
+    ],
+    [
+     5,
+     8,
+     1.1,
+     1.7
+    ]
+   ],
+   "h": "c3e07d97882a591f",
+   "t": "时钟上指着几点？"
+  },
+  "QA_L_DESC_CLOCK_clock-nine.o0": {
+   "f": "audio/qa/QA_L_DESC_CLOCK_clock-nine.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7125
+    ]
+   ],
+   "h": "c591c3d104b63fce",
+   "t": "六点"
+  },
+  "QA_L_DESC_CLOCK_clock-nine.o1": {
+   "f": "audio/qa/QA_L_DESC_CLOCK_clock-nine.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7
+    ]
+   ],
+   "h": "6fd5482238fa8301",
+   "t": "八点"
+  },
+  "QA_L_DESC_CLOCK_clock-nine.o2": {
+   "f": "audio/qa/QA_L_DESC_CLOCK_clock-nine.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7
+    ]
+   ],
+   "h": "c7297830f0224843",
+   "t": "九点"
+  },
+  "QA_L_DESC_CLOCK_clock-nine.o3": {
+   "f": "audio/qa/QA_L_DESC_CLOCK_clock-nine.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     3,
+     0.1,
+     0.9
+    ]
+   ],
+   "h": "32a3c4e4cdf8ed56",
+   "t": "十一点"
   },
   "QA_L_DESC_COUNT_triangle-count": {
    "f": "audio/qa/QA_L_DESC_COUNT_triangle-count.mp3",
@@ -1720,6 +4292,312 @@
    ],
    "h": "9dafdfa66224690f",
    "t": "七个"
+  },
+  "QA_L_DESC_LIFE_cross-road": {
+   "f": "audio/qa/QA_L_DESC_LIFE_cross-road.mp3",
+   "d": 2.664,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.2875
+    ],
+    [
+     1,
+     3,
+     0.2875,
+     0.65
+    ],
+    [
+     3,
+     4,
+     0.65,
+     0.75
+    ],
+    [
+     4,
+     6,
+     0.7625,
+     1.25
+    ],
+    [
+     6,
+     7,
+     1.35,
+     1.4875
+    ],
+    [
+     7,
+     8,
+     1.4875,
+     1.6875
+    ],
+    [
+     8,
+     11,
+     1.6875,
+     2.1
+    ]
+   ],
+   "h": "ee67cd4f89b8ff62",
+   "t": "过马路的时候要看什么？"
+  },
+  "QA_L_DESC_LIFE_cross-road.o0": {
+   "f": "audio/qa/QA_L_DESC_LIFE_cross-road.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     3,
+     0.1,
+     0.8125
+    ]
+   ],
+   "h": "a3e11265980dc3d2",
+   "t": "红绿灯"
+  },
+  "QA_L_DESC_LIFE_cross-road.o1": {
+   "f": "audio/qa/QA_L_DESC_LIFE_cross-road.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7375
+    ]
+   ],
+   "h": "dbda37264e8e994d",
+   "t": "电视"
+  },
+  "QA_L_DESC_LIFE_cross-road.o2": {
+   "f": "audio/qa/QA_L_DESC_LIFE_cross-road.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.65
+    ]
+   ],
+   "h": "381f2694d5798285",
+   "t": "镜子"
+  },
+  "QA_L_DESC_LIFE_cross-road.o3": {
+   "f": "audio/qa/QA_L_DESC_LIFE_cross-road.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.75
+    ]
+   ],
+   "h": "14bb7ae19e5390c1",
+   "t": "气球"
+  },
+  "QA_L_DESC_LIFE_who-doctor": {
+   "f": "audio/qa/QA_L_DESC_LIFE_who-doctor.mp3",
+   "d": 2.736,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.6125
+    ],
+    [
+     2,
+     3,
+     0.6125,
+     0.875
+    ],
+    [
+     3,
+     5,
+     0.9625,
+     1.2125
+    ],
+    [
+     5,
+     6,
+     1.225,
+     1.425
+    ],
+    [
+     6,
+     7,
+     1.425,
+     1.625
+    ],
+    [
+     7,
+     10,
+     1.6375,
+     2.15
+    ]
+   ],
+   "h": "0c2fb28316f20b06",
+   "t": "生病了应该找谁帮忙？"
+  },
+  "QA_L_DESC_LIFE_who-doctor.o0": {
+   "f": "audio/qa/QA_L_DESC_LIFE_who-doctor.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.675
+    ]
+   ],
+   "h": "29b58c8956c662e1",
+   "t": "医生"
+  },
+  "QA_L_DESC_LIFE_who-doctor.o1": {
+   "f": "audio/qa/QA_L_DESC_LIFE_who-doctor.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7375
+    ]
+   ],
+   "h": "28d34edaeab0bfed",
+   "t": "司机"
+  },
+  "QA_L_DESC_LIFE_who-doctor.o2": {
+   "f": "audio/qa/QA_L_DESC_LIFE_who-doctor.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.75
+    ]
+   ],
+   "h": "e763e0fb09dbeecd",
+   "t": "厨师"
+  },
+  "QA_L_DESC_LIFE_who-doctor.o3": {
+   "f": "audio/qa/QA_L_DESC_LIFE_who-doctor.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7125
+    ]
+   ],
+   "h": "374dfec07ea7096c",
+   "t": "警察"
+  },
+  "QA_L_DESC_POS_where-ball-low": {
+   "f": "audio/qa/QA_L_DESC_POS_where-ball-low.mp3",
+   "d": 2.616,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.6625
+    ],
+    [
+     2,
+     3,
+     0.6875,
+     0.8375
+    ],
+    [
+     3,
+     5,
+     0.85,
+     1.2
+    ],
+    [
+     5,
+     6,
+     1.2,
+     1.2875
+    ],
+    [
+     6,
+     8,
+     1.3125,
+     1.55
+    ],
+    [
+     8,
+     11,
+     1.5625,
+     2.025
+    ]
+   ],
+   "h": "382a7239f67e155a",
+   "t": "小球在箱子的什么地方？"
+  },
+  "QA_L_DESC_POS_where-ball-low.o0": {
+   "f": "audio/qa/QA_L_DESC_POS_where-ball-low.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.75
+    ]
+   ],
+   "h": "f94234e29487d98b",
+   "t": "上面"
+  },
+  "QA_L_DESC_POS_where-ball-low.o1": {
+   "f": "audio/qa/QA_L_DESC_POS_where-ball-low.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.725
+    ]
+   ],
+   "h": "1870e1ec697157e1",
+   "t": "下面"
+  },
+  "QA_L_DESC_POS_where-ball-low.o2": {
+   "f": "audio/qa/QA_L_DESC_POS_where-ball-low.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.675
+    ]
+   ],
+   "h": "d5790c46986ff60a",
+   "t": "里面"
+  },
+  "QA_L_DESC_POS_where-ball-low.o3": {
+   "f": "audio/qa/QA_L_DESC_POS_where-ball-low.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7
+    ]
+   ],
+   "h": "5329d4d8c70b0383",
+   "t": "右边"
   },
   "QA_L_DESC_SHAPE_hexagon-sides": {
    "f": "audio/qa/QA_L_DESC_SHAPE_hexagon-sides.mp3",
@@ -1845,6 +4723,174 @@
    "h": "6b5c2a47d2cfb68d",
    "t": "八条"
   },
+  "QA_L_DESC_SHAPE_pentagon-sides": {
+   "f": "audio/qa/QA_L_DESC_SHAPE_pentagon-sides.mp3",
+   "d": 2.256,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.3875
+    ],
+    [
+     2,
+     4,
+     0.4,
+     0.8125
+    ],
+    [
+     4,
+     5,
+     0.8375,
+     0.9875
+    ],
+    [
+     5,
+     6,
+     0.9875,
+     1.15
+    ],
+    [
+     6,
+     7,
+     1.15,
+     1.3625
+    ],
+    [
+     7,
+     9,
+     1.3625,
+     1.675
+    ]
+   ],
+   "h": "57554e87cc9d81e6",
+   "t": "这个图形有几条边？"
+  },
+  "QA_L_DESC_SHAPE_pentagon-sides.o0": {
+   "f": "audio/qa/QA_L_DESC_SHAPE_pentagon-sides.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3875
+    ],
+    [
+     1,
+     2,
+     0.3875,
+     0.7875
+    ]
+   ],
+   "h": "be00ceeba2aa9c20",
+   "t": "四条"
+  },
+  "QA_L_DESC_SHAPE_pentagon-sides.o1": {
+   "f": "audio/qa/QA_L_DESC_SHAPE_pentagon-sides.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.275
+    ],
+    [
+     1,
+     2,
+     0.275,
+     0.6625
+    ]
+   ],
+   "h": "dc26c12174fc9ee0",
+   "t": "五条"
+  },
+  "QA_L_DESC_SHAPE_pentagon-sides.o2": {
+   "f": "audio/qa/QA_L_DESC_SHAPE_pentagon-sides.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.35
+    ],
+    [
+     1,
+     2,
+     0.35,
+     0.7375
+    ]
+   ],
+   "h": "08baa99f8b9ecdf9",
+   "t": "六条"
+  },
+  "QA_L_DESC_SHAPE_pentagon-sides.o3": {
+   "f": "audio/qa/QA_L_DESC_SHAPE_pentagon-sides.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.35
+    ],
+    [
+     1,
+     2,
+     0.35,
+     0.725
+    ]
+   ],
+   "h": "a4d9a0e88e516472",
+   "t": "七条"
+  },
+  "QA_L_PICK_CMP_read-shortest-bar": {
+   "f": "audio/qa/QA_L_PICK_CMP_read-shortest-bar.mp3",
+   "d": 2.208,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.2875
+    ],
+    [
+     1,
+     3,
+     0.3,
+     0.6875
+    ],
+    [
+     3,
+     4,
+     0.7125,
+     0.9
+    ],
+    [
+     4,
+     5,
+     0.9,
+     1.0625
+    ],
+    [
+     5,
+     6,
+     1.0625,
+     1.15
+    ],
+    [
+     6,
+     9,
+     1.1625,
+     1.6125
+    ]
+   ],
+   "h": "abcc531aedbd499b",
+   "t": "请选出最矮的柱子。"
+  },
   "QA_L_PICK_CMP_read-tallest-bar": {
    "f": "audio/qa/QA_L_PICK_CMP_read-tallest-bar.mp3",
    "d": 2.28,
@@ -1882,6 +4928,62 @@
    ],
    "h": "1433e77e1f5d8089",
    "t": "请选出最高的柱子。"
+  },
+  "QA_L_PICK_COLOR_read-lightest-green": {
+   "f": "audio/qa/QA_L_PICK_COLOR_read-lightest-green.mp3",
+   "d": 3.096,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.2875
+    ],
+    [
+     1,
+     3,
+     0.3,
+     0.7
+    ],
+    [
+     3,
+     5,
+     0.725,
+     1.1625
+    ],
+    [
+     5,
+     6,
+     1.175,
+     1.4
+    ],
+    [
+     6,
+     7,
+     1.4,
+     1.6125
+    ],
+    [
+     7,
+     8,
+     1.6125,
+     1.7
+    ],
+    [
+     8,
+     10,
+     1.725,
+     2.025
+    ],
+    [
+     10,
+     13,
+     2.0375,
+     2.5125
+    ]
+   ],
+   "h": "28797a27ae11a1f5",
+   "t": "请选出颜色最浅的绿色方块。"
   },
   "QA_L_PICK_COUNT_read-five-stars": {
    "f": "audio/qa/QA_L_PICK_COUNT_read-five-stars.mp3",
@@ -1921,6 +5023,138 @@
    "h": "c9c02f94500ac922",
    "t": "请选出五个五角星。"
   },
+  "QA_L_PICK_LIFE_read-wheel": {
+   "f": "audio/qa/QA_L_PICK_LIFE_read-wheel.mp3",
+   "d": 2.352,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3
+    ],
+    [
+     1,
+     3,
+     0.3125,
+     0.6875
+    ],
+    [
+     3,
+     6,
+     0.7125,
+     1.2125
+    ],
+    [
+     6,
+     7,
+     1.2125,
+     1.3
+    ],
+    [
+     7,
+     10,
+     1.3125,
+     1.775
+    ]
+   ],
+   "h": "63402988c7f863bc",
+   "t": "请选出有轮子的东西。"
+  },
+  "QA_L_PICK_POS_pick-ball-left": {
+   "f": "audio/qa/QA_L_PICK_POS_pick-ball-left.mp3",
+   "d": 3.576,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3
+    ],
+    [
+     1,
+     3,
+     0.3125,
+     0.75
+    ],
+    [
+     3,
+     5,
+     0.775,
+     1.3125
+    ],
+    [
+     5,
+     6,
+     1.3375,
+     1.4875
+    ],
+    [
+     6,
+     8,
+     1.5,
+     1.825
+    ],
+    [
+     8,
+     10,
+     1.8375,
+     2.2125
+    ],
+    [
+     10,
+     11,
+     2.2125,
+     2.3
+    ],
+    [
+     11,
+     12,
+     2.3125,
+     2.4375
+    ],
+    [
+     12,
+     13,
+     2.4375,
+     2.6625
+    ],
+    [
+     13,
+     15,
+     2.6625,
+     3.0125
+    ]
+   ],
+   "h": "ae1ba22076554357",
+   "t": "请选出小球在箱子左边的那张图。"
+  },
+  "QA_L_PICK_SHAPE_read-pentagon": {
+   "f": "audio/qa/QA_L_PICK_SHAPE_read-pentagon.mp3",
+   "d": 1.992,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3
+    ],
+    [
+     1,
+     3,
+     0.3125,
+     0.6875
+    ],
+    [
+     3,
+     7,
+     0.7125,
+     1.4
+    ]
+   ],
+   "h": "39d9a141ac5c39ad",
+   "t": "请选出五边形。"
+  },
   "QA_L_PICK_SHAPE_read-triangle": {
    "f": "audio/qa/QA_L_PICK_SHAPE_read-triangle.mp3",
    "d": 2.112,
@@ -1946,6 +5180,56 @@
    ],
    "h": "18bff48d5f2ce815",
    "t": "请选出三角形。"
+  },
+  "QA_L_SAME_DIFFPICK_find-diff-block-l": {
+   "f": "audio/qa/QA_L_SAME_DIFFPICK_find-diff-block-l.mp3",
+   "d": 2.832,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3375
+    ],
+    [
+     1,
+     3,
+     0.3375,
+     0.525
+    ],
+    [
+     3,
+     5,
+     0.5375,
+     1.1
+    ],
+    [
+     5,
+     6,
+     1.2,
+     1.3375
+    ],
+    [
+     6,
+     8,
+     1.35,
+     1.7
+    ],
+    [
+     8,
+     9,
+     1.7125,
+     1.8375
+    ],
+    [
+     9,
+     12,
+     1.8375,
+     2.25
+    ]
+   ],
+   "h": "9535bc5141fef08f",
+   "t": "哪一个色块和其他不一样？"
   },
   "QA_L_SAME_DIFFPICK_find-diff-count": {
    "f": "audio/qa/QA_L_SAME_DIFFPICK_find-diff-count.mp3",
@@ -2002,6 +5286,282 @@
    ],
    "h": "8913dff9ec728fd3",
    "t": "哪一张图和其他不一样？"
+  },
+  "QA_L_SAME_EQ_block-pair-l": {
+   "f": "audio/qa/QA_L_SAME_EQ_block-pair-l.mp3",
+   "d": 2.064,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.275
+    ],
+    [
+     1,
+     2,
+     0.275,
+     0.4375
+    ],
+    [
+     2,
+     3,
+     0.4375,
+     0.5
+    ],
+    [
+     3,
+     5,
+     0.5125,
+     0.9125
+    ],
+    [
+     5,
+     7,
+     0.9375,
+     1.25
+    ],
+    [
+     7,
+     9,
+     1.25,
+     1.5
+    ]
+   ],
+   "h": "23580cb18547f3ea",
+   "t": "这两个色块一样吗？"
+  },
+  "QA_L_SAME_EQ_block-pair-l.o0": {
+   "f": "audio/qa/QA_L_SAME_EQ_block-pair-l.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.625
+    ]
+   ],
+   "h": "cfde66c0eb4e5d56",
+   "t": "一样"
+  },
+  "QA_L_SAME_EQ_block-pair-l.o1": {
+   "f": "audio/qa/QA_L_SAME_EQ_block-pair-l.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.25
+    ],
+    [
+     1,
+     3,
+     0.25,
+     0.7375
+    ]
+   ],
+   "h": "b13b11ce3b5c77ac",
+   "t": "不一样"
+  },
+  "QA_L_SAME_EQ_triangle-pair": {
+   "f": "audio/qa/QA_L_SAME_EQ_triangle-pair.mp3",
+   "d": 2.544,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.2625
+    ],
+    [
+     1,
+     3,
+     0.275,
+     0.7
+    ],
+    [
+     3,
+     4,
+     0.7,
+     0.85
+    ],
+    [
+     4,
+     5,
+     0.85,
+     0.9375
+    ],
+    [
+     5,
+     7,
+     0.95,
+     1.375
+    ],
+    [
+     7,
+     9,
+     1.4,
+     1.7
+    ],
+    [
+     9,
+     11,
+     1.7,
+     1.9625
+    ]
+   ],
+   "h": "e9707cb63f4d7186",
+   "t": "这两张图的形状一样吗？"
+  },
+  "QA_L_SAME_EQ_triangle-pair.o0": {
+   "f": "audio/qa/QA_L_SAME_EQ_triangle-pair.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.625
+    ]
+   ],
+   "h": "cfde66c0eb4e5d56",
+   "t": "一样"
+  },
+  "QA_L_SAME_EQ_triangle-pair.o1": {
+   "f": "audio/qa/QA_L_SAME_EQ_triangle-pair.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.25
+    ],
+    [
+     1,
+     3,
+     0.25,
+     0.7375
+    ]
+   ],
+   "h": "b13b11ce3b5c77ac",
+   "t": "不一样"
+  },
+  "QA_L_SAME_ODD_odd-not-eat-l": {
+   "f": "audio/qa/QA_L_SAME_ODD_odd-not-eat-l.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.35
+    ],
+    [
+     1,
+     3,
+     0.35,
+     0.55
+    ],
+    [
+     3,
+     5,
+     0.5625,
+     0.8625
+    ],
+    [
+     5,
+     7,
+     0.8625,
+     1.2125
+    ]
+   ],
+   "h": "8e9bd88a28cf16f7",
+   "t": "哪一个不能吃？"
+  },
+  "QA_L_SAME_ODD_odd-not-vehicle-l": {
+   "f": "audio/qa/QA_L_SAME_ODD_odd-not-vehicle-l.mp3",
+   "d": 2.256,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3375
+    ],
+    [
+     1,
+     3,
+     0.3375,
+     0.575
+    ],
+    [
+     3,
+     5,
+     0.6,
+     0.825
+    ],
+    [
+     5,
+     10,
+     0.8375,
+     1.675
+    ]
+   ],
+   "h": "ef0998be78949ed5",
+   "t": "哪一个不是交通工具？"
+  },
+  "QA_L_SAME_SAMEPICK_find-same-color": {
+   "f": "audio/qa/QA_L_SAME_SAMEPICK_find-same-color.mp3",
+   "d": 2.52,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3375
+    ],
+    [
+     1,
+     3,
+     0.3375,
+     0.5375
+    ],
+    [
+     3,
+     4,
+     0.5625,
+     0.675
+    ],
+    [
+     4,
+     6,
+     0.6875,
+     1.025
+    ],
+    [
+     6,
+     7,
+     1.025,
+     1.1
+    ],
+    [
+     7,
+     9,
+     1.125,
+     1.5
+    ],
+    [
+     9,
+     12,
+     1.5125,
+     1.9375
+    ]
+   ],
+   "h": "ac6f9a1c8e2deb05",
+   "t": "哪一个和上面的颜色一样？"
   },
   "QA_L_SAME_SAMEPICK_find-same-count": {
    "f": "audio/qa/QA_L_SAME_SAMEPICK_find-same-count.mp3",
@@ -2247,6 +5807,170 @@
    "h": "fb770aff8bf4c141",
    "t": "九"
   },
+  "QA_P_ADD_DIG_seven-plus-two-dig": {
+   "f": "audio/qa/QA_P_ADD_DIG_seven-plus-two-dig.mp3",
+   "d": 1.944,
+   "s": [
+    [
+     0,
+     3,
+     0.1,
+     0.6875
+    ],
+    [
+     3,
+     5,
+     0.7125,
+     1.0375
+    ],
+    [
+     5,
+     7,
+     1.0375,
+     1.375
+    ]
+   ],
+   "h": "d1e4812c3f945b72",
+   "t": "七加二等于几？"
+  },
+  "QA_P_ADD_DIG_seven-plus-two-dig.o0": {
+   "f": "audio/qa/QA_P_ADD_DIG_seven-plus-two-dig.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.4875
+    ]
+   ],
+   "h": "547efa8977b6fa78",
+   "t": "八"
+  },
+  "QA_P_ADD_DIG_seven-plus-two-dig.o1": {
+   "f": "audio/qa/QA_P_ADD_DIG_seven-plus-two-dig.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.4875
+    ]
+   ],
+   "h": "fb770aff8bf4c141",
+   "t": "九"
+  },
+  "QA_P_ADD_DIG_seven-plus-two-dig.o2": {
+   "f": "audio/qa/QA_P_ADD_DIG_seven-plus-two-dig.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.5875
+    ]
+   ],
+   "h": "9606465b5b435cd3",
+   "t": "十"
+  },
+  "QA_P_ADD_DIG_seven-plus-two-dig.o3": {
+   "f": "audio/qa/QA_P_ADD_DIG_seven-plus-two-dig.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.75
+    ]
+   ],
+   "h": "75dafb25e465bfad",
+   "t": "十一"
+  },
+  "QA_P_ADD_DIG_six-plus-six-dig": {
+   "f": "audio/qa/QA_P_ADD_DIG_six-plus-six-dig.mp3",
+   "d": 1.992,
+   "s": [
+    [
+     0,
+     3,
+     0.1,
+     0.7
+    ],
+    [
+     3,
+     5,
+     0.725,
+     1.05
+    ],
+    [
+     5,
+     7,
+     1.05,
+     1.425
+    ]
+   ],
+   "h": "c98a129cf629c76f",
+   "t": "六加六等于几？"
+  },
+  "QA_P_ADD_DIG_six-plus-six-dig.o0": {
+   "f": "audio/qa/QA_P_ADD_DIG_six-plus-six-dig.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.5875
+    ]
+   ],
+   "h": "9606465b5b435cd3",
+   "t": "十"
+  },
+  "QA_P_ADD_DIG_six-plus-six-dig.o1": {
+   "f": "audio/qa/QA_P_ADD_DIG_six-plus-six-dig.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.75
+    ]
+   ],
+   "h": "75dafb25e465bfad",
+   "t": "十一"
+  },
+  "QA_P_ADD_DIG_six-plus-six-dig.o2": {
+   "f": "audio/qa/QA_P_ADD_DIG_six-plus-six-dig.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7
+    ]
+   ],
+   "h": "75f99aa528fa92d3",
+   "t": "十二"
+  },
+  "QA_P_ADD_DIG_six-plus-six-dig.o3": {
+   "f": "audio/qa/QA_P_ADD_DIG_six-plus-six-dig.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7375
+    ]
+   ],
+   "h": "dc1e424473742d80",
+   "t": "十三"
+  },
   "QA_P_ADD_DIG_six-plus-two": {
    "f": "audio/qa/QA_P_ADD_DIG_six-plus-two.mp3",
    "d": 1.968,
@@ -2328,6 +6052,224 @@
    ],
    "h": "9606465b5b435cd3",
    "t": "十"
+  },
+  "QA_P_ADD_DIG_three-plus-four-dig": {
+   "f": "audio/qa/QA_P_ADD_DIG_three-plus-four-dig.mp3",
+   "d": 2.04,
+   "s": [
+    [
+     0,
+     3,
+     0.1,
+     0.7625
+    ],
+    [
+     3,
+     5,
+     0.7875,
+     1.1125
+    ],
+    [
+     5,
+     7,
+     1.1125,
+     1.4625
+    ]
+   ],
+   "h": "69dfdf3242e81892",
+   "t": "三加四等于几？"
+  },
+  "QA_P_ADD_DIG_three-plus-four-dig.o0": {
+   "f": "audio/qa/QA_P_ADD_DIG_three-plus-four-dig.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.5
+    ]
+   ],
+   "h": "9eb5f35aa733a46f",
+   "t": "六"
+  },
+  "QA_P_ADD_DIG_three-plus-four-dig.o1": {
+   "f": "audio/qa/QA_P_ADD_DIG_three-plus-four-dig.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.5375
+    ]
+   ],
+   "h": "7d738dbea3703d1c",
+   "t": "七"
+  },
+  "QA_P_ADD_DIG_three-plus-four-dig.o2": {
+   "f": "audio/qa/QA_P_ADD_DIG_three-plus-four-dig.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.4875
+    ]
+   ],
+   "h": "547efa8977b6fa78",
+   "t": "八"
+  },
+  "QA_P_ADD_DIG_three-plus-four-dig.o3": {
+   "f": "audio/qa/QA_P_ADD_DIG_three-plus-four-dig.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.4875
+    ]
+   ],
+   "h": "fb770aff8bf4c141",
+   "t": "九"
+  },
+  "QA_P_ADD_OBJ_four-plus-three-obj": {
+   "f": "audio/qa/QA_P_ADD_OBJ_four-plus-three-obj.mp3",
+   "d": 3.456,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.4375
+    ],
+    [
+     2,
+     4,
+     0.45,
+     0.8875
+    ],
+    [
+     4,
+     5,
+     0.9125,
+     1.0875
+    ],
+    [
+     5,
+     6,
+     1.1,
+     1.3125
+    ],
+    [
+     6,
+     7,
+     1.3125,
+     1.3875
+    ],
+    [
+     7,
+     10,
+     1.4,
+     2.125
+    ],
+    [
+     10,
+     12,
+     2.125,
+     2.425
+    ],
+    [
+     12,
+     15,
+     2.4375,
+     2.8625
+    ]
+   ],
+   "h": "f597d96068ff9743",
+   "t": "四个苹果加三个苹果，一共几个？"
+  },
+  "QA_P_ADD_OBJ_four-plus-three-obj.o0": {
+   "f": "audio/qa/QA_P_ADD_OBJ_four-plus-three-obj.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.325
+    ],
+    [
+     1,
+     2,
+     0.325,
+     0.65
+    ]
+   ],
+   "h": "2b9eafcc3f6a21cb",
+   "t": "五个"
+  },
+  "QA_P_ADD_OBJ_four-plus-three-obj.o1": {
+   "f": "audio/qa/QA_P_ADD_OBJ_four-plus-three-obj.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3875
+    ],
+    [
+     1,
+     2,
+     0.3875,
+     0.6875
+    ]
+   ],
+   "h": "9087ad2f6a2dedd7",
+   "t": "六个"
+  },
+  "QA_P_ADD_OBJ_four-plus-three-obj.o2": {
+   "f": "audio/qa/QA_P_ADD_OBJ_four-plus-three-obj.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.4
+    ],
+    [
+     1,
+     2,
+     0.4,
+     0.7
+    ]
+   ],
+   "h": "9dafdfa66224690f",
+   "t": "七个"
+  },
+  "QA_P_ADD_OBJ_four-plus-three-obj.o3": {
+   "f": "audio/qa/QA_P_ADD_OBJ_four-plus-three-obj.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.325
+    ],
+    [
+     1,
+     2,
+     0.325,
+     0.65
+    ]
+   ],
+   "h": "653c18e7815edd7a",
+   "t": "八个"
   },
   "QA_P_ADD_OBJ_three-plus-two-obj": {
    "f": "audio/qa/QA_P_ADD_OBJ_three-plus-two-obj.mp3",
@@ -2565,9 +6507,123 @@
    "h": "8354d2fc670464d0",
    "t": "哪一辆车开得最快？"
   },
-  "QA_P_CMP_SLOW_slowest-snail": {
-   "f": "audio/qa/QA_P_CMP_SLOW_slowest-snail.mp3",
-   "d": 2.664,
+  "QA_P_CMP_FAT_fattest-ball-p": {
+   "f": "audio/qa/QA_P_CMP_FAT_fattest-ball-p.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3375
+    ],
+    [
+     1,
+     3,
+     0.3375,
+     0.55
+    ],
+    [
+     3,
+     4,
+     0.55,
+     0.75
+    ],
+    [
+     4,
+     5,
+     0.7625,
+     0.95
+    ],
+    [
+     5,
+     7,
+     0.95,
+     1.2625
+    ]
+   ],
+   "h": "8dead0f7ce7c0d4c",
+   "t": "哪一个球最胖？"
+  },
+  "QA_P_CMP_MORE_fewer-dots": {
+   "f": "audio/qa/QA_P_CMP_MORE_fewer-dots.mp3",
+   "d": 2.016,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.325
+    ],
+    [
+     1,
+     3,
+     0.325,
+     0.6125
+    ],
+    [
+     3,
+     4,
+     0.6125,
+     0.6875
+    ],
+    [
+     4,
+     6,
+     0.7,
+     1.0875
+    ],
+    [
+     6,
+     8,
+     1.0875,
+     1.4375
+    ]
+   ],
+   "h": "e86b66c5d606d3a6",
+   "t": "哪一边的圆点少？"
+  },
+  "QA_P_CMP_MORE_fewer-stars": {
+   "f": "audio/qa/QA_P_CMP_MORE_fewer-stars.mp3",
+   "d": 1.968,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.325
+    ],
+    [
+     1,
+     3,
+     0.325,
+     0.6125
+    ],
+    [
+     3,
+     4,
+     0.6125,
+     0.6875
+    ],
+    [
+     4,
+     6,
+     0.7,
+     1.0375
+    ],
+    [
+     6,
+     8,
+     1.0375,
+     1.3875
+    ]
+   ],
+   "h": "139e1c498b831937",
+   "t": "哪一边的星星少？"
+  },
+  "QA_P_CMP_SLOW_slowest-animal": {
+   "f": "audio/qa/QA_P_CMP_SLOW_slowest-animal.mp3",
+   "d": 2.712,
    "s": [
     [
      0,
@@ -2597,35 +6653,35 @@
      4,
      6,
      0.775,
-     1.225
+     1.2375
     ],
     [
      6,
      7,
-     1.325,
-     1.5
+     1.3375,
+     1.5375
     ],
     [
      7,
      8,
-     1.5,
-     1.5875
+     1.5375,
+     1.625
     ],
     [
      8,
      9,
-     1.6,
-     1.8
+     1.6375,
+     1.85
     ],
     [
      9,
      11,
-     1.8,
-     2.0875
+     1.85,
+     2.15
     ]
    ],
-   "h": "a04be85902c1a842",
-   "t": "哪一只小动物爬得最慢？"
+   "h": "4051ec89010f6494",
+   "t": "哪一只小动物走得最慢？"
   },
   "QA_P_CMP_THINBOARD_thinnest-board": {
    "f": "audio/qa/QA_P_CMP_THINBOARD_thinnest-board.mp3",
@@ -2708,6 +6764,218 @@
    ],
    "h": "3bcc10b6666102eb",
    "t": "哪一根小棒最细？"
+  },
+  "QA_P_DESC_CLOCK_clock-three": {
+   "f": "audio/qa/QA_P_DESC_CLOCK_clock-three.mp3",
+   "d": 2.28,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.5875
+    ],
+    [
+     2,
+     3,
+     0.5875,
+     0.8125
+    ],
+    [
+     3,
+     4,
+     0.8375,
+     0.975
+    ],
+    [
+     4,
+     5,
+     0.975,
+     1.0875
+    ],
+    [
+     5,
+     8,
+     1.1,
+     1.7
+    ]
+   ],
+   "h": "c3e07d97882a591f",
+   "t": "时钟上指着几点？"
+  },
+  "QA_P_DESC_CLOCK_clock-three.o0": {
+   "f": "audio/qa/QA_P_DESC_CLOCK_clock-three.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.6875
+    ]
+   ],
+   "h": "a08c18d017065264",
+   "t": "一点"
+  },
+  "QA_P_DESC_CLOCK_clock-three.o1": {
+   "f": "audio/qa/QA_P_DESC_CLOCK_clock-three.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.775
+    ]
+   ],
+   "h": "ccba12606cf70b33",
+   "t": "三点"
+  },
+  "QA_P_DESC_CLOCK_clock-three.o2": {
+   "f": "audio/qa/QA_P_DESC_CLOCK_clock-three.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7125
+    ]
+   ],
+   "h": "c591c3d104b63fce",
+   "t": "六点"
+  },
+  "QA_P_DESC_CLOCK_clock-three.o3": {
+   "f": "audio/qa/QA_P_DESC_CLOCK_clock-three.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7
+    ]
+   ],
+   "h": "c7297830f0224843",
+   "t": "九点"
+  },
+  "QA_P_DESC_COUNT_car-count": {
+   "f": "audio/qa/QA_P_DESC_COUNT_car-count.mp3",
+   "d": 2.328,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3
+    ],
+    [
+     1,
+     2,
+     0.3,
+     0.5
+    ],
+    [
+     2,
+     3,
+     0.525,
+     0.6625
+    ],
+    [
+     3,
+     5,
+     0.6625,
+     1.025
+    ],
+    [
+     5,
+     9,
+     1.0375,
+     1.7375
+    ]
+   ],
+   "h": "7c5dd7a5c5bfe51d",
+   "t": "图上有几辆小汽车？"
+  },
+  "QA_P_DESC_COUNT_car-count.o0": {
+   "f": "audio/qa/QA_P_DESC_COUNT_car-count.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3625
+    ],
+    [
+     1,
+     2,
+     0.3625,
+     0.675
+    ]
+   ],
+   "h": "e64056b92870b8e8",
+   "t": "两辆"
+  },
+  "QA_P_DESC_COUNT_car-count.o1": {
+   "f": "audio/qa/QA_P_DESC_COUNT_car-count.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.425
+    ],
+    [
+     1,
+     2,
+     0.425,
+     0.725
+    ]
+   ],
+   "h": "83e97a4db19976e1",
+   "t": "三辆"
+  },
+  "QA_P_DESC_COUNT_car-count.o2": {
+   "f": "audio/qa/QA_P_DESC_COUNT_car-count.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.4
+    ],
+    [
+     1,
+     2,
+     0.4,
+     0.725
+    ]
+   ],
+   "h": "270ad3d0fcecb545",
+   "t": "四辆"
+  },
+  "QA_P_DESC_COUNT_car-count.o3": {
+   "f": "audio/qa/QA_P_DESC_COUNT_car-count.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3
+    ],
+    [
+     1,
+     2,
+     0.3,
+     0.6375
+    ]
+   ],
+   "h": "8f5d9b417ea913a1",
+   "t": "五辆"
   },
   "QA_P_DESC_COUNT_dice-five": {
    "f": "audio/qa/QA_P_DESC_COUNT_dice-five.mp3",
@@ -2833,6 +7101,282 @@
    "h": "9087ad2f6a2dedd7",
    "t": "六个"
   },
+  "QA_P_DESC_DAY_when-day": {
+   "f": "audio/qa/QA_P_DESC_DAY_when-day.mp3",
+   "d": 2.064,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.5625
+    ],
+    [
+     2,
+     3,
+     0.5625,
+     0.6375
+    ],
+    [
+     3,
+     4,
+     0.6625,
+     0.7625
+    ],
+    [
+     4,
+     9,
+     0.775,
+     1.4875
+    ]
+   ],
+   "h": "f9bd1deb2e58d8c8",
+   "t": "天亮了是什么时候？"
+  },
+  "QA_P_DESC_DAY_when-day.o0": {
+   "f": "audio/qa/QA_P_DESC_DAY_when-day.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.6875
+    ]
+   ],
+   "h": "5b97e572968ff62c",
+   "t": "早上"
+  },
+  "QA_P_DESC_DAY_when-day.o1": {
+   "f": "audio/qa/QA_P_DESC_DAY_when-day.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.675
+    ]
+   ],
+   "h": "c3f6ee2063299eaf",
+   "t": "中午"
+  },
+  "QA_P_DESC_DAY_when-day.o2": {
+   "f": "audio/qa/QA_P_DESC_DAY_when-day.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.725
+    ]
+   ],
+   "h": "dca9cca9a0b7df39",
+   "t": "下午"
+  },
+  "QA_P_DESC_DAY_when-day.o3": {
+   "f": "audio/qa/QA_P_DESC_DAY_when-day.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.675
+    ]
+   ],
+   "h": "16251322521c1e94",
+   "t": "晚上"
+  },
+  "QA_P_DESC_LIFE_drink-what": {
+   "f": "audio/qa/QA_P_DESC_LIFE_drink-what.mp3",
+   "d": 1.992,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.6375
+    ],
+    [
+     2,
+     3,
+     0.6625,
+     0.825
+    ],
+    [
+     3,
+     4,
+     0.825,
+     0.9625
+    ],
+    [
+     4,
+     7,
+     0.975,
+     1.4
+    ]
+   ],
+   "h": "144b2d1697d0521f",
+   "t": "喝水要用什么？"
+  },
+  "QA_P_DESC_LIFE_drink-what.o0": {
+   "f": "audio/qa/QA_P_DESC_LIFE_drink-what.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.6875
+    ]
+   ],
+   "h": "0f30f3b100ba4e5c",
+   "t": "杯子"
+  },
+  "QA_P_DESC_LIFE_drink-what.o1": {
+   "f": "audio/qa/QA_P_DESC_LIFE_drink-what.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.6375
+    ]
+   ],
+   "h": "99b66330c6f31bb7",
+   "t": "椅子"
+  },
+  "QA_P_DESC_LIFE_drink-what.o2": {
+   "f": "audio/qa/QA_P_DESC_LIFE_drink-what.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.6625
+    ]
+   ],
+   "h": "20b50e7674a0baec",
+   "t": "帽子"
+  },
+  "QA_P_DESC_LIFE_drink-what.o3": {
+   "f": "audio/qa/QA_P_DESC_LIFE_drink-what.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7375
+    ]
+   ],
+   "h": "b8f321c24120d69c",
+   "t": "鞋子"
+  },
+  "QA_P_DESC_POS_where-ball": {
+   "f": "audio/qa/QA_P_DESC_POS_where-ball.mp3",
+   "d": 2.616,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.6625
+    ],
+    [
+     2,
+     3,
+     0.6875,
+     0.8375
+    ],
+    [
+     3,
+     5,
+     0.85,
+     1.2
+    ],
+    [
+     5,
+     6,
+     1.2,
+     1.2875
+    ],
+    [
+     6,
+     8,
+     1.3125,
+     1.55
+    ],
+    [
+     8,
+     11,
+     1.5625,
+     2.025
+    ]
+   ],
+   "h": "382a7239f67e155a",
+   "t": "小球在箱子的什么地方？"
+  },
+  "QA_P_DESC_POS_where-ball.o0": {
+   "f": "audio/qa/QA_P_DESC_POS_where-ball.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.75
+    ]
+   ],
+   "h": "f94234e29487d98b",
+   "t": "上面"
+  },
+  "QA_P_DESC_POS_where-ball.o1": {
+   "f": "audio/qa/QA_P_DESC_POS_where-ball.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.725
+    ]
+   ],
+   "h": "1870e1ec697157e1",
+   "t": "下面"
+  },
+  "QA_P_DESC_POS_where-ball.o2": {
+   "f": "audio/qa/QA_P_DESC_POS_where-ball.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.6875
+    ]
+   ],
+   "h": "6c9fc29dba96c9a3",
+   "t": "左边"
+  },
+  "QA_P_DESC_POS_where-ball.o3": {
+   "f": "audio/qa/QA_P_DESC_POS_where-ball.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7
+    ]
+   ],
+   "h": "5329d4d8c70b0383",
+   "t": "右边"
+  },
   "QA_P_DESC_SHAPE_pentagon": {
    "f": "audio/qa/QA_P_DESC_SHAPE_pentagon.mp3",
    "d": 2.088,
@@ -2926,6 +7470,100 @@
    ],
    "h": "a78638a2e0e6583d",
    "t": "菱形"
+  },
+  "QA_P_DESC_SHAPE_rhombus": {
+   "f": "audio/qa/QA_P_DESC_SHAPE_rhombus.mp3",
+   "d": 2.088,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.325
+    ],
+    [
+     1,
+     2,
+     0.325,
+     0.5375
+    ],
+    [
+     2,
+     3,
+     0.5375,
+     0.65
+    ],
+    [
+     3,
+     5,
+     0.6625,
+     0.925
+    ],
+    [
+     5,
+     8,
+     0.9375,
+     1.5
+    ]
+   ],
+   "h": "bfeb718e4ccca8d9",
+   "t": "图上是什么图形？"
+  },
+  "QA_P_DESC_SHAPE_rhombus.o0": {
+   "f": "audio/qa/QA_P_DESC_SHAPE_rhombus.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7375
+    ]
+   ],
+   "h": "81dde2b7a7f2d4e6",
+   "t": "圆形"
+  },
+  "QA_P_DESC_SHAPE_rhombus.o1": {
+   "f": "audio/qa/QA_P_DESC_SHAPE_rhombus.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7375
+    ]
+   ],
+   "h": "a78638a2e0e6583d",
+   "t": "菱形"
+  },
+  "QA_P_DESC_SHAPE_rhombus.o2": {
+   "f": "audio/qa/QA_P_DESC_SHAPE_rhombus.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     3,
+     0.1,
+     0.95
+    ]
+   ],
+   "h": "84c7adda7e76b6be",
+   "t": "三角形"
+  },
+  "QA_P_DESC_SHAPE_rhombus.o3": {
+   "f": "audio/qa/QA_P_DESC_SHAPE_rhombus.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7375
+    ]
+   ],
+   "h": "fecf598ce06da72a",
+   "t": "十字"
   },
   "QA_P_PICK_CMP_read-tallest": {
    "f": "audio/qa/QA_P_PICK_CMP_read-tallest.mp3",
@@ -3059,6 +7697,224 @@
    "h": "8e8d72044b2195c3",
    "t": "请选出五个圆点。"
   },
+  "QA_P_PICK_LIFE_read-in-sky": {
+   "f": "audio/qa/QA_P_PICK_LIFE_read-in-sky.mp3",
+   "d": 3.072,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3
+    ],
+    [
+     1,
+     3,
+     0.3125,
+     0.8375
+    ],
+    [
+     3,
+     5,
+     0.8625,
+     1.0875
+    ],
+    [
+     5,
+     6,
+     1.1,
+     1.3
+    ],
+    [
+     6,
+     7,
+     1.3,
+     1.45
+    ],
+    [
+     7,
+     9,
+     1.475,
+     1.925
+    ],
+    [
+     9,
+     10,
+     1.925,
+     2.0125
+    ],
+    [
+     10,
+     13,
+     2.025,
+     2.4875
+    ]
+   ],
+   "h": "7f04ccb416008dea",
+   "t": "请选出可以飘到天上的东西。"
+  },
+  "QA_P_PICK_LIFE_read-vehicle": {
+   "f": "audio/qa/QA_P_PICK_LIFE_read-vehicle.mp3",
+   "d": 2.208,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3125
+    ],
+    [
+     1,
+     3,
+     0.325,
+     0.7625
+    ],
+    [
+     3,
+     8,
+     0.7875,
+     1.625
+    ]
+   ],
+   "h": "f539fe6602cb478c",
+   "t": "请选出交通工具。"
+  },
+  "QA_P_PICK_POS_pick-ball-in-box": {
+   "f": "audio/qa/QA_P_PICK_POS_pick-ball-in-box.mp3",
+   "d": 3.504,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3
+    ],
+    [
+     1,
+     3,
+     0.3125,
+     0.75
+    ],
+    [
+     3,
+     5,
+     0.775,
+     1.3125
+    ],
+    [
+     5,
+     6,
+     1.3375,
+     1.4875
+    ],
+    [
+     6,
+     8,
+     1.5,
+     1.85
+    ],
+    [
+     8,
+     10,
+     1.8625,
+     2.1375
+    ],
+    [
+     10,
+     11,
+     2.1375,
+     2.2125
+    ],
+    [
+     11,
+     12,
+     2.225,
+     2.35
+    ],
+    [
+     12,
+     13,
+     2.35,
+     2.575
+    ],
+    [
+     13,
+     15,
+     2.575,
+     2.925
+    ]
+   ],
+   "h": "378e2be514c8a314",
+   "t": "请选出小球在箱子里面的那张图。"
+  },
+  "QA_P_PICK_POS_pick-ball-right": {
+   "f": "audio/qa/QA_P_PICK_POS_pick-ball-right.mp3",
+   "d": 3.552,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3
+    ],
+    [
+     1,
+     3,
+     0.3125,
+     0.75
+    ],
+    [
+     3,
+     5,
+     0.775,
+     1.325
+    ],
+    [
+     5,
+     6,
+     1.35,
+     1.5
+    ],
+    [
+     6,
+     8,
+     1.5125,
+     1.8375
+    ],
+    [
+     8,
+     10,
+     1.85,
+     2.225
+    ],
+    [
+     10,
+     11,
+     2.225,
+     2.2875
+    ],
+    [
+     11,
+     12,
+     2.3,
+     2.425
+    ],
+    [
+     12,
+     13,
+     2.425,
+     2.6375
+    ],
+    [
+     13,
+     15,
+     2.6375,
+     2.9875
+    ]
+   ],
+   "h": "4f073b6c04a246cb",
+   "t": "请选出小球在箱子右边的那张图。"
+  },
   "QA_P_PICK_SHAPE_read-hexagon": {
    "f": "audio/qa/QA_P_PICK_SHAPE_read-hexagon.mp3",
    "d": 2.04,
@@ -3135,6 +7991,332 @@
    "h": "9535bc5141fef08f",
    "t": "哪一个色块和其他不一样？"
   },
+  "QA_P_SAME_DIFFPICK_find-diff-star-p": {
+   "f": "audio/qa/QA_P_SAME_DIFFPICK_find-diff-star-p.mp3",
+   "d": 2.808,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3375
+    ],
+    [
+     1,
+     3,
+     0.3375,
+     0.525
+    ],
+    [
+     3,
+     5,
+     0.5375,
+     1.0875
+    ],
+    [
+     5,
+     6,
+     1.1875,
+     1.325
+    ],
+    [
+     6,
+     8,
+     1.3375,
+     1.6875
+    ],
+    [
+     8,
+     9,
+     1.7,
+     1.825
+    ],
+    [
+     9,
+     12,
+     1.825,
+     2.2375
+    ]
+   ],
+   "h": "53e6afb5a76740e8",
+   "t": "哪一个图形和其他不一样？"
+  },
+  "QA_P_SAME_EQ_square-pair": {
+   "f": "audio/qa/QA_P_SAME_EQ_square-pair.mp3",
+   "d": 2.04,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.2625
+    ],
+    [
+     1,
+     2,
+     0.275,
+     0.4375
+    ],
+    [
+     2,
+     3,
+     0.4375,
+     0.5
+    ],
+    [
+     3,
+     5,
+     0.5125,
+     0.875
+    ],
+    [
+     5,
+     7,
+     0.9,
+     1.225
+    ],
+    [
+     7,
+     9,
+     1.225,
+     1.475
+    ]
+   ],
+   "h": "e6c82e1ca315a9b6",
+   "t": "这两个图形一样吗？"
+  },
+  "QA_P_SAME_EQ_square-pair.o0": {
+   "f": "audio/qa/QA_P_SAME_EQ_square-pair.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.625
+    ]
+   ],
+   "h": "cfde66c0eb4e5d56",
+   "t": "一样"
+  },
+  "QA_P_SAME_EQ_square-pair.o1": {
+   "f": "audio/qa/QA_P_SAME_EQ_square-pair.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.25
+    ],
+    [
+     1,
+     3,
+     0.25,
+     0.7375
+    ]
+   ],
+   "h": "b13b11ce3b5c77ac",
+   "t": "不一样"
+  },
+  "QA_P_SAME_EQ_watermelon-grape-pair": {
+   "f": "audio/qa/QA_P_SAME_EQ_watermelon-grape-pair.mp3",
+   "d": 2.04,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.2625
+    ],
+    [
+     1,
+     2,
+     0.275,
+     0.4375
+    ],
+    [
+     2,
+     3,
+     0.4375,
+     0.5
+    ],
+    [
+     3,
+     5,
+     0.5125,
+     0.875
+    ],
+    [
+     5,
+     7,
+     0.9,
+     1.225
+    ],
+    [
+     7,
+     9,
+     1.225,
+     1.475
+    ]
+   ],
+   "h": "c62e64d8f9701cc9",
+   "t": "这两个水果一样吗？"
+  },
+  "QA_P_SAME_EQ_watermelon-grape-pair.o0": {
+   "f": "audio/qa/QA_P_SAME_EQ_watermelon-grape-pair.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.625
+    ]
+   ],
+   "h": "cfde66c0eb4e5d56",
+   "t": "一样"
+  },
+  "QA_P_SAME_EQ_watermelon-grape-pair.o1": {
+   "f": "audio/qa/QA_P_SAME_EQ_watermelon-grape-pair.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.25
+    ],
+    [
+     1,
+     3,
+     0.25,
+     0.7375
+    ]
+   ],
+   "h": "b13b11ce3b5c77ac",
+   "t": "不一样"
+  },
+  "QA_P_SAME_ODD_odd-animal": {
+   "f": "audio/qa/QA_P_SAME_ODD_odd-animal.mp3",
+   "d": 2.064,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3375
+    ],
+    [
+     1,
+     3,
+     0.3375,
+     0.5625
+    ],
+    [
+     3,
+     5,
+     0.5875,
+     0.7875
+    ],
+    [
+     5,
+     6,
+     0.8,
+     1.0125
+    ],
+    [
+     6,
+     9,
+     1.0125,
+     1.5
+    ]
+   ],
+   "h": "72fc8ad8ce170449",
+   "t": "哪一个不是小动物？"
+  },
+  "QA_P_SAME_ODD_odd-not-fruit-p": {
+   "f": "audio/qa/QA_P_SAME_ODD_odd-not-fruit-p.mp3",
+   "d": 1.968,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.35
+    ],
+    [
+     1,
+     3,
+     0.35,
+     0.5625
+    ],
+    [
+     3,
+     5,
+     0.5875,
+     0.8
+    ],
+    [
+     5,
+     8,
+     0.8125,
+     1.3875
+    ]
+   ],
+   "h": "6c8315715ecf560e",
+   "t": "哪一个不是水果？"
+  },
+  "QA_P_SAME_SAMEPICK_find-pentagon": {
+   "f": "audio/qa/QA_P_SAME_SAMEPICK_find-pentagon.mp3",
+   "d": 2.496,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3375
+    ],
+    [
+     1,
+     3,
+     0.3375,
+     0.5375
+    ],
+    [
+     3,
+     4,
+     0.5625,
+     0.675
+    ],
+    [
+     4,
+     6,
+     0.6875,
+     1.0125
+    ],
+    [
+     6,
+     7,
+     1.0125,
+     1.1
+    ],
+    [
+     7,
+     9,
+     1.1125,
+     1.4625
+    ],
+    [
+     9,
+     12,
+     1.475,
+     1.9
+    ]
+   ],
+   "h": "ca60ac4f1541cab0",
+   "t": "哪一个和上面的图形一样？"
+  },
   "QA_P_SAME_SAMEPICK_find-same-square": {
    "f": "audio/qa/QA_P_SAME_SAMEPICK_find-same-square.mp3",
    "d": 2.496,
@@ -3184,6 +8366,252 @@
    ],
    "h": "ca60ac4f1541cab0",
    "t": "哪一个和上面的图形一样？"
+  },
+  "QA_T_ADD_DIG_four-plus-four-dig": {
+   "f": "audio/qa/QA_T_ADD_DIG_four-plus-four-dig.mp3",
+   "d": 2.016,
+   "s": [
+    [
+     0,
+     3,
+     0.1,
+     0.75
+    ],
+    [
+     3,
+     5,
+     0.775,
+     1.1
+    ],
+    [
+     5,
+     7,
+     1.1,
+     1.45
+    ]
+   ],
+   "h": "02c7df2b4e271aa0",
+   "t": "四加四等于几？"
+  },
+  "QA_T_ADD_DIG_four-plus-four-dig.o0": {
+   "f": "audio/qa/QA_T_ADD_DIG_four-plus-four-dig.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.5
+    ]
+   ],
+   "h": "9eb5f35aa733a46f",
+   "t": "六"
+  },
+  "QA_T_ADD_DIG_four-plus-four-dig.o1": {
+   "f": "audio/qa/QA_T_ADD_DIG_four-plus-four-dig.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.5375
+    ]
+   ],
+   "h": "7d738dbea3703d1c",
+   "t": "七"
+  },
+  "QA_T_ADD_DIG_four-plus-four-dig.o2": {
+   "f": "audio/qa/QA_T_ADD_DIG_four-plus-four-dig.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.4875
+    ]
+   ],
+   "h": "547efa8977b6fa78",
+   "t": "八"
+  },
+  "QA_T_ADD_DIG_four-plus-four-dig.o3": {
+   "f": "audio/qa/QA_T_ADD_DIG_four-plus-four-dig.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.4875
+    ]
+   ],
+   "h": "fb770aff8bf4c141",
+   "t": "九"
+  },
+  "QA_T_ADD_DIG_six-plus-three-dig": {
+   "f": "audio/qa/QA_T_ADD_DIG_six-plus-three-dig.mp3",
+   "d": 1.992,
+   "s": [
+    [
+     0,
+     3,
+     0.1,
+     0.725
+    ],
+    [
+     3,
+     5,
+     0.75,
+     1.0625
+    ],
+    [
+     5,
+     7,
+     1.0625,
+     1.4125
+    ]
+   ],
+   "h": "bdb91a367fdb9ef0",
+   "t": "六加三等于几？"
+  },
+  "QA_T_ADD_DIG_six-plus-three-dig.o0": {
+   "f": "audio/qa/QA_T_ADD_DIG_six-plus-three-dig.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.5375
+    ]
+   ],
+   "h": "7d738dbea3703d1c",
+   "t": "七"
+  },
+  "QA_T_ADD_DIG_six-plus-three-dig.o1": {
+   "f": "audio/qa/QA_T_ADD_DIG_six-plus-three-dig.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.4875
+    ]
+   ],
+   "h": "547efa8977b6fa78",
+   "t": "八"
+  },
+  "QA_T_ADD_DIG_six-plus-three-dig.o2": {
+   "f": "audio/qa/QA_T_ADD_DIG_six-plus-three-dig.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.4875
+    ]
+   ],
+   "h": "fb770aff8bf4c141",
+   "t": "九"
+  },
+  "QA_T_ADD_DIG_six-plus-three-dig.o3": {
+   "f": "audio/qa/QA_T_ADD_DIG_six-plus-three-dig.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.5875
+    ]
+   ],
+   "h": "9606465b5b435cd3",
+   "t": "十"
+  },
+  "QA_T_ADD_DIG_three-plus-two-dig": {
+   "f": "audio/qa/QA_T_ADD_DIG_three-plus-two-dig.mp3",
+   "d": 2.016,
+   "s": [
+    [
+     0,
+     3,
+     0.1,
+     0.7375
+    ],
+    [
+     3,
+     5,
+     0.7625,
+     1.1
+    ],
+    [
+     5,
+     7,
+     1.1,
+     1.4375
+    ]
+   ],
+   "h": "58d18bf3d4cc323d",
+   "t": "三加二等于几？"
+  },
+  "QA_T_ADD_DIG_three-plus-two-dig.o0": {
+   "f": "audio/qa/QA_T_ADD_DIG_three-plus-two-dig.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.5625
+    ]
+   ],
+   "h": "48b572dfc103eb03",
+   "t": "四"
+  },
+  "QA_T_ADD_DIG_three-plus-two-dig.o1": {
+   "f": "audio/qa/QA_T_ADD_DIG_three-plus-two-dig.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.475
+    ]
+   ],
+   "h": "72225d699db16bbb",
+   "t": "五"
+  },
+  "QA_T_ADD_DIG_three-plus-two-dig.o2": {
+   "f": "audio/qa/QA_T_ADD_DIG_three-plus-two-dig.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.5
+    ]
+   ],
+   "h": "9eb5f35aa733a46f",
+   "t": "六"
+  },
+  "QA_T_ADD_DIG_three-plus-two-dig.o3": {
+   "f": "audio/qa/QA_T_ADD_DIG_three-plus-two-dig.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.5375
+    ]
+   ],
+   "h": "7d738dbea3703d1c",
+   "t": "七"
   },
   "QA_T_ADD_DIG_two-plus-three-dig": {
    "f": "audio/qa/QA_T_ADD_DIG_two-plus-three-dig.mp3",
@@ -3266,6 +8694,278 @@
    ],
    "h": "7d738dbea3703d1c",
    "t": "七"
+  },
+  "QA_T_ADD_OBJ_four-plus-two-star": {
+   "f": "audio/qa/QA_T_ADD_OBJ_four-plus-two-star.mp3",
+   "d": 3.384,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3625
+    ],
+    [
+     1,
+     2,
+     0.3625,
+     0.4625
+    ],
+    [
+     2,
+     4,
+     0.475,
+     0.875
+    ],
+    [
+     4,
+     5,
+     0.9,
+     1.0375
+    ],
+    [
+     5,
+     6,
+     1.05,
+     1.225
+    ],
+    [
+     6,
+     7,
+     1.225,
+     1.2875
+    ],
+    [
+     7,
+     10,
+     1.3,
+     2.05
+    ],
+    [
+     10,
+     12,
+     2.05,
+     2.3625
+    ],
+    [
+     12,
+     15,
+     2.375,
+     2.8
+    ]
+   ],
+   "h": "7249fb644bc572c7",
+   "t": "四个星星加两个星星，一共几个？"
+  },
+  "QA_T_ADD_OBJ_four-plus-two-star.o0": {
+   "f": "audio/qa/QA_T_ADD_OBJ_four-plus-two-star.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.425
+    ],
+    [
+     1,
+     2,
+     0.425,
+     0.725
+    ]
+   ],
+   "h": "6389ca171ffe229e",
+   "t": "四个"
+  },
+  "QA_T_ADD_OBJ_four-plus-two-star.o1": {
+   "f": "audio/qa/QA_T_ADD_OBJ_four-plus-two-star.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.325
+    ],
+    [
+     1,
+     2,
+     0.325,
+     0.65
+    ]
+   ],
+   "h": "2b9eafcc3f6a21cb",
+   "t": "五个"
+  },
+  "QA_T_ADD_OBJ_four-plus-two-star.o2": {
+   "f": "audio/qa/QA_T_ADD_OBJ_four-plus-two-star.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3875
+    ],
+    [
+     1,
+     2,
+     0.3875,
+     0.6875
+    ]
+   ],
+   "h": "9087ad2f6a2dedd7",
+   "t": "六个"
+  },
+  "QA_T_ADD_OBJ_four-plus-two-star.o3": {
+   "f": "audio/qa/QA_T_ADD_OBJ_four-plus-two-star.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.4
+    ],
+    [
+     1,
+     2,
+     0.4,
+     0.7
+    ]
+   ],
+   "h": "9dafdfa66224690f",
+   "t": "七个"
+  },
+  "QA_T_ADD_OBJ_three-plus-one-obj": {
+   "f": "audio/qa/QA_T_ADD_OBJ_three-plus-one-obj.mp3",
+   "d": 3.384,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.375
+    ],
+    [
+     1,
+     2,
+     0.375,
+     0.45
+    ],
+    [
+     2,
+     4,
+     0.4625,
+     0.85
+    ],
+    [
+     4,
+     5,
+     0.875,
+     1.05
+    ],
+    [
+     5,
+     10,
+     1.0625,
+     2.0125
+    ],
+    [
+     10,
+     12,
+     2.0125,
+     2.325
+    ],
+    [
+     12,
+     15,
+     2.3375,
+     2.7875
+    ]
+   ],
+   "h": "89bf9c82bb6aa9cf",
+   "t": "三个苹果加一个苹果，一共几个？"
+  },
+  "QA_T_ADD_OBJ_three-plus-one-obj.o0": {
+   "f": "audio/qa/QA_T_ADD_OBJ_three-plus-one-obj.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.375
+    ],
+    [
+     1,
+     2,
+     0.375,
+     0.6875
+    ]
+   ],
+   "h": "6eac9cba331d0935",
+   "t": "二个"
+  },
+  "QA_T_ADD_OBJ_three-plus-one-obj.o1": {
+   "f": "audio/qa/QA_T_ADD_OBJ_three-plus-one-obj.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.45
+    ],
+    [
+     1,
+     2,
+     0.45,
+     0.7125
+    ]
+   ],
+   "h": "0541603f980c5071",
+   "t": "三个"
+  },
+  "QA_T_ADD_OBJ_three-plus-one-obj.o2": {
+   "f": "audio/qa/QA_T_ADD_OBJ_three-plus-one-obj.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.425
+    ],
+    [
+     1,
+     2,
+     0.425,
+     0.725
+    ]
+   ],
+   "h": "6389ca171ffe229e",
+   "t": "四个"
+  },
+  "QA_T_ADD_OBJ_three-plus-one-obj.o3": {
+   "f": "audio/qa/QA_T_ADD_OBJ_three-plus-one-obj.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.325
+    ],
+    [
+     1,
+     2,
+     0.325,
+     0.65
+    ]
+   ],
+   "h": "2b9eafcc3f6a21cb",
+   "t": "五个"
   },
   "QA_T_ADD_OBJ_two-plus-one-obj": {
    "f": "audio/qa/QA_T_ADD_OBJ_two-plus-one-obj.mp3",
@@ -3391,6 +9091,148 @@
    "h": "6389ca171ffe229e",
    "t": "四个"
   },
+  "QA_T_ADD_OBJ_two-plus-three-ball": {
+   "f": "audio/qa/QA_T_ADD_OBJ_two-plus-three-ball.mp3",
+   "d": 3.024,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3375
+    ],
+    [
+     1,
+     2,
+     0.3375,
+     0.4375
+    ],
+    [
+     2,
+     3,
+     0.4375,
+     0.625
+    ],
+    [
+     3,
+     4,
+     0.65,
+     0.8125
+    ],
+    [
+     4,
+     5,
+     0.825,
+     1.05
+    ],
+    [
+     5,
+     6,
+     1.05,
+     1.1375
+    ],
+    [
+     6,
+     8,
+     1.1375,
+     1.675
+    ],
+    [
+     8,
+     10,
+     1.675,
+     1.9875
+    ],
+    [
+     10,
+     13,
+     2.0,
+     2.45
+    ]
+   ],
+   "h": "ebaf4635f7c6d098",
+   "t": "两个球加三个球，一共几个？"
+  },
+  "QA_T_ADD_OBJ_two-plus-three-ball.o0": {
+   "f": "audio/qa/QA_T_ADD_OBJ_two-plus-three-ball.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.45
+    ],
+    [
+     1,
+     2,
+     0.45,
+     0.7125
+    ]
+   ],
+   "h": "0541603f980c5071",
+   "t": "三个"
+  },
+  "QA_T_ADD_OBJ_two-plus-three-ball.o1": {
+   "f": "audio/qa/QA_T_ADD_OBJ_two-plus-three-ball.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.425
+    ],
+    [
+     1,
+     2,
+     0.425,
+     0.725
+    ]
+   ],
+   "h": "6389ca171ffe229e",
+   "t": "四个"
+  },
+  "QA_T_ADD_OBJ_two-plus-three-ball.o2": {
+   "f": "audio/qa/QA_T_ADD_OBJ_two-plus-three-ball.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.325
+    ],
+    [
+     1,
+     2,
+     0.325,
+     0.65
+    ]
+   ],
+   "h": "2b9eafcc3f6a21cb",
+   "t": "五个"
+  },
+  "QA_T_ADD_OBJ_two-plus-three-ball.o3": {
+   "f": "audio/qa/QA_T_ADD_OBJ_two-plus-three-ball.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3875
+    ],
+    [
+     1,
+     2,
+     0.3875,
+     0.6875
+    ]
+   ],
+   "h": "9087ad2f6a2dedd7",
+   "t": "六个"
+  },
   "QA_T_CMP_FAR_farthest-ball": {
    "f": "audio/qa/QA_T_CMP_FAR_farthest-ball.mp3",
    "d": 2.544,
@@ -3510,6 +9352,120 @@
    ],
    "h": "6c159feff0d461ee",
    "t": "哪一座塔最高？"
+  },
+  "QA_T_CMP_LONG_longest-ribbon-t": {
+   "f": "audio/qa/QA_T_CMP_LONG_longest-ribbon-t.mp3",
+   "d": 2.088,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3125
+    ],
+    [
+     1,
+     3,
+     0.3125,
+     0.6125
+    ],
+    [
+     3,
+     5,
+     0.625,
+     0.95
+    ],
+    [
+     5,
+     6,
+     0.9625,
+     1.15
+    ],
+    [
+     6,
+     8,
+     1.15,
+     1.5125
+    ]
+   ],
+   "h": "25cae93518c86e6c",
+   "t": "哪一条丝带最长？"
+  },
+  "QA_T_CMP_MORE_more-dots": {
+   "f": "audio/qa/QA_T_CMP_MORE_more-dots.mp3",
+   "d": 1.968,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.325
+    ],
+    [
+     1,
+     3,
+     0.325,
+     0.6125
+    ],
+    [
+     3,
+     4,
+     0.6125,
+     0.6875
+    ],
+    [
+     4,
+     6,
+     0.7,
+     1.1
+    ],
+    [
+     6,
+     8,
+     1.1,
+     1.3875
+    ]
+   ],
+   "h": "98dc97394a10df9a",
+   "t": "哪一边的圆点多？"
+  },
+  "QA_T_CMP_NEAR_nearest-ball-t": {
+   "f": "audio/qa/QA_T_CMP_NEAR_nearest-ball-t.mp3",
+   "d": 2.208,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3375
+    ],
+    [
+     1,
+     3,
+     0.3375,
+     0.5375
+    ],
+    [
+     3,
+     5,
+     0.55,
+     0.875
+    ],
+    [
+     5,
+     7,
+     0.8875,
+     1.1125
+    ],
+    [
+     7,
+     10,
+     1.125,
+     1.625
+    ]
+   ],
+   "h": "efa8cd0f50605410",
+   "t": "哪一个球离我们最近？"
   },
   "QA_T_CMP_SHORT_shortest-stick": {
    "f": "audio/qa/QA_T_CMP_SHORT_shortest-stick.mp3",
@@ -3699,6 +9655,224 @@
    "h": "f5212d9f5a1dfaf6",
    "t": "绿色"
   },
+  "QA_T_DESC_COLOR_pink-block": {
+   "f": "audio/qa/QA_T_DESC_COLOR_pink-block.mp3",
+   "d": 2.52,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.4375
+    ],
+    [
+     2,
+     4,
+     0.45,
+     0.85
+    ],
+    [
+     4,
+     5,
+     0.875,
+     0.9875
+    ],
+    [
+     5,
+     7,
+     0.9875,
+     1.2375
+    ],
+    [
+     7,
+     9,
+     1.25,
+     1.7125
+    ],
+    [
+     9,
+     11,
+     1.7125,
+     1.9375
+    ]
+   ],
+   "h": "00719e815736425c",
+   "t": "这个方块是什么颜色的？"
+  },
+  "QA_T_DESC_COLOR_pink-block.o0": {
+   "f": "audio/qa/QA_T_DESC_COLOR_pink-block.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7375
+    ]
+   ],
+   "h": "6b87820b96c35569",
+   "t": "红色"
+  },
+  "QA_T_DESC_COLOR_pink-block.o1": {
+   "f": "audio/qa/QA_T_DESC_COLOR_pink-block.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.725
+    ]
+   ],
+   "h": "7bf967178affc979",
+   "t": "黄色"
+  },
+  "QA_T_DESC_COLOR_pink-block.o2": {
+   "f": "audio/qa/QA_T_DESC_COLOR_pink-block.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.725
+    ]
+   ],
+   "h": "414721340c40f555",
+   "t": "粉色"
+  },
+  "QA_T_DESC_COLOR_pink-block.o3": {
+   "f": "audio/qa/QA_T_DESC_COLOR_pink-block.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7125
+    ]
+   ],
+   "h": "f5212d9f5a1dfaf6",
+   "t": "绿色"
+  },
+  "QA_T_DESC_COUNT_banana-count": {
+   "f": "audio/qa/QA_T_DESC_COUNT_banana-count.mp3",
+   "d": 2.112,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3125
+    ],
+    [
+     1,
+     2,
+     0.3125,
+     0.5
+    ],
+    [
+     2,
+     3,
+     0.525,
+     0.65
+    ],
+    [
+     3,
+     4,
+     0.6625,
+     0.85
+    ],
+    [
+     4,
+     5,
+     0.85,
+     0.9875
+    ],
+    [
+     5,
+     8,
+     1.0,
+     1.525
+    ]
+   ],
+   "h": "548db545c7a6b9d7",
+   "t": "图上有几根香蕉？"
+  },
+  "QA_T_DESC_COUNT_banana-count.o0": {
+   "f": "audio/qa/QA_T_DESC_COUNT_banana-count.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3625
+    ],
+    [
+     1,
+     2,
+     0.3625,
+     0.675
+    ]
+   ],
+   "h": "c718c27e90e75ade",
+   "t": "两根"
+  },
+  "QA_T_DESC_COUNT_banana-count.o1": {
+   "f": "audio/qa/QA_T_DESC_COUNT_banana-count.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.4375
+    ],
+    [
+     1,
+     2,
+     0.4375,
+     0.7375
+    ]
+   ],
+   "h": "d5cd32e1f5698f87",
+   "t": "三根"
+  },
+  "QA_T_DESC_COUNT_banana-count.o2": {
+   "f": "audio/qa/QA_T_DESC_COUNT_banana-count.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.725
+    ]
+   ],
+   "h": "a728fef9dcd09992",
+   "t": "四根"
+  },
+  "QA_T_DESC_COUNT_banana-count.o3": {
+   "f": "audio/qa/QA_T_DESC_COUNT_banana-count.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3125
+    ],
+    [
+     1,
+     2,
+     0.3125,
+     0.625
+    ]
+   ],
+   "h": "bd3bd28deaa3fc45",
+   "t": "五根"
+  },
   "QA_T_DESC_COUNT_star-count": {
    "f": "audio/qa/QA_T_DESC_COUNT_star-count.mp3",
    "d": 2.112,
@@ -3823,6 +9997,184 @@
    "h": "32bdd751c6055f8c",
    "t": "六颗"
   },
+  "QA_T_DESC_LIFE_rainy-day": {
+   "f": "audio/qa/QA_T_DESC_LIFE_rainy-day.mp3",
+   "d": 2.544,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.475
+    ],
+    [
+     2,
+     3,
+     0.4875,
+     0.6875
+    ],
+    [
+     3,
+     5,
+     0.6875,
+     1.1625
+    ],
+    [
+     5,
+     6,
+     1.25,
+     1.3875
+    ],
+    [
+     6,
+     7,
+     1.3875,
+     1.55
+    ],
+    [
+     7,
+     10,
+     1.55,
+     1.9625
+    ]
+   ],
+   "h": "f352bda6121f7775",
+   "t": "下雨天出门要带什么？"
+  },
+  "QA_T_DESC_LIFE_rainy-day.o0": {
+   "f": "audio/qa/QA_T_DESC_LIFE_rainy-day.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7125
+    ]
+   ],
+   "h": "d3d7774c42139f01",
+   "t": "雨伞"
+  },
+  "QA_T_DESC_LIFE_rainy-day.o1": {
+   "f": "audio/qa/QA_T_DESC_LIFE_rainy-day.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.6625
+    ]
+   ],
+   "h": "20b50e7674a0baec",
+   "t": "帽子"
+  },
+  "QA_T_DESC_LIFE_rainy-day.o2": {
+   "f": "audio/qa/QA_T_DESC_LIFE_rainy-day.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7375
+    ]
+   ],
+   "h": "b8f321c24120d69c",
+   "t": "鞋子"
+  },
+  "QA_T_DESC_LIFE_rainy-day.o3": {
+   "f": "audio/qa/QA_T_DESC_LIFE_rainy-day.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.6875
+    ]
+   ],
+   "h": "0f30f3b100ba4e5c",
+   "t": "杯子"
+  },
+  "QA_T_DESC_POS_above-or-below": {
+   "f": "audio/qa/QA_T_DESC_POS_above-or-below.mp3",
+   "d": 3.192,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.5625
+    ],
+    [
+     2,
+     3,
+     0.5875,
+     0.7375
+    ],
+    [
+     3,
+     5,
+     0.75,
+     1.1
+    ],
+    [
+     5,
+     6,
+     1.1,
+     1.1875
+    ],
+    [
+     6,
+     8,
+     1.2,
+     1.7375
+    ],
+    [
+     8,
+     10,
+     1.825,
+     2.075
+    ],
+    [
+     10,
+     13,
+     2.0875,
+     2.6
+    ]
+   ],
+   "h": "f6acd71ab8936d13",
+   "t": "小球在箱子的上面还是下面？"
+  },
+  "QA_T_DESC_POS_above-or-below.o0": {
+   "f": "audio/qa/QA_T_DESC_POS_above-or-below.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.75
+    ]
+   ],
+   "h": "f94234e29487d98b",
+   "t": "上面"
+  },
+  "QA_T_DESC_POS_above-or-below.o1": {
+   "f": "audio/qa/QA_T_DESC_POS_above-or-below.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.725
+    ]
+   ],
+   "h": "1870e1ec697157e1",
+   "t": "下面"
+  },
   "QA_T_DESC_WHAT_panda": {
    "f": "audio/qa/QA_T_DESC_WHAT_panda.mp3",
    "d": 2.184,
@@ -3923,6 +10275,156 @@
    "h": "a5f1fb54c32fd902",
    "t": "青蛙"
   },
+  "QA_T_DESC_WHAT_rabbit": {
+   "f": "audio/qa/QA_T_DESC_WHAT_rabbit.mp3",
+   "d": 2.184,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.325
+    ],
+    [
+     1,
+     2,
+     0.325,
+     0.525
+    ],
+    [
+     2,
+     3,
+     0.55,
+     0.6625
+    ],
+    [
+     3,
+     5,
+     0.6625,
+     0.9125
+    ],
+    [
+     5,
+     6,
+     0.925,
+     1.125
+    ],
+    [
+     6,
+     9,
+     1.125,
+     1.6125
+    ]
+   ],
+   "h": "31c8a3e1fe060668",
+   "t": "图上是什么小动物？"
+  },
+  "QA_T_DESC_WHAT_rabbit.o0": {
+   "f": "audio/qa/QA_T_DESC_WHAT_rabbit.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.4
+    ],
+    [
+     1,
+     2,
+     0.4,
+     0.75
+    ]
+   ],
+   "h": "c2bf97e25530cb72",
+   "t": "小兔"
+  },
+  "QA_T_DESC_WHAT_rabbit.o1": {
+   "f": "audio/qa/QA_T_DESC_WHAT_rabbit.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3875
+    ],
+    [
+     1,
+     2,
+     0.3875,
+     0.7
+    ]
+   ],
+   "h": "26d10f1d1b98d913",
+   "t": "小猫"
+  },
+  "QA_T_DESC_WHAT_rabbit.o2": {
+   "f": "audio/qa/QA_T_DESC_WHAT_rabbit.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.75
+    ]
+   ],
+   "h": "c7c4cb59d86560dd",
+   "t": "小狗"
+  },
+  "QA_T_DESC_WHAT_rabbit.o3": {
+   "f": "audio/qa/QA_T_DESC_WHAT_rabbit.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.375
+    ],
+    [
+     1,
+     3,
+     0.375,
+     0.8625
+    ]
+   ],
+   "h": "6abacb71593915d2",
+   "t": "小熊猫"
+  },
+  "QA_T_PICK_COUNT_read-four-stars": {
+   "f": "audio/qa/QA_T_PICK_COUNT_read-four-stars.mp3",
+   "d": 2.256,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3125
+    ],
+    [
+     1,
+     3,
+     0.325,
+     0.7375
+    ],
+    [
+     3,
+     5,
+     0.7625,
+     1.15
+    ],
+    [
+     5,
+     8,
+     1.1625,
+     1.6625
+    ]
+   ],
+   "h": "9c5b4ebab2f0859e",
+   "t": "请选出四颗星星。"
+  },
   "QA_T_PICK_COUNT_read-three-apples": {
    "f": "audio/qa/QA_T_PICK_COUNT_read-three-apples.mp3",
    "d": 2.184,
@@ -3961,6 +10463,164 @@
    "h": "1be7a6f78b4d64e9",
    "t": "请选出三个苹果。"
   },
+  "QA_T_PICK_LIFE_read-animal": {
+   "f": "audio/qa/QA_T_PICK_LIFE_read-animal.mp3",
+   "d": 1.944,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3125
+    ],
+    [
+     1,
+     3,
+     0.325,
+     0.65
+    ],
+    [
+     3,
+     4,
+     0.675,
+     0.8875
+    ],
+    [
+     4,
+     7,
+     0.8875,
+     1.3625
+    ]
+   ],
+   "h": "d300e729e1f90168",
+   "t": "请选出小动物。"
+  },
+  "QA_T_PICK_LIFE_read-can-play": {
+   "f": "audio/qa/QA_T_PICK_LIFE_read-can-play.mp3",
+   "d": 2.352,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3
+    ],
+    [
+     1,
+     3,
+     0.3125,
+     0.75
+    ],
+    [
+     3,
+     5,
+     0.775,
+     1.0125
+    ],
+    [
+     5,
+     6,
+     1.0125,
+     1.2125
+    ],
+    [
+     6,
+     7,
+     1.2125,
+     1.3
+    ],
+    [
+     7,
+     10,
+     1.3125,
+     1.775
+    ]
+   ],
+   "h": "125ad2b865cde8e3",
+   "t": "请选出可以玩的东西。"
+  },
+  "QA_T_PICK_LIFE_read-on-road": {
+   "f": "audio/qa/QA_T_PICK_LIFE_read-on-road.mp3",
+   "d": 2.88,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3
+    ],
+    [
+     1,
+     3,
+     0.3125,
+     0.825
+    ],
+    [
+     3,
+     4,
+     0.85,
+     1.0125
+    ],
+    [
+     4,
+     5,
+     1.0125,
+     1.1625
+    ],
+    [
+     5,
+     7,
+     1.1875,
+     1.475
+    ],
+    [
+     7,
+     8,
+     1.4875,
+     1.7125
+    ],
+    [
+     8,
+     9,
+     1.7125,
+     1.8125
+    ],
+    [
+     9,
+     12,
+     1.825,
+     2.3
+    ]
+   ],
+   "h": "8c5b7e62e77ead4c",
+   "t": "请选出能在路上跑的东西。"
+  },
+  "QA_T_PICK_SHAPE_read-triangle-t": {
+   "f": "audio/qa/QA_T_PICK_SHAPE_read-triangle-t.mp3",
+   "d": 2.112,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3125
+    ],
+    [
+     1,
+     3,
+     0.325,
+     0.7375
+    ],
+    [
+     3,
+     7,
+     0.7625,
+     1.525
+    ]
+   ],
+   "h": "18bff48d5f2ce815",
+   "t": "请选出三角形。"
+  },
   "QA_T_PICK_WORD_read-apple": {
    "f": "audio/qa/QA_T_PICK_WORD_read-apple.mp3",
    "d": 1.872,
@@ -3986,6 +10646,82 @@
    ],
    "h": "afb37ad37c8511ab",
    "t": "请选出苹果。"
+  },
+  "QA_T_PICK_WORD_read-banana": {
+   "f": "audio/qa/QA_T_PICK_WORD_read-banana.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3125
+    ],
+    [
+     1,
+     3,
+     0.325,
+     0.675
+    ],
+    [
+     3,
+     6,
+     0.6875,
+     1.2375
+    ]
+   ],
+   "h": "c75965aea64a3a07",
+   "t": "请选出香蕉。"
+  },
+  "QA_T_SAME_DIFFPICK_find-diff-grape": {
+   "f": "audio/qa/QA_T_SAME_DIFFPICK_find-diff-grape.mp3",
+   "d": 2.832,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3375
+    ],
+    [
+     1,
+     3,
+     0.3375,
+     0.525
+    ],
+    [
+     3,
+     5,
+     0.5375,
+     1.1
+    ],
+    [
+     5,
+     6,
+     1.2,
+     1.3375
+    ],
+    [
+     6,
+     8,
+     1.35,
+     1.7
+    ],
+    [
+     8,
+     9,
+     1.7125,
+     1.8375
+    ],
+    [
+     9,
+     12,
+     1.8375,
+     2.25
+    ]
+   ],
+   "h": "24a717d3a0146f84",
+   "t": "哪一个水果和其他不一样？"
   },
   "QA_T_SAME_DIFFPICK_find-diff-shape": {
    "f": "audio/qa/QA_T_SAME_DIFFPICK_find-diff-shape.mp3",
@@ -4036,6 +10772,168 @@
    ],
    "h": "53e6afb5a76740e8",
    "t": "哪一个图形和其他不一样？"
+  },
+  "QA_T_SAME_EQ_ball-pair-same": {
+   "f": "audio/qa/QA_T_SAME_EQ_ball-pair-same.mp3",
+   "d": 1.92,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.2625
+    ],
+    [
+     1,
+     2,
+     0.275,
+     0.4375
+    ],
+    [
+     2,
+     3,
+     0.4375,
+     0.5125
+    ],
+    [
+     3,
+     4,
+     0.5125,
+     0.7125
+    ],
+    [
+     4,
+     6,
+     0.725,
+     1.075
+    ],
+    [
+     6,
+     8,
+     1.075,
+     1.3375
+    ]
+   ],
+   "h": "7915706a9bc6ae31",
+   "t": "这两个球一样吗？"
+  },
+  "QA_T_SAME_EQ_ball-pair-same.o0": {
+   "f": "audio/qa/QA_T_SAME_EQ_ball-pair-same.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.625
+    ]
+   ],
+   "h": "cfde66c0eb4e5d56",
+   "t": "一样"
+  },
+  "QA_T_SAME_EQ_ball-pair-same.o1": {
+   "f": "audio/qa/QA_T_SAME_EQ_ball-pair-same.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.25
+    ],
+    [
+     1,
+     3,
+     0.25,
+     0.7375
+    ]
+   ],
+   "h": "b13b11ce3b5c77ac",
+   "t": "不一样"
+  },
+  "QA_T_SAME_EQ_panda-bear-pair": {
+   "f": "audio/qa/QA_T_SAME_EQ_panda-bear-pair.mp3",
+   "d": 2.208,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.275
+    ],
+    [
+     1,
+     2,
+     0.275,
+     0.4625
+    ],
+    [
+     2,
+     3,
+     0.4625,
+     0.55
+    ],
+    [
+     3,
+     4,
+     0.5625,
+     0.7625
+    ],
+    [
+     4,
+     6,
+     0.7625,
+     1.0125
+    ],
+    [
+     6,
+     8,
+     1.0375,
+     1.3875
+    ],
+    [
+     8,
+     10,
+     1.3875,
+     1.6375
+    ]
+   ],
+   "h": "672f9088cebb74d2",
+   "t": "这两只小动物一样吗？"
+  },
+  "QA_T_SAME_EQ_panda-bear-pair.o0": {
+   "f": "audio/qa/QA_T_SAME_EQ_panda-bear-pair.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.625
+    ]
+   ],
+   "h": "cfde66c0eb4e5d56",
+   "t": "一样"
+  },
+  "QA_T_SAME_EQ_panda-bear-pair.o1": {
+   "f": "audio/qa/QA_T_SAME_EQ_panda-bear-pair.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.25
+    ],
+    [
+     1,
+     3,
+     0.25,
+     0.7375
+    ]
+   ],
+   "h": "b13b11ce3b5c77ac",
+   "t": "不一样"
   },
   "QA_T_SAME_EQ_two-apples": {
    "f": "audio/qa/QA_T_SAME_EQ_two-apples.mp3",
@@ -4115,6 +11013,88 @@
    "h": "b13b11ce3b5c77ac",
    "t": "不一样"
   },
+  "QA_T_SAME_ODD_odd-fruit": {
+   "f": "audio/qa/QA_T_SAME_ODD_odd-fruit.mp3",
+   "d": 1.968,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.35
+    ],
+    [
+     1,
+     3,
+     0.35,
+     0.5625
+    ],
+    [
+     3,
+     5,
+     0.5875,
+     0.8
+    ],
+    [
+     5,
+     8,
+     0.8125,
+     1.3875
+    ]
+   ],
+   "h": "6c8315715ecf560e",
+   "t": "哪一个不是水果？"
+  },
+  "QA_T_SAME_SAMEPICK_find-apple": {
+   "f": "audio/qa/QA_T_SAME_SAMEPICK_find-apple.mp3",
+   "d": 2.472,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3375
+    ],
+    [
+     1,
+     3,
+     0.3375,
+     0.5375
+    ],
+    [
+     3,
+     4,
+     0.5625,
+     0.675
+    ],
+    [
+     4,
+     6,
+     0.6875,
+     1.0125
+    ],
+    [
+     6,
+     7,
+     1.0125,
+     1.0875
+    ],
+    [
+     7,
+     9,
+     1.1125,
+     1.45
+    ],
+    [
+     9,
+     12,
+     1.4625,
+     1.8875
+    ]
+   ],
+   "h": "b4e2e32359e3dbd8",
+   "t": "哪一个和上面的水果一样？"
+  },
   "QA_T_SAME_SAMEPICK_find-star": {
    "f": "audio/qa/QA_T_SAME_SAMEPICK_find-star.mp3",
    "d": 2.496,
@@ -4164,6 +11144,170 @@
    ],
    "h": "ca60ac4f1541cab0",
    "t": "哪一个和上面的图形一样？"
+  },
+  "QA_U_ADD_DIG_eight-plus-eight-dig": {
+   "f": "audio/qa/QA_U_ADD_DIG_eight-plus-eight-dig.mp3",
+   "d": 1.944,
+   "s": [
+    [
+     0,
+     3,
+     0.1,
+     0.6625
+    ],
+    [
+     3,
+     5,
+     0.6875,
+     1.025
+    ],
+    [
+     5,
+     7,
+     1.025,
+     1.375
+    ]
+   ],
+   "h": "64b73509c2064809",
+   "t": "八加八等于几？"
+  },
+  "QA_U_ADD_DIG_eight-plus-eight-dig.o0": {
+   "f": "audio/qa/QA_U_ADD_DIG_eight-plus-eight-dig.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7625
+    ]
+   ],
+   "h": "babdeda64358d922",
+   "t": "十四"
+  },
+  "QA_U_ADD_DIG_eight-plus-eight-dig.o1": {
+   "f": "audio/qa/QA_U_ADD_DIG_eight-plus-eight-dig.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7625
+    ]
+   ],
+   "h": "863e8a392d5ea03c",
+   "t": "十五"
+  },
+  "QA_U_ADD_DIG_eight-plus-eight-dig.o2": {
+   "f": "audio/qa/QA_U_ADD_DIG_eight-plus-eight-dig.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7875
+    ]
+   ],
+   "h": "0387bd3221877fae",
+   "t": "十六"
+  },
+  "QA_U_ADD_DIG_eight-plus-eight-dig.o3": {
+   "f": "audio/qa/QA_U_ADD_DIG_eight-plus-eight-dig.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.775
+    ]
+   ],
+   "h": "f3de5cd4e407acce",
+   "t": "十七"
+  },
+  "QA_U_ADD_DIG_eight-plus-six-dig": {
+   "f": "audio/qa/QA_U_ADD_DIG_eight-plus-six-dig.mp3",
+   "d": 1.968,
+   "s": [
+    [
+     0,
+     3,
+     0.1,
+     0.6875
+    ],
+    [
+     3,
+     5,
+     0.7125,
+     1.0375
+    ],
+    [
+     5,
+     7,
+     1.0375,
+     1.4
+    ]
+   ],
+   "h": "8bdb89809f27477b",
+   "t": "八加六等于几？"
+  },
+  "QA_U_ADD_DIG_eight-plus-six-dig.o0": {
+   "f": "audio/qa/QA_U_ADD_DIG_eight-plus-six-dig.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7375
+    ]
+   ],
+   "h": "dc1e424473742d80",
+   "t": "十三"
+  },
+  "QA_U_ADD_DIG_eight-plus-six-dig.o1": {
+   "f": "audio/qa/QA_U_ADD_DIG_eight-plus-six-dig.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7625
+    ]
+   ],
+   "h": "babdeda64358d922",
+   "t": "十四"
+  },
+  "QA_U_ADD_DIG_eight-plus-six-dig.o2": {
+   "f": "audio/qa/QA_U_ADD_DIG_eight-plus-six-dig.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7625
+    ]
+   ],
+   "h": "863e8a392d5ea03c",
+   "t": "十五"
+  },
+  "QA_U_ADD_DIG_eight-plus-six-dig.o3": {
+   "f": "audio/qa/QA_U_ADD_DIG_eight-plus-six-dig.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7875
+    ]
+   ],
+   "h": "0387bd3221877fae",
+   "t": "十六"
   },
   "QA_U_ADD_DIG_nine-plus-eight": {
    "f": "audio/qa/QA_U_ADD_DIG_nine-plus-eight.mp3",
@@ -4329,6 +11473,88 @@
    "h": "75e299b6b77e76b5",
    "t": "二十"
   },
+  "QA_U_ADD_DIG_seven-plus-nine-dig": {
+   "f": "audio/qa/QA_U_ADD_DIG_seven-plus-nine-dig.mp3",
+   "d": 1.968,
+   "s": [
+    [
+     0,
+     3,
+     0.1,
+     0.7
+    ],
+    [
+     3,
+     5,
+     0.725,
+     1.0375
+    ],
+    [
+     5,
+     7,
+     1.0375,
+     1.3875
+    ]
+   ],
+   "h": "2f7af2658fa98015",
+   "t": "七加九等于几？"
+  },
+  "QA_U_ADD_DIG_seven-plus-nine-dig.o0": {
+   "f": "audio/qa/QA_U_ADD_DIG_seven-plus-nine-dig.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7625
+    ]
+   ],
+   "h": "863e8a392d5ea03c",
+   "t": "十五"
+  },
+  "QA_U_ADD_DIG_seven-plus-nine-dig.o1": {
+   "f": "audio/qa/QA_U_ADD_DIG_seven-plus-nine-dig.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7875
+    ]
+   ],
+   "h": "0387bd3221877fae",
+   "t": "十六"
+  },
+  "QA_U_ADD_DIG_seven-plus-nine-dig.o2": {
+   "f": "audio/qa/QA_U_ADD_DIG_seven-plus-nine-dig.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.775
+    ]
+   ],
+   "h": "f3de5cd4e407acce",
+   "t": "十七"
+  },
+  "QA_U_ADD_DIG_seven-plus-nine-dig.o3": {
+   "f": "audio/qa/QA_U_ADD_DIG_seven-plus-nine-dig.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7125
+    ]
+   ],
+   "h": "602fd815d929bc92",
+   "t": "十八"
+  },
   "QA_U_ADD_DIG_seven-plus-six": {
    "f": "audio/qa/QA_U_ADD_DIG_seven-plus-six.mp3",
    "d": 1.992,
@@ -4410,6 +11636,148 @@
    ],
    "h": "863e8a392d5ea03c",
    "t": "十五"
+  },
+  "QA_U_ADD_OBJ_five-plus-three-star": {
+   "f": "audio/qa/QA_U_ADD_OBJ_five-plus-three-star.mp3",
+   "d": 3.336,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.275
+    ],
+    [
+     1,
+     2,
+     0.275,
+     0.35
+    ],
+    [
+     2,
+     4,
+     0.3625,
+     0.75
+    ],
+    [
+     4,
+     5,
+     0.775,
+     0.925
+    ],
+    [
+     5,
+     6,
+     0.9375,
+     1.15
+    ],
+    [
+     6,
+     7,
+     1.15,
+     1.225
+    ],
+    [
+     7,
+     10,
+     1.2375,
+     2.0
+    ],
+    [
+     10,
+     12,
+     2.0,
+     2.3125
+    ],
+    [
+     12,
+     15,
+     2.325,
+     2.75
+    ]
+   ],
+   "h": "c5c0074543db38e7",
+   "t": "五个星星加三个星星，一共几个？"
+  },
+  "QA_U_ADD_OBJ_five-plus-three-star.o0": {
+   "f": "audio/qa/QA_U_ADD_OBJ_five-plus-three-star.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.4
+    ],
+    [
+     1,
+     2,
+     0.4,
+     0.7
+    ]
+   ],
+   "h": "9dafdfa66224690f",
+   "t": "七个"
+  },
+  "QA_U_ADD_OBJ_five-plus-three-star.o1": {
+   "f": "audio/qa/QA_U_ADD_OBJ_five-plus-three-star.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.325
+    ],
+    [
+     1,
+     2,
+     0.325,
+     0.65
+    ]
+   ],
+   "h": "653c18e7815edd7a",
+   "t": "八个"
+  },
+  "QA_U_ADD_OBJ_five-plus-three-star.o2": {
+   "f": "audio/qa/QA_U_ADD_OBJ_five-plus-three-star.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3625
+    ],
+    [
+     1,
+     2,
+     0.3625,
+     0.6625
+    ]
+   ],
+   "h": "9cde94c64e3bdcd9",
+   "t": "九个"
+  },
+  "QA_U_ADD_OBJ_five-plus-three-star.o3": {
+   "f": "audio/qa/QA_U_ADD_OBJ_five-plus-three-star.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.4625
+    ],
+    [
+     1,
+     2,
+     0.4625,
+     0.7875
+    ]
+   ],
+   "h": "89ec1237ed616f5c",
+   "t": "十个"
   },
   "QA_U_ADD_OBJ_six-plus-two-obj": {
    "f": "audio/qa/QA_U_ADD_OBJ_six-plus-two-obj.mp3",
@@ -4614,6 +11982,138 @@
    ],
    "h": "a7de0e918ec52269",
    "t": "哪一只小动物排在最后面？"
+  },
+  "QA_U_CMP_DEEP_deepest-well-u": {
+   "f": "audio/qa/QA_U_CMP_DEEP_deepest-well-u.mp3",
+   "d": 1.944,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3375
+    ],
+    [
+     1,
+     3,
+     0.3375,
+     0.6625
+    ],
+    [
+     3,
+     4,
+     0.6625,
+     0.8625
+    ],
+    [
+     4,
+     5,
+     0.875,
+     1.0625
+    ],
+    [
+     5,
+     7,
+     1.0625,
+     1.375
+    ]
+   ],
+   "h": "3b53e37292195c14",
+   "t": "哪一口井最深？"
+  },
+  "QA_U_CMP_FAST_fastest-taxi": {
+   "f": "audio/qa/QA_U_CMP_FAST_fastest-taxi.mp3",
+   "d": 2.208,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.325
+    ],
+    [
+     1,
+     2,
+     0.325,
+     0.4125
+    ],
+    [
+     2,
+     3,
+     0.4125,
+     0.625
+    ],
+    [
+     3,
+     4,
+     0.625,
+     0.825
+    ],
+    [
+     4,
+     5,
+     0.85,
+     1.0125
+    ],
+    [
+     5,
+     6,
+     1.0125,
+     1.1
+    ],
+    [
+     6,
+     7,
+     1.1125,
+     1.3
+    ],
+    [
+     7,
+     9,
+     1.3,
+     1.6375
+    ]
+   ],
+   "h": "8354d2fc670464d0",
+   "t": "哪一辆车开得最快？"
+  },
+  "QA_U_CMP_FAT_fattest-ball-u": {
+   "f": "audio/qa/QA_U_CMP_FAT_fattest-ball-u.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3375
+    ],
+    [
+     1,
+     3,
+     0.3375,
+     0.55
+    ],
+    [
+     3,
+     4,
+     0.55,
+     0.75
+    ],
+    [
+     4,
+     5,
+     0.7625,
+     0.95
+    ],
+    [
+     5,
+     7,
+     0.95,
+     1.2625
+    ]
+   ],
+   "h": "8dead0f7ce7c0d4c",
+   "t": "哪一个球最胖？"
   },
   "QA_U_CMP_FRONT_front-animal": {
    "f": "audio/qa/QA_U_CMP_FRONT_front-animal.mp3",
@@ -4821,6 +12321,188 @@
    "h": "bde19dec5dc4297b",
    "t": "哪一根蜡烛最粗？"
   },
+  "QA_U_DESC_CLOCK_clock-eleven": {
+   "f": "audio/qa/QA_U_DESC_CLOCK_clock-eleven.mp3",
+   "d": 2.28,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.5875
+    ],
+    [
+     2,
+     3,
+     0.5875,
+     0.8125
+    ],
+    [
+     3,
+     4,
+     0.8375,
+     0.975
+    ],
+    [
+     4,
+     5,
+     0.975,
+     1.0875
+    ],
+    [
+     5,
+     8,
+     1.1,
+     1.7
+    ]
+   ],
+   "h": "c3e07d97882a591f",
+   "t": "时钟上指着几点？"
+  },
+  "QA_U_DESC_CLOCK_clock-eleven.o0": {
+   "f": "audio/qa/QA_U_DESC_CLOCK_clock-eleven.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7
+    ]
+   ],
+   "h": "c7297830f0224843",
+   "t": "九点"
+  },
+  "QA_U_DESC_CLOCK_clock-eleven.o1": {
+   "f": "audio/qa/QA_U_DESC_CLOCK_clock-eleven.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.8
+    ]
+   ],
+   "h": "155da100cd8e4a68",
+   "t": "十点"
+  },
+  "QA_U_DESC_CLOCK_clock-eleven.o2": {
+   "f": "audio/qa/QA_U_DESC_CLOCK_clock-eleven.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     3,
+     0.1,
+     0.9
+    ]
+   ],
+   "h": "32a3c4e4cdf8ed56",
+   "t": "十一点"
+  },
+  "QA_U_DESC_CLOCK_clock-eleven.o3": {
+   "f": "audio/qa/QA_U_DESC_CLOCK_clock-eleven.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     3,
+     0.1,
+     0.8875
+    ]
+   ],
+   "h": "72ab7aec8bc64b95",
+   "t": "十二点"
+  },
+  "QA_U_DESC_CLOCK_clock-half-seven": {
+   "f": "audio/qa/QA_U_DESC_CLOCK_clock-half-seven.mp3",
+   "d": 2.208,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.6
+    ],
+    [
+     2,
+     3,
+     0.6,
+     0.8125
+    ],
+    [
+     3,
+     4,
+     0.8125,
+     0.9625
+    ],
+    [
+     4,
+     8,
+     0.975,
+     1.625
+    ]
+   ],
+   "h": "1eb6c03de142219d",
+   "t": "时钟上是几点半？"
+  },
+  "QA_U_DESC_CLOCK_clock-half-seven.o0": {
+   "f": "audio/qa/QA_U_DESC_CLOCK_clock-half-seven.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     3,
+     0.1,
+     0.825
+    ]
+   ],
+   "h": "e43092957e8f9ed1",
+   "t": "五点半"
+  },
+  "QA_U_DESC_CLOCK_clock-half-seven.o1": {
+   "f": "audio/qa/QA_U_DESC_CLOCK_clock-half-seven.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     3,
+     0.1,
+     0.825
+    ]
+   ],
+   "h": "6969690ec2b371cf",
+   "t": "六点半"
+  },
+  "QA_U_DESC_CLOCK_clock-half-seven.o2": {
+   "f": "audio/qa/QA_U_DESC_CLOCK_clock-half-seven.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     3,
+     0.1,
+     0.825
+    ]
+   ],
+   "h": "c3c0586780e3e021",
+   "t": "七点半"
+  },
+  "QA_U_DESC_CLOCK_clock-half-seven.o3": {
+   "f": "audio/qa/QA_U_DESC_CLOCK_clock-half-seven.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     3,
+     0.1,
+     0.8125
+    ]
+   ],
+   "h": "7027a8d8e83048c3",
+   "t": "八点半"
+  },
   "QA_U_DESC_COUNT_circle-count-seven": {
    "f": "audio/qa/QA_U_DESC_COUNT_circle-count-seven.mp3",
    "d": 2.088,
@@ -4939,6 +12621,318 @@
    "h": "9cde94c64e3bdcd9",
    "t": "九个"
   },
+  "QA_U_DESC_COUNT_triangle-count-u": {
+   "f": "audio/qa/QA_U_DESC_COUNT_triangle-count-u.mp3",
+   "d": 2.28,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3
+    ],
+    [
+     1,
+     2,
+     0.3,
+     0.5
+    ],
+    [
+     2,
+     3,
+     0.525,
+     0.6625
+    ],
+    [
+     3,
+     5,
+     0.6625,
+     0.9
+    ],
+    [
+     5,
+     9,
+     0.9125,
+     1.6875
+    ]
+   ],
+   "h": "0cfa08a9659a563d",
+   "t": "图上有几个三角形？"
+  },
+  "QA_U_DESC_COUNT_triangle-count-u.o0": {
+   "f": "audio/qa/QA_U_DESC_COUNT_triangle-count-u.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3875
+    ],
+    [
+     1,
+     2,
+     0.3875,
+     0.6875
+    ]
+   ],
+   "h": "9087ad2f6a2dedd7",
+   "t": "六个"
+  },
+  "QA_U_DESC_COUNT_triangle-count-u.o1": {
+   "f": "audio/qa/QA_U_DESC_COUNT_triangle-count-u.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.4
+    ],
+    [
+     1,
+     2,
+     0.4,
+     0.7
+    ]
+   ],
+   "h": "9dafdfa66224690f",
+   "t": "七个"
+  },
+  "QA_U_DESC_COUNT_triangle-count-u.o2": {
+   "f": "audio/qa/QA_U_DESC_COUNT_triangle-count-u.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.325
+    ],
+    [
+     1,
+     2,
+     0.325,
+     0.65
+    ]
+   ],
+   "h": "653c18e7815edd7a",
+   "t": "八个"
+  },
+  "QA_U_DESC_COUNT_triangle-count-u.o3": {
+   "f": "audio/qa/QA_U_DESC_COUNT_triangle-count-u.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3625
+    ],
+    [
+     1,
+     2,
+     0.3625,
+     0.6625
+    ]
+   ],
+   "h": "9cde94c64e3bdcd9",
+   "t": "九个"
+  },
+  "QA_U_DESC_LIFE_winter-wear": {
+   "f": "audio/qa/QA_U_DESC_LIFE_winter-wear.mp3",
+   "d": 2.328,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.5625
+    ],
+    [
+     2,
+     3,
+     0.5875,
+     0.7875
+    ],
+    [
+     3,
+     5,
+     0.7875,
+     1.025
+    ],
+    [
+     5,
+     6,
+     1.05,
+     1.2375
+    ],
+    [
+     6,
+     9,
+     1.2375,
+     1.7625
+    ]
+   ],
+   "h": "34184f14210dad3d",
+   "t": "冬天穿什么最暖和？"
+  },
+  "QA_U_DESC_LIFE_winter-wear.o0": {
+   "f": "audio/qa/QA_U_DESC_LIFE_winter-wear.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.6875
+    ]
+   ],
+   "h": "f239bb99e4e3b3f0",
+   "t": "棉衣"
+  },
+  "QA_U_DESC_LIFE_winter-wear.o1": {
+   "f": "audio/qa/QA_U_DESC_LIFE_winter-wear.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.75
+    ]
+   ],
+   "h": "0325eefa7a24256d",
+   "t": "衬衫"
+  },
+  "QA_U_DESC_LIFE_winter-wear.o2": {
+   "f": "audio/qa/QA_U_DESC_LIFE_winter-wear.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7625
+    ]
+   ],
+   "h": "c85d6cb3822049d9",
+   "t": "凉鞋"
+  },
+  "QA_U_DESC_LIFE_winter-wear.o3": {
+   "f": "audio/qa/QA_U_DESC_LIFE_winter-wear.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.675
+    ]
+   ],
+   "h": "1935260a1702318e",
+   "t": "短裤"
+  },
+  "QA_U_DESC_POS_where-ball-in": {
+   "f": "audio/qa/QA_U_DESC_POS_where-ball-in.mp3",
+   "d": 2.616,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.6625
+    ],
+    [
+     2,
+     3,
+     0.6875,
+     0.8375
+    ],
+    [
+     3,
+     5,
+     0.85,
+     1.2
+    ],
+    [
+     5,
+     6,
+     1.2,
+     1.2875
+    ],
+    [
+     6,
+     8,
+     1.3125,
+     1.55
+    ],
+    [
+     8,
+     11,
+     1.5625,
+     2.025
+    ]
+   ],
+   "h": "382a7239f67e155a",
+   "t": "小球在箱子的什么地方？"
+  },
+  "QA_U_DESC_POS_where-ball-in.o0": {
+   "f": "audio/qa/QA_U_DESC_POS_where-ball-in.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.75
+    ]
+   ],
+   "h": "f94234e29487d98b",
+   "t": "上面"
+  },
+  "QA_U_DESC_POS_where-ball-in.o1": {
+   "f": "audio/qa/QA_U_DESC_POS_where-ball-in.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.725
+    ]
+   ],
+   "h": "1870e1ec697157e1",
+   "t": "下面"
+  },
+  "QA_U_DESC_POS_where-ball-in.o2": {
+   "f": "audio/qa/QA_U_DESC_POS_where-ball-in.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.675
+    ]
+   ],
+   "h": "d5790c46986ff60a",
+   "t": "里面"
+  },
+  "QA_U_DESC_POS_where-ball-in.o3": {
+   "f": "audio/qa/QA_U_DESC_POS_where-ball-in.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7
+    ]
+   ],
+   "h": "5329d4d8c70b0383",
+   "t": "右边"
+  },
   "QA_U_DESC_SHAPE_cross": {
    "f": "audio/qa/QA_U_DESC_SHAPE_cross.mp3",
    "d": 2.088,
@@ -5033,6 +13027,200 @@
    "h": "5fc78f808817bbd7",
    "t": "五边形"
   },
+  "QA_U_DESC_SHAPE_heart": {
+   "f": "audio/qa/QA_U_DESC_SHAPE_heart.mp3",
+   "d": 2.088,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.325
+    ],
+    [
+     1,
+     2,
+     0.325,
+     0.5375
+    ],
+    [
+     2,
+     3,
+     0.5375,
+     0.65
+    ],
+    [
+     3,
+     5,
+     0.6625,
+     0.925
+    ],
+    [
+     5,
+     8,
+     0.9375,
+     1.5
+    ]
+   ],
+   "h": "bfeb718e4ccca8d9",
+   "t": "图上是什么图形？"
+  },
+  "QA_U_DESC_SHAPE_heart.o0": {
+   "f": "audio/qa/QA_U_DESC_SHAPE_heart.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7125
+    ]
+   ],
+   "h": "c90bbc497065e4e7",
+   "t": "爱心"
+  },
+  "QA_U_DESC_SHAPE_heart.o1": {
+   "f": "audio/qa/QA_U_DESC_SHAPE_heart.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     3,
+     0.1,
+     0.875
+    ]
+   ],
+   "h": "c7d265e74f63a355",
+   "t": "五角星"
+  },
+  "QA_U_DESC_SHAPE_heart.o2": {
+   "f": "audio/qa/QA_U_DESC_SHAPE_heart.o2.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7375
+    ]
+   ],
+   "h": "81dde2b7a7f2d4e6",
+   "t": "圆形"
+  },
+  "QA_U_DESC_SHAPE_heart.o3": {
+   "f": "audio/qa/QA_U_DESC_SHAPE_heart.o3.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.7375
+    ]
+   ],
+   "h": "a78638a2e0e6583d",
+   "t": "菱形"
+  },
+  "QA_U_PICK_CLOCK_pick-clock-eight": {
+   "f": "audio/qa/QA_U_PICK_CLOCK_pick-clock-eight.mp3",
+   "d": 2.64,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3
+    ],
+    [
+     1,
+     3,
+     0.3125,
+     0.775
+    ],
+    [
+     3,
+     4,
+     0.8,
+     0.95
+    ],
+    [
+     4,
+     5,
+     0.95,
+     1.075
+    ],
+    [
+     5,
+     7,
+     1.1,
+     1.475
+    ],
+    [
+     7,
+     8,
+     1.475,
+     1.55
+    ],
+    [
+     8,
+     11,
+     1.5625,
+     2.05
+    ]
+   ],
+   "h": "3b3be2de3ea9f331",
+   "t": "请选出指着八点的时钟。"
+  },
+  "QA_U_PICK_CLOCK_pick-clock-four": {
+   "f": "audio/qa/QA_U_PICK_CLOCK_pick-clock-four.mp3",
+   "d": 2.64,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3125
+    ],
+    [
+     1,
+     3,
+     0.325,
+     0.775
+    ],
+    [
+     3,
+     4,
+     0.8,
+     0.95
+    ],
+    [
+     4,
+     5,
+     0.95,
+     1.05
+    ],
+    [
+     5,
+     7,
+     1.075,
+     1.475
+    ],
+    [
+     7,
+     8,
+     1.475,
+     1.55
+    ],
+    [
+     8,
+     11,
+     1.5625,
+     2.05
+    ]
+   ],
+   "h": "a65c8e19f10f94d6",
+   "t": "请选出指着四点的时钟。"
+  },
   "QA_U_PICK_DEEP_read-deepest-cup": {
    "f": "audio/qa/QA_U_PICK_DEEP_read-deepest-cup.mp3",
    "d": 2.52,
@@ -5088,6 +13276,168 @@
    ],
    "h": "1256a5cd87c36a1c",
    "t": "请选出水最深的那杯。"
+  },
+  "QA_U_PICK_LIFE_read-grow-tree": {
+   "f": "audio/qa/QA_U_PICK_LIFE_read-grow-tree.mp3",
+   "d": 2.664,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3125
+    ],
+    [
+     1,
+     3,
+     0.325,
+     0.75
+    ],
+    [
+     3,
+     4,
+     0.775,
+     0.975
+    ],
+    [
+     4,
+     5,
+     0.975,
+     1.1125
+    ],
+    [
+     5,
+     6,
+     1.125,
+     1.3375
+    ],
+    [
+     6,
+     7,
+     1.3375,
+     1.5
+    ],
+    [
+     7,
+     8,
+     1.5,
+     1.5875
+    ],
+    [
+     8,
+     11,
+     1.6,
+     2.075
+    ]
+   ],
+   "h": "79125056de5dee83",
+   "t": "请选出长在树上的东西。"
+  },
+  "QA_U_PICK_LIFE_read-not-eat": {
+   "f": "audio/qa/QA_U_PICK_LIFE_read-not-eat.mp3",
+   "d": 2.352,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.2875
+    ],
+    [
+     1,
+     3,
+     0.3,
+     0.725
+    ],
+    [
+     3,
+     5,
+     0.75,
+     1.05
+    ],
+    [
+     5,
+     6,
+     1.05,
+     1.2
+    ],
+    [
+     6,
+     7,
+     1.2,
+     1.2875
+    ],
+    [
+     7,
+     10,
+     1.3,
+     1.7625
+    ]
+   ],
+   "h": "2f93f2aa80b421f5",
+   "t": "请选出不能吃的东西。"
+  },
+  "QA_U_PICK_ORD_read-ordinal-first": {
+   "f": "audio/qa/QA_U_PICK_ORD_read-ordinal-first.mp3",
+   "d": 2.952,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3
+    ],
+    [
+     1,
+     3,
+     0.3125,
+     0.825
+    ],
+    [
+     3,
+     4,
+     0.85,
+     1.0375
+    ],
+    [
+     4,
+     5,
+     1.0375,
+     1.1875
+    ],
+    [
+     5,
+     7,
+     1.2125,
+     1.475
+    ],
+    [
+     7,
+     8,
+     1.475,
+     1.6375
+    ],
+    [
+     8,
+     9,
+     1.6375,
+     1.7125
+    ],
+    [
+     9,
+     10,
+     1.725,
+     1.925
+    ],
+    [
+     10,
+     13,
+     1.925,
+     2.375
+    ]
+   ],
+   "h": "a511be5b89dfbed5",
+   "t": "请选出排在第一位的小动物。"
   },
   "QA_U_PICK_ORD_read-ordinal-third": {
    "f": "audio/qa/QA_U_PICK_ORD_read-ordinal-third.mp3",
@@ -5177,6 +13527,62 @@
    "h": "3dbd07b2110cc201",
    "t": "请选出十字。"
   },
+  "QA_U_SAME_DIFFPICK_find-diff-bar": {
+   "f": "audio/qa/QA_U_SAME_DIFFPICK_find-diff-bar.mp3",
+   "d": 2.688,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3
+    ],
+    [
+     1,
+     2,
+     0.3,
+     0.4125
+    ],
+    [
+     2,
+     3,
+     0.4125,
+     0.625
+    ],
+    [
+     3,
+     4,
+     0.625,
+     0.975
+    ],
+    [
+     4,
+     5,
+     1.075,
+     1.2125
+    ],
+    [
+     5,
+     7,
+     1.225,
+     1.575
+    ],
+    [
+     7,
+     8,
+     1.5875,
+     1.7125
+    ],
+    [
+     8,
+     11,
+     1.7125,
+     2.1125
+    ]
+   ],
+   "h": "8913dff9ec728fd3",
+   "t": "哪一张图和其他不一样？"
+  },
   "QA_U_SAME_DIFFPICK_find-diff-speed": {
    "f": "audio/qa/QA_U_SAME_DIFFPICK_find-diff-speed.mp3",
    "d": 2.52,
@@ -5232,6 +13638,362 @@
    ],
    "h": "85eaffaa570f932f",
    "t": "哪一辆车和其他不一样？"
+  },
+  "QA_U_SAME_EQ_block-pair-u": {
+   "f": "audio/qa/QA_U_SAME_EQ_block-pair-u.mp3",
+   "d": 2.064,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.275
+    ],
+    [
+     1,
+     2,
+     0.275,
+     0.4375
+    ],
+    [
+     2,
+     3,
+     0.4375,
+     0.5
+    ],
+    [
+     3,
+     5,
+     0.5125,
+     0.9125
+    ],
+    [
+     5,
+     7,
+     0.9375,
+     1.25
+    ],
+    [
+     7,
+     9,
+     1.25,
+     1.5
+    ]
+   ],
+   "h": "23580cb18547f3ea",
+   "t": "这两个色块一样吗？"
+  },
+  "QA_U_SAME_EQ_block-pair-u.o0": {
+   "f": "audio/qa/QA_U_SAME_EQ_block-pair-u.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.625
+    ]
+   ],
+   "h": "cfde66c0eb4e5d56",
+   "t": "一样"
+  },
+  "QA_U_SAME_EQ_block-pair-u.o1": {
+   "f": "audio/qa/QA_U_SAME_EQ_block-pair-u.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.25
+    ],
+    [
+     1,
+     3,
+     0.25,
+     0.7375
+    ]
+   ],
+   "h": "b13b11ce3b5c77ac",
+   "t": "不一样"
+  },
+  "QA_U_SAME_EQ_fox-dog-pair": {
+   "f": "audio/qa/QA_U_SAME_EQ_fox-dog-pair.mp3",
+   "d": 2.208,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.275
+    ],
+    [
+     1,
+     2,
+     0.275,
+     0.4625
+    ],
+    [
+     2,
+     3,
+     0.4625,
+     0.55
+    ],
+    [
+     3,
+     4,
+     0.5625,
+     0.7625
+    ],
+    [
+     4,
+     6,
+     0.7625,
+     1.0125
+    ],
+    [
+     6,
+     8,
+     1.0375,
+     1.3875
+    ],
+    [
+     8,
+     10,
+     1.3875,
+     1.6375
+    ]
+   ],
+   "h": "672f9088cebb74d2",
+   "t": "这两只小动物一样吗？"
+  },
+  "QA_U_SAME_EQ_fox-dog-pair.o0": {
+   "f": "audio/qa/QA_U_SAME_EQ_fox-dog-pair.o0.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     2,
+     0.1,
+     0.625
+    ]
+   ],
+   "h": "cfde66c0eb4e5d56",
+   "t": "一样"
+  },
+  "QA_U_SAME_EQ_fox-dog-pair.o1": {
+   "f": "audio/qa/QA_U_SAME_EQ_fox-dog-pair.o1.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.25
+    ],
+    [
+     1,
+     3,
+     0.25,
+     0.7375
+    ]
+   ],
+   "h": "b13b11ce3b5c77ac",
+   "t": "不一样"
+  },
+  "QA_U_SAME_ODD_odd-not-fruit-u": {
+   "f": "audio/qa/QA_U_SAME_ODD_odd-not-fruit-u.mp3",
+   "d": 1.968,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.35
+    ],
+    [
+     1,
+     3,
+     0.35,
+     0.5625
+    ],
+    [
+     3,
+     5,
+     0.5875,
+     0.8
+    ],
+    [
+     5,
+     8,
+     0.8125,
+     1.3875
+    ]
+   ],
+   "h": "6c8315715ecf560e",
+   "t": "哪一个不是水果？"
+  },
+  "QA_U_SAME_ODD_odd-vehicle": {
+   "f": "audio/qa/QA_U_SAME_ODD_odd-vehicle.mp3",
+   "d": 1.872,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.35
+    ],
+    [
+     1,
+     3,
+     0.35,
+     0.5625
+    ],
+    [
+     3,
+     5,
+     0.575,
+     0.85
+    ],
+    [
+     5,
+     7,
+     0.85,
+     1.2
+    ]
+   ],
+   "h": "fe1b062a34fa5cfa",
+   "t": "哪一个不是车？"
+  },
+  "QA_U_SAME_SAMEPICK_find-heart": {
+   "f": "audio/qa/QA_U_SAME_SAMEPICK_find-heart.mp3",
+   "d": 2.496,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.3375
+    ],
+    [
+     1,
+     3,
+     0.3375,
+     0.5375
+    ],
+    [
+     3,
+     4,
+     0.5625,
+     0.675
+    ],
+    [
+     4,
+     6,
+     0.6875,
+     1.0125
+    ],
+    [
+     6,
+     7,
+     1.0125,
+     1.1
+    ],
+    [
+     7,
+     9,
+     1.1125,
+     1.4625
+    ],
+    [
+     9,
+     12,
+     1.475,
+     1.9
+    ]
+   ],
+   "h": "ca60ac4f1541cab0",
+   "t": "哪一个和上面的图形一样？"
+  },
+  "QA_U_SAME_SAMEPICK_find-same-dots": {
+   "f": "audio/qa/QA_U_SAME_SAMEPICK_find-same-dots.mp3",
+   "d": 3.504,
+   "s": [
+    [
+     0,
+     1,
+     0.1,
+     0.325
+    ],
+    [
+     1,
+     2,
+     0.325,
+     0.4375
+    ],
+    [
+     2,
+     3,
+     0.4375,
+     0.6375
+    ],
+    [
+     3,
+     4,
+     0.6375,
+     0.8
+    ],
+    [
+     4,
+     5,
+     0.8,
+     0.975
+    ],
+    [
+     5,
+     6,
+     0.975,
+     1.05
+    ],
+    [
+     6,
+     8,
+     1.0625,
+     1.625
+    ],
+    [
+     8,
+     9,
+     1.725,
+     1.85
+    ],
+    [
+     9,
+     11,
+     1.8625,
+     2.1625
+    ],
+    [
+     11,
+     12,
+     2.1625,
+     2.2375
+    ],
+    [
+     12,
+     14,
+     2.25,
+     2.6375
+    ],
+    [
+     14,
+     16,
+     2.6375,
+     2.925
+    ]
+   ],
+   "h": "9f630777bd9dab40",
+   "t": "哪一张图上的圆点和上面的一样多？"
   },
   "common_answer_head": {
    "f": "audio/qa/common_answer_head.mp3",

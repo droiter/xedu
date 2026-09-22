@@ -144,8 +144,7 @@ class PicView extends StatelessWidget {
       builder: (context, constraints) {
         final w = constraints.maxWidth.isFinite ? constraints.maxWidth : 96.0;
         final h = constraints.maxHeight.isFinite ? constraints.maxHeight : 96.0;
-        final shorter = w < h ? w : h;
-        final double box = shorter > 260.0 ? 260.0 : (shorter < 12.0 ? 12.0 : shorter);
+        final double box = _boxOf(w, h);
 
         final Widget art = switch (pic.kind) {
           PicKind.dots => _dots(box),
@@ -170,7 +169,9 @@ class PicView extends StatelessWidget {
           PicKind.distance => _distance(box, scheme),
           PicKind.speed => _speed(box, scheme),
           PicKind.depth => _depth(box, scheme),
-          PicKind.queue => _queue(box, scheme),
+          PicKind.queue => _queue(w, h, scheme),
+          PicKind.place => _place(box, scheme),
+          PicKind.clock => _clock(box, scheme),
           PicKind.asset => _asset(box),
         };
         return Center(child: art);
@@ -723,33 +724,44 @@ class PicView extends StatelessWidget {
   }
 
   // 前后：一队小动物依次遮挡，右边是前面，越靠前挡得越完整。
-  Widget _queue(double box, ColorScheme scheme) {
+  //
+  // 队列是横着摆的，所以按**可用宽度**排，不能只按方格短边 —— 只按短边算的话，
+  // 四五只动物挤在一个方格宽里，每只只有二十几像素，实拍照片根本认不出是谁。
+  // 每只动物先尽量长得跟题面图一样高（题面图的高度就是 [h]），整排摆不下再按宽度缩。
+  Widget _queue(double w, double h, ColorScheme scheme) {
     final row = pic.emojis;
-    if (row.isEmpty) return _asset(box);
+    if (row.isEmpty) return _asset(_boxOf(w, h));
     final n = row.length;
-    final item = box / (1 + (n - 1) * 0.78);
-    final step = item * 0.78;
+    const overlap = 0.78; // 每只盖住前一只右边 22%，遮挡感就出来了
+    final hintH = (h * 0.18).clamp(12.0, 26.0);
+    final avail = h - hintH;
+    final byWidth = w / (1 + (n - 1) * overlap);
+    final item = avail < byWidth ? avail : byWidth;
+    final step = item * overlap;
+    final total = item + (n - 1) * step;
     final hint = scheme.onSurface.withOpacity(0.55);
 
     return SizedBox(
-      width: box,
-      height: box,
+      width: total,
+      height: h,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Padding(
-            padding: EdgeInsets.only(left: box * 0.55, bottom: box * 0.04),
+          SizedBox(
+            height: hintH,
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text('前', style: TextStyle(fontSize: box * 0.12, color: hint)),
-                Icon(Icons.arrow_forward_rounded, size: box * 0.16, color: hint),
+                Text('前',
+                    style: TextStyle(fontSize: hintH * 0.72, color: hint)),
+                Icon(Icons.arrow_forward_rounded,
+                    size: hintH * 0.95, color: hint),
               ],
             ),
           ),
           SizedBox(
             height: item,
-            width: box,
+            width: total,
             child: Stack(
               clipBehavior: Clip.none,
               children: [
@@ -773,6 +785,99 @@ class PicView extends StatelessWidget {
     );
   }
 
+  /// 单个图形可用的方格边长：取宽高里的短边，留一点余量并封顶。
+  double _boxOf(double w, double h) {
+    final shorter = w < h ? w : h;
+    if (shorter > 260.0) return 260.0;
+    return shorter < 12.0 ? 12.0 : shorter;
+  }
+
+  // 方位：小球在箱子的上面 / 下面 / 左边 / 右边 / 里面。
+  //
+  // 箱子的边长固定，只有球的位置变 —— 比「在哪里」时箱子跟着变就没法看了。
+  Widget _place(double box, ColorScheme scheme) {
+    final lvl = _mod(pic.level, 5);
+    final side = box * 0.42;
+    final ball = box * 0.22;
+    final gap = box * 0.06;
+    final ballArt = Container(
+      width: ball,
+      height: ball,
+      decoration: const BoxDecoration(
+        shape: BoxShape.circle,
+        color: Color(0xFFF43F6E),
+      ),
+    );
+    Widget boxArt() => Container(
+          width: side,
+          height: side,
+          decoration: BoxDecoration(
+            // 半透明才看得见「里面」那颗球。
+            color: scheme.onSurface.withOpacity(0.16),
+            border: Border.all(color: scheme.onSurface.withOpacity(0.55), width: 2),
+            borderRadius: BorderRadius.circular(box * 0.07),
+          ),
+        );
+    final art = switch (lvl) {
+      0 => Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [ballArt, SizedBox(height: gap), boxArt()],
+        ),
+      1 => Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [boxArt(), SizedBox(height: gap), ballArt],
+        ),
+      2 => Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [ballArt, SizedBox(width: gap), boxArt()],
+        ),
+      3 => Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [boxArt(), SizedBox(width: gap), ballArt],
+        ),
+      _ => SizedBox(
+          width: side,
+          height: side,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [boxArt(), ballArt],
+          ),
+        ),
+    };
+    return SizedBox(width: box, height: box, child: Center(child: art));
+  }
+
+  // 时钟：时针分针指着整点 / 半点。表盘上只画刻度，不写阿拉伯数字。
+  Widget _clock(double box, ColorScheme scheme) {
+    final face = scheme.brightness == Brightness.dark
+        ? scheme.surfaceContainerHighest
+        : Colors.white;
+    final d = box * 0.94;
+    return SizedBox(
+      width: box,
+      height: box,
+      child: Center(
+        child: Container(
+          width: d,
+          height: d,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: face,
+            border:
+                Border.all(color: scheme.onSurface.withOpacity(0.55), width: 2),
+          ),
+          child: CustomPaint(
+            painter: _ClockPainter(
+              hour: _mod(pic.n, 12),
+              minute: pic.level == 0 ? 0 : 30,
+              color: scheme.onSurface,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _asset(double box) {
     return Container(
       width: box,
@@ -785,6 +890,66 @@ class PicView extends StatelessWidget {
       child: Icon(Icons.image_outlined, size: box * 0.45, color: Colors.black38),
     );
   }
+}
+
+/// 时钟表盘：十二个刻度 + 时针分针。十二点在上，顺时针走。
+class _ClockPainter extends CustomPainter {
+  _ClockPainter({required this.hour, required this.minute, required this.color});
+
+  /// 小时，0..11（0 就是十二点）。
+  final int hour;
+
+  /// 分钟，只支持 0（整点）和 30（半点）。
+  final int minute;
+
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final s = size.shortestSide;
+    final c = Offset(size.width / 2, size.height / 2);
+    final r = s / 2;
+
+    final tick = Paint()..strokeCap = StrokeCap.round;
+    for (var i = 0; i < 12; i++) {
+      final a = -math.pi / 2 + i * math.pi / 6;
+      final big = i % 3 == 0;
+      tick
+        ..color = color.withOpacity(big ? 0.8 : 0.5)
+        ..strokeWidth = big ? s * 0.03 : s * 0.016;
+      canvas.drawLine(
+        c + Offset(math.cos(a), math.sin(a)) * (r * (big ? 0.70 : 0.80)),
+        c + Offset(math.cos(a), math.sin(a)) * (r * 0.88),
+        tick,
+      );
+    }
+
+    final hourAngle = -math.pi / 2 +
+        (hour % 12) * math.pi / 6 +
+        minute / 60 * math.pi / 6;
+    final minuteAngle = -math.pi / 2 + minute * math.pi / 30;
+    canvas.drawLine(
+      c,
+      c + Offset(math.cos(hourAngle), math.sin(hourAngle)) * (r * 0.46),
+      Paint()
+        ..color = color
+        ..strokeCap = StrokeCap.round
+        ..strokeWidth = s * 0.055,
+    );
+    canvas.drawLine(
+      c,
+      c + Offset(math.cos(minuteAngle), math.sin(minuteAngle)) * (r * 0.70),
+      Paint()
+        ..color = color
+        ..strokeCap = StrokeCap.round
+        ..strokeWidth = s * 0.032,
+    );
+    canvas.drawCircle(c, s * 0.035, Paint()..color = color);
+  }
+
+  @override
+  bool shouldRepaint(_ClockPainter old) =>
+      old.hour != hour || old.minute != minute || old.color != color;
 }
 
 /// 蜡烛火苗：水滴形，外焰橙、内焰黄。

@@ -12,12 +12,19 @@ QaBank _load() => QaBank.parse(
       File('assets/data/qa_voice.json').readAsStringSync(),
     );
 
+/// 整点用的一到十二的中文写法（题面里不许出现阿拉伯数字）。
+const List<String> _cnHours = [
+  '一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '十一', '十二',
+];
+
+String _cnHour(int hour) => _cnHours[(hour - 1) % 12];
+
 void main() {
   final bank = _load();
 
   group('问答题库', () {
-    test('五个年龄段都有题，题量够玩几局', () {
-      expect(bank.questions.length, greaterThanOrEqualTo(50));
+    test('五个年龄段都有题，每档至少四十道', () {
+      expect(bank.questions.length, greaterThanOrEqualTo(200));
       for (final g in [
         PatternAgeGroup.baby,
         PatternAgeGroup.toddler,
@@ -25,8 +32,29 @@ void main() {
         PatternAgeGroup.lowerGrade,
         PatternAgeGroup.upperGrade,
       ]) {
-        expect(bank.forAge(g).length, greaterThanOrEqualTo(10),
+        expect(bank.forAge(g).length, greaterThanOrEqualTo(40),
             reason: '${g.ageText} 的题量偏少');
+      }
+    });
+
+    test('每个年龄段里五种题型数量均衡（最多最少差不超过一题）', () {
+      for (final g in [
+        PatternAgeGroup.baby,
+        PatternAgeGroup.toddler,
+        PatternAgeGroup.preschool,
+        PatternAgeGroup.lowerGrade,
+        PatternAgeGroup.upperGrade,
+      ]) {
+        final counts = [
+          for (final k in QaKind.values)
+            bank.forAge(g).where((q) => q.kind == k).length,
+        ];
+        expect(counts.reduce((a, b) => a < b ? a : b), greaterThan(0),
+            reason: '${g.ageText} 有题型一道题都没有');
+        expect(counts.reduce((a, b) => a > b ? a : b) -
+            counts.reduce((a, b) => a < b ? a : b), lessThanOrEqualTo(1),
+            reason: '${g.ageText} 的题型分布不均衡：'
+                '${[for (var i = 0; i < QaKind.values.length; i++) '${QaKind.values[i].label}=${counts[i]}'].join(' ')}');
       }
     });
 
@@ -118,6 +146,78 @@ void main() {
       for (final q in thick) {
         for (final o in q.options) {
           expect(o.pic?.kind, PicKind.candle, reason: '${q.qid} 选项不是蜡烛图');
+        }
+      }
+    });
+
+    test('快慢题的速度线只画在车上：蜗牛画速度线看不出谁快谁慢', () {
+      final speed = [
+        for (final q in bank.questions) ...[
+          for (final s in q.scene)
+            if (s.kind == PicKind.speed) s,
+          for (final o in q.options)
+            if (o.pic?.kind == PicKind.speed) o.pic!,
+        ],
+      ];
+      expect(speed, isNotEmpty, reason: '快慢题一道都没有了？');
+      for (final p in speed) {
+        expect(const ['🚗', '🚕', '🚙'], contains(p.emoji),
+            reason: '${p.id}：给「${p.emoji}」画速度线，孩子看不出快慢（原来那道蜗牛题就是这么废掉的）');
+      }
+    });
+
+    test('方位 / 时钟 / 生活常识 / 分类 / 多少 / 早晚这些新题型都在库里', () {
+      final subs = {for (final q in bank.questions) q.sub};
+      expect(subs, containsAll(['POS', 'CLOCK', 'LIFE', 'ODD', 'MORE', 'DAY']));
+    });
+
+    test('方位题：题面说的方位就是答案那张图摆的位置', () {
+      for (final q in bank.questions.where((q) => q.sub == 'POS')) {
+        if (q.kind == QaKind.describe) {
+          // 看图说话：图里小球摆在哪，答案文字就得是哪个方位词。
+          expect(q.options[q.answer].text, kPlaceNames[q.scene.single.level],
+              reason: q.qid);
+        } else {
+          // 阅读选图：题面里写的方位词，就是正确选项那张图。
+          final want = kPlaceNames.indexWhere((n) => q.prompt.contains(n));
+          expect(want, isNonNegative, reason: '${q.qid} 题面里没写方位');
+          for (final o in q.options) {
+            expect(o.pic?.kind, PicKind.place, reason: '${q.qid} 选项不是方位图');
+          }
+          expect(q.options[q.answer].pic?.level, want, reason: q.qid);
+        }
+      }
+    });
+
+    test('时钟题：指着的时刻就是答案文字，选项都是表盘', () {
+      for (final q in bank.questions.where((q) => q.sub == 'CLOCK')) {
+        if (q.kind == QaKind.describe) {
+          final c = q.scene.single;
+          final half = c.level != 0;
+          expect(q.options[q.answer].text,
+              '${_cnHour(c.n)}点${half ? '半' : ''}',
+              reason: q.qid);
+        } else {
+          final want = [
+            for (var h = 12; h >= 1; h--)
+              if (q.prompt.contains('${_cnHour(h)}点')) h,
+          ].first;
+          for (final o in q.options) {
+            expect(o.pic?.kind, PicKind.clock, reason: '${q.qid} 选项不是表盘');
+          }
+          expect(q.options[q.answer].pic?.n, want, reason: q.qid);
+        }
+      }
+    });
+
+    test('多少题：说「多」的答案数量最大，说「少」的答案数量最小', () {
+      for (final q in bank.questions.where((q) => q.sub == 'MORE')) {
+        final ns = [for (final o in q.options) o.pic!.n];
+        final mine = ns[q.answer];
+        for (var i = 0; i < ns.length; i++) {
+          if (i == q.answer) continue;
+          expect(q.prompt.contains('少') ? mine < ns[i] : mine > ns[i], isTrue,
+              reason: '${q.qid} 答案数量不对');
         }
       }
     });

@@ -69,9 +69,18 @@ enum PicKind {
   /// 前后：一队小动物依次遮挡，[Pic.emojis] 从左到右 = 从最后面到最前面。
   queue,
 
+  /// 方位：小球在箱子的上面 / 下面 / 左边 / 右边 / 里面，[Pic.level] 为方位编号。
+  place,
+
+  /// 时钟：时针分针指着整点或半点，[Pic.n] 为小时（1..12），[Pic.level] 0 整点 1 半点。
+  clock,
+
   /// 外部图片资源（预留，需要配合 pubspec.yaml 的 assets 目录）。
   asset,
 }
+
+/// 方位的名字，下标与 [Pic.place] 的 level 对应。
+const List<String> kPlaceNames = ['上面', '下面', '左边', '右边', '里面'];
 
 /// 几何图形的中文名，下标与 [Pic.shape] / [Pic.shapeCount] 的 base 对应。
 const List<String> kShapeNames = [
@@ -297,6 +306,26 @@ class Pic {
         id: 'q:${emojis.join()}',
         emojis: emojis,
         label: '排队',
+      );
+
+  /// 方位：小球在箱子的什么地方。[level] 0 上面 1 下面 2 左边 3 右边 4 里面。
+  static Pic place(int level) => Pic(
+        kind: PicKind.place,
+        id: 'plc:$level',
+        level: level,
+        label: kPlaceNames[level % kPlaceNames.length],
+      );
+
+  /// 时钟。[hour] 是小时（1..12），[minute] 只支持 0 和 30（整点 / 半点）。
+  ///
+  /// 表盘上只画刻度不写数字 —— 题面文字和选项文字都不许出现阿拉伯数字，
+  /// 钟面上写了数字就成了另一回事。
+  static Pic clock(int hour, {int minute = 0}) => Pic(
+        kind: PicKind.clock,
+        id: 'clk:$hour:$minute',
+        n: hour,
+        level: minute == 0 ? 0 : 1,
+        label: minute == 0 ? '$hour 点' : '$hour 点半',
       );
 
   /// 队伍里的第 [index] 位（0 = 最后面）。

@@ -158,7 +158,8 @@ void main() {
 
       // 抽帧、落盘都是真 I/O：每次 await 都要一圈真实事件循环 + 一次刷微任务，
       // 所以这里是「转一圈真实的、pump 一下」重复几轮，而不是一次 pumpAndSettle。
-      for (var i = 0; i < 6; i++) {
+      // 上限给足、出现就收：整包测试并行跑时 I/O 会被别的用例抢，写死轮数会假失败。
+      for (var i = 0; i < 80 && find.byType(Image).evaluate().isEmpty; i++) {
         await tester.runAsync(
             () => Future<void>.delayed(const Duration(milliseconds: 20)));
         await tester.pump();
