@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:xedu/core/constants.dart';
 import 'package:xedu/features/pattern_quiz/pattern_quiz_models.dart';
+import 'package:xedu/features/pattern_quiz/pic_view.dart';
 import 'package:xedu/features/qa_quiz/qa_age_select_screen.dart';
 import 'package:xedu/features/qa_quiz/qa_bank.dart';
 import 'package:xedu/features/qa_quiz/qa_models.dart';
@@ -68,7 +69,16 @@ void main() {
     '快慢图': _q('preschool', 'fastest-car'),
     '深浅图': _q('preschool', 'deepest-well'),
     '粗细图（蜡烛）': _q('toddler', 'thickest-candle'),
+    '方位图（小球与箱子）': _q('preschool', 'where-ball'),
+    '时钟图（整点）': _q('preschool', 'clock-three'),
+    '时钟图（半点）': _q('lowerGrade', 'clock-half-ten'),
+    '两个图选项（比多少）': _q('baby', 'more-apples'),
+    '两个文字选项（早晚）': _q('baby', 'day-or-night'),
     '纯文字长选项': _q('upperGrade', 'nine-plus-eight'),
+    '圆点图选项（一样多）': _q('upperGrade', 'find-same-dots'),
+    '两个圆点选项（比多少）': _q('preschool', 'fewer-dots'),
+    '数星星图选项（六个）': _q('toddler', 'read-four-stars'),
+    '算一算（十个星星）': _q('upperGrade', 'five-plus-three-star'),
   };
 
   group('问答页面版式', () {
@@ -155,8 +165,11 @@ void main() {
             tester.widget<GlowBorder>(find.byType(GlowBorder).first).colors,
             kAnswerGlowColors);
 
-        // 闪一下就走：一秒钟已经收干净了（以前要闪 1.5 秒）。
-        await tester.pump(const Duration(milliseconds: 1000));
+        // 闪一下就走，而且只有 450ms（原来 900ms 的一半）。
+        await tester.pump(const Duration(milliseconds: 400));
+        expect(find.byType(GlowBorder), findsNWidgets(q.options.length),
+            reason: '${q.qid} 的辉光亮得太短，不到半秒就收了');
+        await tester.pump(const Duration(milliseconds: 100));
         expect(find.byType(GlowBorder), findsNothing,
             reason: '${q.qid} 的辉光没停下来');
 
@@ -351,6 +364,114 @@ void main() {
     });
   });
 
+  group('按设备尺寸自适应', () {
+    /// 在 [size] 上渲一道题，量出「题面能占多宽」「题面图多大」。
+    Future<(double, double)> probe(
+        WidgetTester tester, QaQuestion q, Size size) async {
+      tester.view.physicalSize = size;
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(await _host(
+        QaQuizScreen(ages: {q.age}, bank: _single(q)),
+        size: size,
+      ));
+      await tester.pump();
+
+      final promptW =
+          tester.getRect(find.text(q.prompt, findRichText: true)).width;
+      final sceneH = q.scene.isEmpty
+          ? 0.0
+          : tester.getRect(find.byType(PicView).first).height;
+
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump();
+      return (promptW, sceneH);
+    }
+
+    testWidgets('平板：题面铺满宽度、题面图跟着变大', (tester) async {
+      final q = _q('baby', 'dog');
+      const wide = Size(1200, 1600);
+      final phone = await probe(tester, q, _phone);
+      final tablet = await probe(tester, q, wide);
+
+      // 原来硬顶 maxWidth: 620，1200 宽的平板上题面只有 ~540 宽、两边空着。
+      expect(tablet.$1, greaterThan(wide.width * 0.65),
+          reason: '平板上题面还是窄窄一条，两边空着');
+      expect(tablet.$1, greaterThan(phone.$1 * 1.6),
+          reason: '平板上题面没比手机宽多少');
+      expect(tablet.$2, greaterThan(phone.$2 * 1.6),
+          reason: '平板上题面图没跟着屏幕变大');
+    });
+
+    testWidgets('平板：排队图（前后题）的小动物明显变大', (tester) async {
+      final q = _q('lowerGrade', 'front-animal');
+
+      Future<double> animal(WidgetTester tester, Size size) async {
+        tester.view.physicalSize = size;
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+
+        await tester.pumpWidget(await _host(
+          QaQuizScreen(ages: {q.age}, bank: _single(q)),
+          size: size,
+        ));
+        await tester.pump();
+
+        // 题面是排队图，第一张照片就是队尾那只；量的是屏幕上真实的方框
+        // （外面套了 FittedBox，得用 getRect 才拿得到缩放后的尺寸）。
+        final side = tester.getRect(find.byType(Image).first).width;
+
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pump();
+        return side;
+      }
+
+      final phone = await animal(tester, _phone);
+      final tablet = await animal(tester, const Size(1200, 1600));
+      expect(phone, greaterThan(45), reason: '手机上排队图的小动物太小了');
+      expect(tablet, greaterThan(phone * 1.8), reason: '平板上排队图没变大');
+
+      // 平板横屏竖向紧，题面图那一行原来跟手机一样定死 104，整行缩在中间一小撮；
+      // 现在按可用高度撑起来，图片要明显比手机大。
+      final wide = await animal(tester, const Size(1280, 800));
+      expect(wide, greaterThan(phone * 1.5), reason: '平板横屏上排队图还是缩在中间');
+    });
+
+    testWidgets('平板竖屏、平板横屏都能一屏放下四个选项', (tester) async {
+      for (final q in [
+        _q('baby', 'one-plus-one-obj'),
+        _q('lowerGrade', 'front-animal'),
+        _q('toddler', 'read-four-stars'),
+        _q('upperGrade', 'nine-plus-eight'),
+      ]) {
+        for (final size in [const Size(800, 1280), const Size(1280, 800)]) {
+          tester.view.physicalSize = size;
+          tester.view.devicePixelRatio = 1.0;
+          addTearDown(tester.view.resetPhysicalSize);
+          addTearDown(tester.view.resetDevicePixelRatio);
+
+          await tester.pumpWidget(await _host(
+            QaQuizScreen(ages: {q.age}, bank: _single(q)),
+            size: size,
+          ));
+          await tester.pump();
+
+          final pos = tester
+              .state<ScrollableState>(find.byType(Scrollable).first)
+              .position;
+          expect(pos.maxScrollExtent, 0,
+              reason: '${q.qid} @ $size：大屏上还要滚动才看得到选项');
+
+          await tester.pumpWidget(const SizedBox.shrink());
+          await tester.pump();
+        }
+      }
+    });
+  });
+
   group('年龄选择页', () {
     testWidgets('五个年龄段都在，点开始能进入答题', (tester) async {
       tester.view.physicalSize = _tablet;
@@ -382,8 +503,22 @@ void main() {
         PatternAgeGroup.upperGrade,
       ]) {
         expect(find.text(g.ageText), findsOneWidget);
+        // 卡片上的题量得是该年龄段自己的数，不能几档都写同一个数
+        expect(
+          find.descendant(
+            of: find
+                .ancestor(of: find.text(g.ageText), matching: find.byType(Row))
+                .last,
+            matching: find.text('题库 ${_full.forAge(g).length} 题'),
+          ),
+          findsOneWidget,
+          reason: '${g.ageText} 卡片上的题量不对',
+        );
       }
-      expect(find.textContaining('题库 ${_full.forAge(PatternAgeGroup.baby).length} 题'),
+      // 底部合计跟默认勾选（3–4 岁）走
+      expect(
+          find.textContaining(
+              '题库共 ${_full.forAge(PatternAgeGroup.toddler).length} 题'),
           findsOneWidget);
 
       // 默认勾 3–4 岁，直接开始

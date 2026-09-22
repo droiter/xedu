@@ -254,6 +254,44 @@ void main() {
       }
     });
 
+    testWidgets('平板：四格图和选项跟着屏幕放大，而且一屏放得下', (tester) async {
+      final ages = {PatternAgeGroup.lowerGrade};
+
+      Future<(double, double, double)> probe(WidgetTester tester, Size size) async {
+        tester.view.physicalSize = size;
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+
+        await tester.pumpWidget(
+            await _quizHost(PatternQuizScreen(ages: ages)));
+        await tester.pump();
+
+        final pos = tester
+            .state<ScrollableState>(find.byType(Scrollable).first)
+            .position;
+        // 四格里的第一格（题面图）和第一个备选答案
+        final slot = tester.getRect(find.byType(PicView).first).height;
+        final option = tester.getRect(find.byType(PicView).last).height;
+
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pump();
+        return (slot, option, pos.maxScrollExtent);
+      }
+
+      final phone = await probe(tester, const Size(360, 640));
+      final tablet = await probe(tester, const Size(800, 1280));
+
+      // 手机版式不动：四格 118 高、选项 104 高（里面还各去掉 1.6 的描边）
+      expect(phone.$1, closeTo(118, 4));
+      expect(phone.$2, closeTo(104, 4));
+      expect(phone.$3, 0, reason: '手机上要滚动才看得到选项');
+
+      expect(tablet.$1, greaterThan(phone.$1 * 1.5), reason: '平板上四格图没变大');
+      expect(tablet.$2, greaterThan(phone.$2 * 1.5), reason: '平板上选项没变大');
+      expect(tablet.$3, 0, reason: '平板上还要滚动才看得到选项');
+    });
+
     testWidgets('规律提示先隐藏，答错一次后才出现', (tester) async {
       useTabletView(tester);
       await tester.pumpWidget(await _quizHost(

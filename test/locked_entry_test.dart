@@ -50,7 +50,7 @@ Future<void> _pumpShell(WidgetTester tester,
 int? _currentTab(WidgetTester tester) =>
     tester.widget<IndexedStack>(find.byType(IndexedStack).first).index;
 
-/// 某一格选项卡里的光辉（刚切过去的那一下才有）。
+/// 某一格选项卡里的光辉 —— 现在一格都不该有（光辉只留给首页那张入口卡）。
 Finder _tabGlow(int i) => find.descendant(
       of: find.byKey(ValueKey('tab-$i')),
       matching: find.byType(GlowBorder),
@@ -138,12 +138,12 @@ void main() {
     expect(find.byType(PatternAgeSelectScreen), findsOneWidget);
   });
 
-  testWidgets('选项卡用高亮表示当前分类，光辉只在切过去时闪一下', (tester) async {
+  testWidgets('选项卡只靠高亮表示当前分类，一格都不转光辉', (tester) async {
     await _pumpShell(tester);
 
-    // 一上来没有任何一格在转光辉。
+    // 一上来没有任何一格有光辉。
     for (var i = 0; i < 6; i++) {
-      expect(_tabGlow(i), findsNothing, reason: '第 $i 格不该常驻光辉');
+      expect(_tabGlow(i), findsNothing, reason: '第 $i 格不该有光辉');
     }
 
     // 当前（看图找规律）那格是主色，别的格子不是。
@@ -155,14 +155,18 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
 
-    // 高亮跟着走到「看视频」；刚进去的那一下这一格亮起光辉。
+    // 高亮跟着走到「看视频」，切过去那一下也不闪光。
     expect(_tabColor(tester, kVideoTab), selectedColor);
     expect(_tabColor(tester, kQuizTab), otherColor);
-    expect(_tabGlow(kVideoTab), findsOneWidget);
+    for (var i = 0; i < 6; i++) {
+      expect(_tabGlow(i), findsNothing, reason: '切到第 $i 格时闪光了');
+    }
 
-    // 闪完就收，不一直转。
+    // 过一会儿也没有「迟到的」光辉。
     await tester.pump(const Duration(milliseconds: 1400));
-    expect(_tabGlow(kVideoTab), findsNothing);
+    for (var i = 0; i < 6; i++) {
+      expect(_tabGlow(i), findsNothing, reason: '第 $i 格冒出了光辉');
+    }
     expect(_tabColor(tester, kVideoTab), selectedColor);
   });
 }

@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../shared/back_guard.dart';
+import '../../shared/quiz_layout.dart';
 import 'celebration.dart';
 import 'exit_gate.dart';
 import 'pattern_quiz_bank.dart';
@@ -306,60 +307,67 @@ class _PatternQuizScreenState extends ConsumerState<PatternQuizScreen>
     final q = _order[_qi];
     final scheme = Theme.of(context).colorScheme;
 
-    return Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 620),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(16, 2, 16, 12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _headRow(context, q),
-              const SizedBox(height: 8),
-              _hintLine(context, q),
-              const SizedBox(height: 2),
-              Text('找出规律，选出空白处缺少的那张图',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: 12.5, color: scheme.onSurfaceVariant)),
-              const SizedBox(height: 8),
-              _slotRow(context),
-              const SizedBox(height: 12),
-              Text('请选择',
-                  style: TextStyle(
-                      fontSize: 13.5,
-                      fontWeight: FontWeight.w700,
-                      color: scheme.onSurfaceVariant)),
-              const SizedBox(height: 8),
-              _optionRow(context),
-              const SizedBox(height: 10),
-              if (_resolved) _praiseBanner(context),
-            ],
+    // 按设备尺寸放大：手机还是 1.0，平板把四格图和选项一起放大、内容铺满宽度。
+    return LayoutBuilder(builder: (context, c) {
+      final layout = QuizLayout.of(c);
+      final f = layout.scale;
+      final pf = layout.pictureScale;
+
+      return Center(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: layout.maxWidth),
+          child: SingleChildScrollView(
+            padding: EdgeInsets.fromLTRB(16, 2, 16, 12 * f),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _headRow(context, q, f),
+                SizedBox(height: 8 * f),
+                _hintLine(context, q, f),
+                SizedBox(height: 2 * f),
+                Text('找出规律，选出空白处缺少的那张图',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 12.5 * f, color: scheme.onSurfaceVariant)),
+                SizedBox(height: 8 * f),
+                _slotRow(context, pf),
+                SizedBox(height: 12 * f),
+                Text('请选择',
+                    style: TextStyle(
+                        fontSize: 13.5 * f,
+                        fontWeight: FontWeight.w700,
+                        color: scheme.onSurfaceVariant)),
+                SizedBox(height: 8 * f),
+                _optionRow(context, pf, f),
+                SizedBox(height: 10 * f),
+                if (_resolved) _praiseBanner(context),
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   /// 一行放下三样：题号进度、本题 id、难度星；窄屏上 id 会自动缩一点。
-  Widget _headRow(BuildContext context, PatternQuestion q) {
+  Widget _headRow(BuildContext context, PatternQuestion q, double f) {
     final scheme = Theme.of(context).colorScheme;
 
     return Row(
       children: [
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          padding: EdgeInsets.symmetric(horizontal: 10 * f, vertical: 4 * f),
           decoration: BoxDecoration(
             color: scheme.primaryContainer,
             borderRadius: BorderRadius.circular(20),
           ),
           child: Text('第 ${_qi + 1} / $_total 题',
               style: TextStyle(
-                  fontSize: 12.5,
+                  fontSize: 12.5 * f,
                   fontWeight: FontWeight.w700,
                   color: scheme.onPrimaryContainer)),
         ),
-        const SizedBox(width: 8),
+        SizedBox(width: 8 * f),
         Expanded(
           child: FittedBox(
             fit: BoxFit.scaleDown,
@@ -367,13 +375,13 @@ class _PatternQuizScreenState extends ConsumerState<PatternQuizScreen>
             child: _idBadge(context, q),
           ),
         ),
-        const SizedBox(width: 8),
+        SizedBox(width: 8 * f),
         for (var i = 0; i < 3; i++)
           Icon(
             q.difficulty > i
                 ? Icons.star_rounded
                 : Icons.star_outline_rounded,
-            size: 18,
+            size: 18 * f,
             color: q.difficulty > i
                 ? const Color(0xFFF59E0B)
                 : scheme.outlineVariant,
@@ -383,7 +391,7 @@ class _PatternQuizScreenState extends ConsumerState<PatternQuizScreen>
   }
 
   /// 规律提示：**答错一次之前不显示**，做错后才亮出来帮孩子找规律。
-  Widget _hintLine(BuildContext context, PatternQuestion q) {
+  Widget _hintLine(BuildContext context, PatternQuestion q, double f) {
     final shown = _missedThis > 0;
     return AnimatedSize(
       duration: const Duration(milliseconds: 200),
@@ -393,14 +401,14 @@ class _PatternQuizScreenState extends ConsumerState<PatternQuizScreen>
               key: const ValueKey('hint'),
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.lightbulb_outline_rounded,
-                    size: 16, color: Color(0xFFF59E0B)),
-                const SizedBox(width: 5),
+                Icon(Icons.lightbulb_outline_rounded,
+                    size: 16 * f, color: const Color(0xFFF59E0B)),
+                SizedBox(width: 5 * f),
                 Flexible(
                   child: Text(q.title,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.w800)),
+                      style: TextStyle(
+                          fontSize: 18 * f, fontWeight: FontWeight.w800)),
                 ),
               ],
             )
@@ -487,10 +495,10 @@ class _PatternQuizScreenState extends ConsumerState<PatternQuizScreen>
   }
 
   // ---------- 4 格图 ----------
-  Widget _slotRow(BuildContext context) {
+  Widget _slotRow(BuildContext context, double f) {
     final q = _order[_qi];
     return SizedBox(
-      height: 118,
+      height: 118 * f,
       // Clip.none：让答对的炫光可以飞出格子范围。
       child: Stack(
         clipBehavior: Clip.none,
@@ -499,8 +507,8 @@ class _PatternQuizScreenState extends ConsumerState<PatternQuizScreen>
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               for (var i = 0; i < q.items.length; i++) ...[
-                Expanded(child: _slot(context, i)),
-                if (i != q.items.length - 1) const SizedBox(width: 8),
+                Expanded(child: _slot(context, i, f)),
+                if (i != q.items.length - 1) SizedBox(width: 8 * f),
               ],
             ],
           ),
@@ -519,7 +527,7 @@ class _PatternQuizScreenState extends ConsumerState<PatternQuizScreen>
     );
   }
 
-  Widget _slot(BuildContext context, int index) {
+  Widget _slot(BuildContext context, int index, double f) {
     final q = _order[_qi];
     final isBlank = index == _blank;
     final scheme = Theme.of(context).colorScheme;
@@ -528,7 +536,7 @@ class _PatternQuizScreenState extends ConsumerState<PatternQuizScreen>
     Widget content;
     if (isBlank && !_resolved) {
       content = Container(
-        margin: const EdgeInsets.all(14),
+        margin: EdgeInsets.all(14 * f),
         alignment: Alignment.center,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
@@ -536,7 +544,7 @@ class _PatternQuizScreenState extends ConsumerState<PatternQuizScreen>
         ),
         child: Text('?',
             style: TextStyle(
-                fontSize: 34,
+                fontSize: 34 * f,
                 fontWeight: FontWeight.w800,
                 color: scheme.outline)),
       );
@@ -584,22 +592,22 @@ class _PatternQuizScreenState extends ConsumerState<PatternQuizScreen>
   }
 
   // ---------- 备选答案 ----------
-  Widget _optionRow(BuildContext context) {
+  Widget _optionRow(BuildContext context, double pf, double f) {
     return SizedBox(
-      height: 104,
+      height: 104 * pf,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           for (var i = 0; i < _options.length; i++) ...[
-            Expanded(child: _option(context, i)),
-            if (i != _options.length - 1) const SizedBox(width: 8),
+            Expanded(child: _option(context, i, f)),
+            if (i != _options.length - 1) SizedBox(width: 8 * f),
           ],
         ],
       ),
     );
   }
 
-  Widget _option(BuildContext context, int i) {
+  Widget _option(BuildContext context, int i, double f) {
     final pic = _options[i];
     final scheme = Theme.of(context).colorScheme;
     final isCorrectOpt = pic.id == _correct.id;
@@ -643,11 +651,11 @@ class _PatternQuizScreenState extends ConsumerState<PatternQuizScreen>
               Center(child: PicView(pic: pic, color: scheme.primary)),
               // 序号画在图片之上：色块会铺满整格，压在下面就被挡住了。
               Positioned(
-                top: 4,
-                left: 6,
+                top: 4 * f,
+                left: 6 * f,
                 child: Container(
-                  width: 20,
-                  height: 20,
+                  width: 20 * f,
+                  height: 20 * f,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
@@ -674,7 +682,7 @@ class _PatternQuizScreenState extends ConsumerState<PatternQuizScreen>
                   ),
                   child: Text(letter,
                       style: TextStyle(
-                          fontSize: 11,
+                          fontSize: 11 * f,
                           fontWeight: FontWeight.w800,
                           color: isCorrectOpt && _resolved
                               ? Colors.white

@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../shared/back_guard.dart';
+import '../../shared/quiz_layout.dart';
 import '../../shared/widgets/glow_border.dart';
 import '../pattern_quiz/celebration.dart';
 import '../pattern_quiz/exit_gate.dart';
@@ -181,7 +182,7 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen>
   void _flashOptions() {
     _cueTimer?.cancel();
     setState(() => _cueOn = true);
-    _cueTimer = Timer(const Duration(milliseconds: 900), () {
+    _cueTimer = Timer(const Duration(milliseconds: 450), () {
       if (!mounted) return;
       setState(() => _cueOn = false);
     });
@@ -317,58 +318,65 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen>
     final q = _q;
     final scheme = Theme.of(context).colorScheme;
 
-    return Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 620),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(16, 2, 16, 12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _headRow(context, q),
-              const SizedBox(height: 8),
-              if (q.scene.isNotEmpty) ...[
-                _sceneRow(context, q),
-                const SizedBox(height: 10),
+    // 按设备尺寸放大：手机还是 1.0，平板把题面图和选项一起放大、内容铺满宽度。
+    return LayoutBuilder(builder: (context, c) {
+      final layout = QuizLayout.of(c);
+      final f = layout.scale;
+      final pf = layout.pictureScale;
+
+      return Center(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: layout.maxWidth),
+          child: SingleChildScrollView(
+            padding: EdgeInsets.fromLTRB(16, 2, 16, 12 * f),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _headRow(context, q, f),
+                SizedBox(height: 8 * f),
+                if (q.scene.isNotEmpty) ...[
+                  _sceneRow(context, q, pf, layout.sceneRowHeight(c.maxHeight)),
+                  SizedBox(height: 10 * f),
+                ],
+                _promptCard(context, q, readAloud, f),
+                SizedBox(height: 10 * f),
+                _readHint(context, readAloud, f),
+                Text('请选择答案',
+                    style: TextStyle(
+                        fontSize: 13.5 * f,
+                        fontWeight: FontWeight.w700,
+                        color: scheme.onSurfaceVariant)),
+                SizedBox(height: 8 * f),
+                _optionGrid(context, q, readAloud, layout),
+                SizedBox(height: 10 * f),
+                if (_resolved) _praiseBanner(context),
               ],
-              _promptCard(context, q, readAloud),
-              const SizedBox(height: 10),
-              _readHint(context, readAloud),
-              Text('请选择答案',
-                  style: TextStyle(
-                      fontSize: 13.5,
-                      fontWeight: FontWeight.w700,
-                      color: scheme.onSurfaceVariant)),
-              const SizedBox(height: 8),
-              _optionGrid(context, q, readAloud),
-              const SizedBox(height: 10),
-              if (_resolved) _praiseBanner(context),
-            ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   /// 一行放下三样：题号进度、本题 id、难度星；窄屏上 id 会自动缩一点。
-  Widget _headRow(BuildContext context, QaQuestion q) {
+  Widget _headRow(BuildContext context, QaQuestion q, double f) {
     final scheme = Theme.of(context).colorScheme;
 
     return Row(
       children: [
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          padding: EdgeInsets.symmetric(horizontal: 10 * f, vertical: 4 * f),
           decoration: BoxDecoration(
             color: scheme.primaryContainer,
             borderRadius: BorderRadius.circular(20),
           ),
           child: Text('第 ${_qi + 1} / $_total 题',
               style: TextStyle(
-                  fontSize: 12.5,
+                  fontSize: 12.5 * f,
                   fontWeight: FontWeight.w700,
                   color: scheme.onPrimaryContainer)),
         ),
-        const SizedBox(width: 8),
+        SizedBox(width: 8 * f),
         Expanded(
           child: FittedBox(
             fit: BoxFit.scaleDown,
@@ -376,11 +384,11 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen>
             child: _idBadge(context, q),
           ),
         ),
-        const SizedBox(width: 8),
+        SizedBox(width: 8 * f),
         for (var i = 0; i < 3; i++)
           Icon(
             q.stars > i ? Icons.star_rounded : Icons.star_outline_rounded,
-            size: 18,
+            size: 18 * f,
             color:
                 q.stars > i ? const Color(0xFFF59E0B) : scheme.outlineVariant,
           ),
@@ -459,11 +467,11 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen>
   }
 
   // ---------- 题面图 ----------
-  Widget _sceneRow(BuildContext context, QaQuestion q) {
+  Widget _sceneRow(BuildContext context, QaQuestion q, double f, double height) {
     final scheme = Theme.of(context).colorScheme;
     return Container(
-      height: 104,
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+      height: height,
+      padding: EdgeInsets.symmetric(horizontal: 8 * f, vertical: 6 * f),
       decoration: BoxDecoration(
         color: Theme.of(context).brightness == Brightness.dark
             ? scheme.surfaceContainerHigh
@@ -478,7 +486,7 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen>
             Expanded(
               child: PicView(pic: q.scene[i], color: scheme.primary),
             ),
-            if (i != q.scene.length - 1) const SizedBox(width: 2),
+            if (i != q.scene.length - 1) SizedBox(width: 2 * f),
           ],
         ],
       ),
@@ -488,13 +496,14 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen>
   // ---------- 题面文字 ----------
   /// 题面 + 重播键**同一行**：读完想再听一遍就点右边那个喇叭（连答案一起再读一遍），
   /// 不用再去下面找一行按钮。语速由家长在「我的 → 偏好设置」里定，这里不给调。
-  Widget _promptCard(BuildContext context, QaQuestion q, bool readAloud) {
+  Widget _promptCard(BuildContext context, QaQuestion q, bool readAloud, double f) {
     final scheme = Theme.of(context).colorScheme;
     final clip = readAloud ? widget.bank.promptClip(q) : null;
 
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.fromLTRB(16, 12, clip == null ? 16 : 6, 12),
+      padding: EdgeInsets.fromLTRB(
+          16 * f, 12 * f, (clip == null ? 16 : 6) * f, 12 * f),
       decoration: BoxDecoration(
         color: scheme.primaryContainer.withOpacity(0.45),
         borderRadius: BorderRadius.circular(16),
@@ -507,6 +516,7 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen>
               clipKey: q.clipKey,
               clip: clip,
               highlight: readAloud,
+              fontSize: 21 * f,
             ),
           ),
           if (clip != null)
@@ -522,10 +532,10 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen>
                   tooltip: playing ? '停止' : '再读一遍',
                   icon: Icon(
                       playing ? Icons.stop_rounded : Icons.volume_up_rounded),
-                  iconSize: 20,
+                  iconSize: 20 * f,
                   visualDensity: VisualDensity.compact,
-                  constraints:
-                      const BoxConstraints.tightFor(width: 40, height: 40),
+                  constraints: BoxConstraints.tightFor(
+                      width: 40 * f, height: 40 * f),
                 );
               },
             ),
@@ -535,19 +545,19 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen>
   }
 
   /// 家长把朗读关掉时提示一句：这题得自己读。
-  Widget _readHint(BuildContext context, bool readAloud) {
+  Widget _readHint(BuildContext context, bool readAloud, double f) {
     if (readAloud) return const SizedBox.shrink();
     final scheme = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: EdgeInsets.only(bottom: 8 * f),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.menu_book_rounded, size: 16, color: scheme.outline),
-          const SizedBox(width: 6),
+          Icon(Icons.menu_book_rounded, size: 16 * f, color: scheme.outline),
+          SizedBox(width: 6 * f),
           Flexible(
             child: Text('读一读题目，自己选一选',
-                style: TextStyle(fontSize: 12.5, color: scheme.outline)),
+                style: TextStyle(fontSize: 12.5 * f, color: scheme.outline)),
           ),
         ],
       ),
@@ -555,27 +565,33 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen>
   }
 
   // ---------- 选项 ----------
-  Widget _optionGrid(BuildContext context, QaQuestion q, bool readAloud) {
+  /// 格子尺寸由 [QuizLayout] 定：图片格子在大屏上按宽度撑高（图才铺得满），
+  /// 但竖向不富余时只按倍数放大，保证两行选项一屏放得下。
+  Widget _optionGrid(BuildContext context, QaQuestion q, bool readAloud,
+      QuizLayout layout) {
+    final f = layout.scale;
     final n = q.options.length;
     final cols = n <= 2 ? n : 2;
     final rows = (n / cols).ceil();
     final hasPic = q.options.any((o) => o.hasPic);
-    final cellH = hasPic ? 116.0 : 74.0;
+    final gap = 10.0 * f;
+    final cellW = (layout.maxWidth - 32 - (cols - 1) * gap) / cols;
+    final cellH = hasPic ? layout.pictureCellHeight(cellW) : 74.0 * f;
 
     return Column(
       children: [
         for (var r = 0; r < rows; r++) ...[
-          if (r > 0) const SizedBox(height: 8),
+          if (r > 0) SizedBox(height: 8 * f),
           SizedBox(
             height: cellH,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 for (var c = 0; c < cols; c++) ...[
-                  if (c > 0) const SizedBox(width: 10),
+                  if (c > 0) SizedBox(width: gap),
                   Expanded(
                     child: r * cols + c < n
-                        ? _optionCell(context, q, r * cols + c, readAloud)
+                        ? _optionCell(context, q, r * cols + c, readAloud, f)
                         : const SizedBox.shrink(),
                   ),
                 ],
@@ -589,7 +605,7 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen>
 
   /// [pos] 是屏幕格子下标，实际画的是 `_optOrder[pos]` 那个选项。
   Widget _optionCell(BuildContext context, QaQuestion q, int pos,
-      bool readAloud) {
+      bool readAloud, double f) {
     final oi = _optOrder[pos];
     final o = q.options[oi];
     final scheme = Theme.of(context).colorScheme;
@@ -633,7 +649,7 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen>
             children: [
               Positioned.fill(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 20, 10, 6),
+                  padding: EdgeInsets.fromLTRB(10 * f, 20 * f, 10 * f, 6 * f),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -641,7 +657,7 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen>
                         Expanded(
                           child: PicView(pic: o.pic!, color: scheme.primary),
                         ),
-                      if (o.hasPic && o.hasText) const SizedBox(height: 4),
+                      if (o.hasPic && o.hasText) SizedBox(height: 4 * f),
                       if (o.hasText)
                         // 读到这个选项时，它自己的文字跟着亮。
                         QaKaraokeText(
@@ -649,7 +665,7 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen>
                           clipKey: q.optionClipKey(oi),
                           clip: clip,
                           highlight: readAloud,
-                          fontSize: 18,
+                          fontSize: 18 * f,
                           fontWeight: FontWeight.w800,
                           height: 1.2,
                           maxLines: 2,
@@ -660,11 +676,11 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen>
                 ),
               ),
               Positioned(
-                top: 5,
-                left: 7,
+                top: 5 * f,
+                left: 7 * f,
                 child: Container(
-                  width: 20,
-                  height: 20,
+                  width: 20 * f,
+                  height: 20 * f,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
@@ -684,7 +700,7 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen>
                   ),
                   child: Text(letter,
                       style: TextStyle(
-                          fontSize: 11,
+                          fontSize: 11 * f,
                           fontWeight: FontWeight.w800,
                           color: revealRight
                               ? Colors.white
@@ -706,11 +722,11 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen>
                         icon: Icon(playing
                             ? Icons.stop_circle_rounded
                             : Icons.volume_up_rounded),
-                        iconSize: 19,
+                        iconSize: 19 * f,
                         padding: EdgeInsets.zero,
                         visualDensity: VisualDensity.compact,
-                        constraints:
-                            const BoxConstraints.tightFor(width: 32, height: 32),
+                        constraints: BoxConstraints.tightFor(
+                            width: 32 * f, height: 32 * f),
                         color: playing ? scheme.primary : scheme.outline,
                       );
                     },
@@ -735,7 +751,7 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen>
       radius: 14,
       strokeWidth: 3,
       colors: kAnswerGlowColors,
-      period: const Duration(milliseconds: 800),
+      period: const Duration(milliseconds: 400),
       child: cell,
     );
   }
