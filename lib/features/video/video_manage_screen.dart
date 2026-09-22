@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -269,60 +268,100 @@ class _VideoManageScreenState extends ConsumerState<VideoManageScreen> {
   Future<void> _addFromFile(VideoCategory c) async {
     List<PickedVideo> picked;
     try {
-      picked = await pickLocalVideos();
+      picked = await pickLocalVideos(
+        // 家长点完「选择」，插件要先在后台把选中的文件拷进缓存目录，这期间
+        // Dart 侧什么都收不到。先把界面盖住：家长不用干等着猜发生了什么，
+        // 也点不动别处（以前这段是空白的，能随便乱点）。
+        onPicking: () => _showBusy(const _BusyState('正在读取你选中的视频…')),
+      );
     } catch (e) {
+      _hideBusy();
       if (!mounted) return;
       _toast('打开文件选择器失败：$e');
       return;
     }
-    if (picked.isEmpty || !mounted) return;
-
-    // 一次可能勾十几个，名字直接取文件名，不再一个个弹框问。
-    final progress =
-        ValueNotifier<String>('正在导入 ${picked.length} 个视频…');
-    final failed = <String>[];
-    final skipped = <String>[];
-    var index = c.videos.length;
-    try {
-      await _busy(progress, () async {
-        for (var i = 0; i < picked.length; i++) {
-          final p = picked[i];
-          final title = defaultVideoName(p.name, ++index);
-          progress.value = '正在导入 ${i + 1}/${picked.length}：$title';
-          String? dest;
-          try {
-            // 查重得赶在复制前面：同一个文件又选了一遍就不必白拷一份。
-            final fingerprint = await videoFingerprint(p);
-            if (_lib.isDuplicate(c.id, fingerprint)) {
-              skipped.add(title);
-              continue;
-            }
-            // 复制进 App 私有目录再记录，缓存里的临时路径迟早会被系统清掉。
-            dest = await importLocalVideo(p);
-            await _lib.addVideo(c.id,
-                title: title,
-                source: dest,
-                kind: VideoKind.file,
-                fingerprint: fingerprint);
-          } catch (e) {
-            // 一个失败不影响后面几个，最后一起报。已经复制进来的文件别留下当孤儿。
-            if (dest != null) await deleteLocalVideoFile(dest);
-            failed.add(title);
-          }
-        }
-      });
-    } finally {
-      progress.dispose();
+    if (picked.isEmpty) {
+      _hideBusy();
+      return;
     }
     if (!mounted) return;
-    final notes = <String>[
-      if (skipped.isNotEmpty)
-        '有 ${skipped.length} 个已经在「${c.name}」里了，没有重复添加：'
-            '${_preview(skipped)}',
-      if (failed.isNotEmpty) '有 ${failed.length} 个视频没能导入：${_preview(failed)}',
-    ];
-    if (notes.isEmpty) return;
-    _toast(notes.join('；'));
+
+    // 一次可能勾十几个，名字直接取文件名，不再一个个弹框问。
+    // 先把指纹和重复都查完再动手：已经在库里的不该白拷一份几百兆的文件。
+    final ready = <({PickedVideo picked, String title, String fingerprint})>[];
+    final blocked = <String>[];
+    final fresh = <String>[];
+    for (var i = 0; i < picked.length; i++) {
+      final p = picked[i];
+      _showBusy(_BusyState(
+        '正在检查有没有重复（${i + 1}/${picked.length}）…',
+        value: i / picked.length,
+      ));
+      final fingerprint = await videoFingerprint(p);
+      final title = defaultVideoName(p.name, c.videos.length + ready.length + 1);
+      final dup = fingerprint.isEmpty
+          ? null
+          : await _lib.findDuplicate(c.id, fingerprint);
+      if (dup != null) {
+        blocked.add(dup.title);
+        continue;
+      }
+      // 同一批里把同一个文件勾了两遍，也算重复。
+      if (fingerprint.isNotEmpty && fresh.contains(fingerprint)) {
+        blocked.add(title);
+        continue;
+      }
+      if (fingerprint.isNotEmpty) fresh.add(fingerprint);
+      ready.add((picked: p, title: title, fingerprint: fingerprint));
+    }
+
+    if (blocked.isNotEmpty) {
+      _hideBusy();
+      final go = await _blockedDialog(c, blocked, ready.length);
+      if (!mounted || go != true) return;
+      _showBusy(const _BusyState('正在导入…'));
+    }
+    if (ready.isEmpty) {
+      _hideBusy();
+      return;
+    }
+
+    final failed = <String>[];
+    final skipped = <String>[];
+    var added = 0;
+    for (var i = 0; i < ready.length; i++) {
+      final r = ready[i];
+      _showBusy(_BusyState(
+        '正在导入 ${i + 1}/${ready.length}：${r.title}',
+        value: i / ready.length,
+      ));
+      String? dest;
+      try {
+        // 查重再拦一道：这一批拷完之前库里可能又有变化。
+        if (r.fingerprint.isNotEmpty &&
+            await _lib.findDuplicate(c.id, r.fingerprint) != null) {
+          skipped.add(r.title);
+          continue;
+        }
+        // 搬进 App 私有目录再记录，缓存里的临时路径迟早会被系统清掉。
+        dest = await importLocalVideo(r.picked);
+        await _lib.addVideo(c.id,
+            title: r.title,
+            source: dest,
+            kind: VideoKind.file,
+            fingerprint: r.fingerprint);
+        added++;
+      } catch (e) {
+        // 一个失败不影响后面几个，最后一起报。已经搬进来的文件别留下当孤儿。
+        if (dest != null) await deleteLocalVideoFile(dest);
+        failed.add(r.title);
+      }
+    }
+    _hideBusy();
+    if (!mounted) return;
+    if (skipped.isNotEmpty || failed.isNotEmpty) {
+      await _resultDialog(c, added: added, skipped: skipped, failed: failed);
+    }
   }
 
   Future<void> _deleteVideo(VideoCategory c, VideoItem v) async {
@@ -377,47 +416,190 @@ class _VideoManageScreenState extends ConsumerState<VideoManageScreen> {
     );
   }
 
-  /// 跑一个耗时任务，期间盖一层不可取消的进度框。
+  // ---- 进度框 ----
+
+  /// 导入期间盖在界面上的进度框内容。
+  final ValueNotifier<_BusyState> _busy = ValueNotifier(const _BusyState(''));
+  bool _busyShown = false;
+
+  @override
+  void dispose() {
+    _busy.dispose();
+    super.dispose();
+  }
+
+  /// 盖上（或者就地更新）进度框。
   ///
-  /// [label] 传的是 ValueListenable 而不是普通字符串：批量导入要一边复制
-  /// 一边改「第几个」，普通字符串改了框里也不会跟着变。
-  Future<T> _busy<T>(ValueListenable<String> label, Future<T> Function() run) async {
+  /// 盖的时机很关键：从选择器开始拷文件那一刻就盖，一直盖到写完库里，中途不闪
+  /// 断；框不可取消、返回键也按不动，家长只能等它自己收掉。以前这段是空白的，
+  /// 界面上一点动静都没有，家长能随便乱点、还能再发起一次导入。
+  void _showBusy(_BusyState state) {
+    if (!mounted) return;
+    _busy.value = state;
+    if (_busyShown) return;
+    _busyShown = true;
     showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (_) => PopScope(
         canPop: false,
-        child: ValueListenableBuilder<String>(
-          valueListenable: label,
-          builder: (_, text, __) => AlertDialog(
-            content: Row(
-              children: [
-                const SizedBox(
-                    width: 22, height: 22,
-                    child: CircularProgressIndicator(strokeWidth: 2.4)),
-                const SizedBox(width: 16),
-                Expanded(child: Text(text)),
-              ],
-            ),
-          ),
+        child: ValueListenableBuilder<_BusyState>(
+          valueListenable: _busy,
+          builder: (_, state, __) =>
+              AlertDialog(content: _BusyBody(state: state)),
         ),
       ),
     );
-    try {
-      return await run();
-    } finally {
-      if (mounted) Navigator.of(context, rootNavigator: true).pop();
-    }
+  }
+
+  void _hideBusy() {
+    if (!_busyShown) return;
+    _busyShown = false;
+    if (mounted) Navigator.of(context, rootNavigator: true).pop();
+  }
+
+  /// 被挡下来的那些视频：一个一个列出来，别让家长只看到一句「有 3 个重复」。
+  ///
+  /// 返回 true 表示「其余那些继续加」，false / null 表示整批都不加了。
+  Future<bool?> _blockedDialog(
+      VideoCategory c, List<String> blocked, int ready) {
+    return showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        scrollable: true,
+        title: Text(ready > 0 ? '这些视频不能重复添加' : '这些视频都已经在库里了'),
+        content: _NameList(
+          head: '下面 ${blocked.length} 个视频已经在「${c.name}」里了：',
+          names: blocked,
+          tail: ready > 0 ? '其余 $ready 个可以继续添加。' : null,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(ready > 0 ? '都取消' : '知道了'),
+          ),
+          if (ready > 0)
+            FilledButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: Text('继续添加其余 $ready 个'),
+            ),
+        ],
+      ),
+    );
+  }
+
+  /// 收尾：有没加进去的（重复 / 失败）才弹，全加进去就不用打扰家长。
+  Future<void> _resultDialog(
+    VideoCategory c, {
+    required int added,
+    required List<String> skipped,
+    required List<String> failed,
+  }) {
+    return showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        scrollable: true,
+        title: const Text('导入完成'),
+        content: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (added > 0) Text('已经加入 $added 个视频。'),
+            if (skipped.isNotEmpty) ...[
+              if (added > 0) const SizedBox(height: 10),
+              _NameList(
+                head: '这 ${skipped.length} 个已经在「${c.name}」里了，没有重复添加：',
+                names: skipped,
+              ),
+            ],
+            if (failed.isNotEmpty) ...[
+              if (added > 0 || skipped.isNotEmpty) const SizedBox(height: 10),
+              _NameList(
+                head: '这 ${failed.length} 个没能导入：',
+                names: failed,
+              ),
+            ],
+          ],
+        ),
+        actions: [
+          FilledButton(
+              onPressed: () => Navigator.pop(ctx), child: const Text('知道了')),
+        ],
+      ),
+    );
   }
 
   void _toast(String msg) {
     ScaffoldMessenger.of(context)
         .showSnackBar(SnackBar(content: Text(msg)));
   }
+}
 
-  /// 「A、B、C 等」——一次勾十几个时全念出来太长，只报前三个。
-  String _preview(List<String> names) =>
-      '${names.take(3).join('、')}${names.length > 3 ? ' 等' : ''}';
+/// 进度框里显示什么。
+@immutable
+class _BusyState {
+  const _BusyState(this.text, {this.value});
+
+  final String text;
+
+  /// 0~1 的进度；null 表示这会儿还算不出比例（比如选择器正在后台拷文件）。
+  final double? value;
+}
+
+/// 进度框的样子：一句话 + 进度条（算得出比例时连百分比一起给）。
+class _BusyBody extends StatelessWidget {
+  const _BusyBody({required this.state});
+
+  final _BusyState state;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(state.text),
+        const SizedBox(height: 16),
+        LinearProgressIndicator(value: state.value, minHeight: 6),
+        if (state.value != null) ...[
+          const SizedBox(height: 8),
+          Text('${(state.value! * 100).round()}%',
+              style: TextStyle(fontSize: 12.5, color: scheme.onSurfaceVariant)),
+        ],
+      ],
+    );
+  }
+}
+
+/// 一串名字的清单：一句开头 + 逐个列出来的名字 + 可选的收尾。
+class _NameList extends StatelessWidget {
+  const _NameList({required this.head, required this.names, this.tail});
+
+  final String head;
+  final List<String> names;
+  final String? tail;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(head),
+        const SizedBox(height: 8),
+        for (final n in names)
+          Padding(
+            padding: const EdgeInsets.only(left: 8, bottom: 4),
+            child: Text('· $n'),
+          ),
+        if (tail != null) ...[
+          const SizedBox(height: 4),
+          Text(tail!),
+        ],
+      ],
+    );
+  }
 }
 
 enum _AddMode { link, file }

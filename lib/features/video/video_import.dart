@@ -22,12 +22,19 @@ class PickedVideo {
 }
 
 /// 打开系统文件选择器挑视频，可以一次多选；取消或一个路径都拿不到时返回空列表。
-Future<List<PickedVideo>> pickLocalVideos() async {
+///
+/// [onPicking] 在家长点完「选择」的那一刻回调一次。插件接下来要在自己的线程上
+/// 把选中的文件逐个拷进缓存目录，这期间 Dart 侧收不到任何东西（几百兆的视频要
+/// 等很久）——界面得靠这一声先把进度盖上去，家长才不会以为没点中、随手乱点。
+Future<List<PickedVideo>> pickLocalVideos({void Function()? onPicking}) async {
   // 带上 SAF 选项，选择器才会把原始 content:// 地址一起给回来，
   // 后面自己查文件名要靠它。
   final files = await FilePicker.pickFiles(
     type: FileType.video,
     androidOptions: const FilePickerAndroidOptions(),
+    onFileLoading: (status) {
+      if (status == FilePickerStatus.picking) onPicking?.call();
+    },
   );
   final picked = <PickedVideo>[];
   for (final f in files) {
@@ -95,6 +102,9 @@ bool _meaningful(String? raw) {
 /// 名字问不到时只剩字节数可用——两个不同的视频撞上同一个字节数几乎不可能，
 /// 总比认不出「同一个文件又选了一遍」强。反过来，文件读不到就干脆不给指纹：
 /// 让家长自己删多出来的那份，也好过把想加的挡在门外。
+///
+/// 名字按落盘时的写法（[safeVideoFileName]）算，才跟 [storedFingerprintOf] 从
+/// 库里那条记录的路径里推出来的一致。
 Future<String> videoFingerprint(PickedVideo picked) async {
   int size;
   try {
@@ -102,19 +112,59 @@ Future<String> videoFingerprint(PickedVideo picked) async {
   } catch (_) {
     return '';
   }
-  return size <= 0 ? '' : '${picked.name}|$size';
+  return size <= 0 ? '' : '${safeVideoFileName(picked.name)}|$size';
 }
 
-/// 把挑中的视频复制进 App 私有目录，返回可长期播放的绝对路径。
+/// 库里一条本机视频的查重指纹，按它存下来的文件现推；推不出来返回 null。
+///
+/// 早先版本的记录里没有指纹，只有 [importLocalVideo] 落盘的路径，光比指纹比不出
+/// 来——家长把同一个文件再选一遍就又会存一份。路径最后一段是
+/// `<微秒时间戳>_<文件名>`，配上传进来那份拷贝的字节数，正好能还原出
+/// [videoFingerprint] 的写法。
+///
+/// 链接、文件已经被删掉或读不到，都返回 null：宁可漏判（家长自己能删），
+/// 也别把两个不同的视频误判成一个。
+Future<String?> storedFingerprintOf(String source) async {
+  final base = source.split(RegExp(r'[/\\]')).last;
+  final name = RegExp(r'^\d{10,}_(.+)$').firstMatch(base)?.group(1);
+  if (name == null) return null;
+  try {
+    final size = await File(source).length();
+    return size <= 0 ? null : '$name|$size';
+  } catch (_) {
+    return null;
+  }
+}
+
+/// 把挑中的视频放进 App 私有目录，返回可长期播放的绝对路径。
 Future<String> importLocalVideo(PickedVideo picked) async {
   final dir = Directory(
       '${(await getApplicationDocumentsDirectory()).path}/$kVideoDirName');
   if (!dir.existsSync()) await dir.create(recursive: true);
   final dest = '${dir.path}/${DateTime.now().microsecondsSinceEpoch}'
-      '_${_safeFileName(picked.name)}';
+      '_${safeVideoFileName(picked.name)}';
+  if (await _movePickerCacheCopy(picked.path, dest)) return dest;
   await File(picked.path).copy(dest);
   await _dropPickerCacheCopy(picked.path);
   return dest;
+}
+
+/// 选择器已经把文件拷进自己的缓存目录了，再整份拷一遍是白花的功夫——几百兆的
+/// 视频要好几秒，家长就得多等这一会儿。同一个文件系统上直接改名搬过去几乎不用
+/// 时间。搬成了返回 true。
+///
+/// 只有在缓存目录里的副本才搬（[_dropPickerCacheCopy] 同一个前缀校验）：万一
+/// 拿到的是家长自己的真实文件，绝不能把人家的文件搬走。
+Future<bool> _movePickerCacheCopy(String source, String dest) async {
+  try {
+    final cache = (await getTemporaryDirectory()).path;
+    if (!source.startsWith(cache)) return false;
+    await File(source).rename(dest);
+    return true;
+  } catch (_) {
+    // 跨文件系统之类的意外，交给调用方老老实实拷一份。
+    return false;
+  }
 }
 
 /// 从视频库里移除本地视频时顺带删掉文件，避免留下孤儿。
@@ -138,8 +188,9 @@ Future<void> _dropPickerCacheCopy(String sourcePath) async {
   }
 }
 
-/// 只保留文件名部分，并去掉路径分隔符等非法字符。
-String _safeFileName(String name) {
+/// 只保留文件名部分，并去掉路径分隔符等非法字符。落盘用这个名字，
+/// [storedFingerprintOf] 推指纹时也按这个名字对。
+String safeVideoFileName(String name) {
   final base = name.split(RegExp(r'[/\\]')).last.trim();
   final cleaned = base.replaceAll(RegExp(r'[<>:"|?*\x00-\x1f]'), '_');
   return cleaned.isEmpty ? 'video.mp4' : cleaned;

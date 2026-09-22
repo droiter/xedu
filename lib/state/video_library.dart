@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/constants.dart';
+import '../features/video/video_import.dart' show storedFingerprintOf;
 import 'prefs.dart';
 
 /// 视频来源：网络链接 / 本机文件。
@@ -214,9 +215,10 @@ class VideoLibraryController extends Notifier<VideoLibrary> {
 
   /// 往 [categoryId] 里加一个视频，返回最后的结果。
   ///
-  /// 查重只看这个分类：分类里已经有同一个视频就不加——链接看地址，本机视频
-  /// 看 [fingerprint]（原文件名 + 字节数）。名字在这个分类里重了则自动加编号
-  /// （「小猪佩奇」→「小猪佩奇 (2)」），别的分类里叫什么名字就不管了。
+  /// 查重只看这个分类（见 [findDuplicate]）：分类里已经有同一个视频就不加——
+  /// 链接看地址，本机视频看 [fingerprint]（原文件名 + 字节数）。名字在这个分类
+  /// 里重了则自动加编号（「小猪佩奇」→「小猪佩奇 (2)」），别的分类里叫什么名字
+  /// 就不管了。
   Future<AddVideoResult> addVideo(
     String categoryId, {
     required String title,
@@ -228,7 +230,8 @@ class VideoLibraryController extends Notifier<VideoLibrary> {
     final trimmed = title.trim().isEmpty ? '未命名视频' : title.trim();
     if (category == null) return AddVideoResult(added: false, title: trimmed);
 
-    final dup = category.findDuplicate(VideoItem.keyOf(source, fingerprint));
+    final dup = await findDuplicate(
+        categoryId, VideoItem.keyOf(source, fingerprint));
     if (dup != null) return AddVideoResult(added: false, title: dup.title);
 
     final item = VideoItem(
@@ -247,13 +250,24 @@ class VideoLibraryController extends Notifier<VideoLibrary> {
     return AddVideoResult(added: true, title: item.title);
   }
 
-  /// 这个分类里是不是已经有同一个视频了（按 [fingerprint] 认）。
+  /// 这个分类里已经有同一个视频了吗？有就返回库里那一条，没有返回 null。
   ///
-  /// 只给本机视频用：批量导入时先问一句，省得为一个已经在库里的视频白拷一份
-  /// 几百兆的文件。链接没有这一层——反正不用先复制，直接交给 [addVideo] 判就行。
-  bool isDuplicate(String categoryId, String fingerprint) {
-    if (fingerprint.isEmpty) return false;
-    return state.byId(categoryId)?.findDuplicate(fingerprint) != null;
+  /// [dedupKey] 是新条目的查重键（[VideoItem.keyOf]）：链接是地址，本机视频是
+  /// 「原文件名 + 字节数」。先按查重键直接比；比不出来再看本机视频那条老路——
+  /// 早先版本的记录没存指纹，只能按它落盘的文件现推一个（[storedFingerprintOf]），
+  /// 否则家长把同一个文件再选一遍就会被当成新视频又存一份。
+  ///
+  /// 批量导入时先问一句，省得为一个已经在库里的视频白拷一份几百兆的文件。
+  Future<VideoItem?> findDuplicate(String categoryId, String dedupKey) async {
+    final category = state.byId(categoryId);
+    if (category == null || dedupKey.isEmpty) return null;
+    final hit = category.findDuplicate(dedupKey);
+    if (hit != null) return hit;
+    for (final v in category.videos) {
+      if (!v.isLocal) continue;
+      if (await storedFingerprintOf(v.source) == dedupKey) return v;
+    }
+    return null;
   }
 
   Future<void> removeVideo(String categoryId, String videoId) async {

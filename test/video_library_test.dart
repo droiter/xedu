@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -71,15 +72,80 @@ Future<void> _settle(WidgetTester tester) async {
   await tester.pump(const Duration(milliseconds: 400));
 }
 
-/// 装一个 Android 选择器给回来的文件。[contentUri] 是 SAF 拿到的原始地址。
-PlatformFile _pickedAndroid({required String name, String? contentUri}) =>
+/// 装一个 Android 选择器给回来的文件。[contentUri] 是 SAF 拿到的原始地址，
+/// [path] 换掉选择器给的落盘路径（真拷过一遍的测试要用真文件）。
+PlatformFile _pickedAndroid({required String name, String? contentUri, String? path}) =>
     AndroidPlatformFile.fromMap({
-      'path': '/data/user/0/com.xedu.xedu/cache/file_picker/1757500000000/$name',
+      'path': path ??
+          '/data/user/0/com.xedu.xedu/cache/file_picker/1757500000000/$name',
       'name': name,
       'size': 1024,
       if (contentUri != null)
         'safHandle': {'uri': contentUri, 'access': 'readOnly'},
     });
+
+/// 顶掉真的系统选择器：照插件那边的规矩，先报一声「开始处理了」再给文件回来。
+/// [gate] 非空时会卡在「处理中」，用来验证这一刻界面长什么样。
+class _FakePicker extends FilePickerPlatform {
+  _FakePicker(this.files, {this.gate});
+
+  final List<PlatformFile> files;
+  final Completer<void>? gate;
+
+  @override
+  Future<List<PlatformFile>> pickFiles({
+    String? dialogTitle,
+    String? initialDirectory,
+    FileType type = FileType.any,
+    List<String>? allowedExtensions,
+    Function(FilePickerStatus)? onFileLoading,
+    int compressionQuality = 0,
+    AndroidOptions androidOptions = const AndroidOptions(),
+    DarwinOptions darwinOptions = const DarwinOptions(),
+    WindowsOptions windowsOptions = const WindowsOptions(),
+    LinuxOptions linuxOptions = const LinuxOptions(),
+    WebOptions webOptions = const WebOptions(),
+  }) async {
+    onFileLoading?.call(FilePickerStatus.picking);
+    if (gate != null) await gate!.future;
+    onFileLoading?.call(FilePickerStatus.done);
+    return files;
+  }
+}
+
+/// 换成假选择器，测试结束再换回来。
+void _useFakePicker(List<PlatformFile> files, {Completer<void>? gate}) {
+  final original = FilePickerPlatform.instance;
+  FilePickerPlatform.instance = _FakePicker(files, gate: gate);
+  addTearDown(() => FilePickerPlatform.instance = original);
+}
+
+/// 把 path_provider 的两条路指到测试自己的临时目录（导入要往「文档目录」写）。
+void _mockPathProvider({required String docs, required String tmp}) {
+  const channel = MethodChannel('plugins.flutter.io/path_provider');
+  final messenger =
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+  messenger.setMockMethodCallHandler(channel, (call) async {
+    switch (call.method) {
+      case 'getApplicationDocumentsDirectory':
+        return docs;
+      case 'getTemporaryDirectory':
+        return tmp;
+    }
+    return null;
+  });
+  addTearDown(() => messenger.setMockMethodCallHandler(channel, null));
+}
+
+/// 导入流程里有真实的文件 I/O，widget 测试的假时钟等不到它——得开真事件循环
+/// 转几圈：每圈给一点真实时间，再 pump 一帧让界面跟上。
+Future<void> _pumpIo(WidgetTester tester, {int rounds = 10}) async {
+  for (var i = 0; i < rounds; i++) {
+    await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 20)));
+    await tester.pump();
+  }
+}
 
 /// 把「问系统要文件名」那条通道换成固定答复；[answer] 为 null 表示问不出来。
 void _mockNameChannel(String? answer) {
@@ -216,7 +282,7 @@ void main() {
           kind: VideoKind.file,
           fingerprint: fp);
       expect(first.added, isTrue);
-      expect(lib.isDuplicate(id, fp), isTrue);
+      expect(await lib.findDuplicate(id, fp), isNotNull);
 
       // 同一个文件再选一遍：复制进来的是另一个带时间戳的路径，只能靠指纹认出来。
       final again = await lib.addVideo(id,
@@ -264,7 +330,7 @@ void main() {
       final c = await _container(seed: {kVideoLibraryKey: _seedLibraryJson()});
       final lib = c.read(videoLibraryProvider.notifier);
 
-      expect(lib.isDuplicate('vc1', ''), isFalse);
+      expect(await lib.findDuplicate('vc1', ''), isNull);
       // 老的本机视频没指纹，退回拿各自的路径当键：换个路径就是新的一份。
       final fresh = await lib.addVideo('vc1',
           title: '汪汪队 第 3 集',
@@ -423,6 +489,193 @@ void main() {
       expect(find.text('小猪佩奇 第 1 集'), findsOneWidget);
       expect(find.text('小猪佩奇 第 1 集 (2)'), findsOneWidget);
       expect(find.text('3 个视频'), findsOneWidget);
+    });
+  });
+
+  group('批量添加本机视频', () {
+    late Directory root;
+
+    setUp(() {
+      root = Directory.systemTemp.createTempSync('xedu_batch');
+    });
+
+    tearDown(() {
+      if (root.existsSync()) root.deleteSync(recursive: true);
+    });
+
+    /// 选择器缓存里的那份副本（插件拷进来的）。名字取了「汪汪队.mp4」。
+    File cachedCopy({String name = '汪汪队.mp4', int size = 2048}) =>
+        File('${root.path}/tmp/file_picker/1757500000000/$name')
+          ..createSync(recursive: true)
+          ..writeAsBytesSync(List.filled(size, 3));
+
+    /// 一条老记录：本机视频，没存指纹，只能靠落盘的文件认。
+    String seedOldLocal(String source) => jsonEncode({
+          'categories': [
+            {
+              'id': 'vc1',
+              'name': '动画片',
+              'videos': [
+                {
+                  'id': 'v1',
+                  'title': '汪汪队 第 2 集',
+                  'source': source,
+                  'kind': 'file',
+                },
+              ],
+            },
+          ],
+        });
+
+    test('老记录没有指纹，同一个文件再选一遍也拦得住', () async {
+      final stored = File('${root.path}/1757500000000_汪汪队.mp4')
+        ..writeAsBytesSync(List.filled(2048, 3));
+      final picked = File('${root.path}/另外一份.mp4')
+        ..writeAsBytesSync(List.filled(2048, 3));
+
+      final c = await _container(
+          seed: {kVideoLibraryKey: seedOldLocal(stored.path)});
+      final lib = c.read(videoLibraryProvider.notifier);
+
+      final fp = await videoFingerprint(
+          PickedVideo(name: '汪汪队.mp4', path: picked.path));
+      expect(fp, '汪汪队.mp4|2048');
+      expect((await lib.findDuplicate('vc1', fp))?.title, '汪汪队 第 2 集');
+
+      // 走一遍加视频：名字换了也没用，是同一个文件就不给加。
+      final again = await lib.addVideo('vc1',
+          title: '再存一遍',
+          source: '${root.path}/又一份.mp4',
+          kind: VideoKind.file,
+          fingerprint: fp);
+      expect(again.added, isFalse);
+      expect(again.title, '汪汪队 第 2 集');
+      expect(c.read(videoLibraryProvider).totalVideos, 1);
+
+      // 大小不一样的还是另一个视频，照样能加。
+      final other = await lib.addVideo('vc1',
+          title: '汪汪队 第 3 集',
+          source: '${root.path}/新的.mp4',
+          kind: VideoKind.file,
+          fingerprint: '汪汪队.mp4|4096');
+      expect(other.added, isTrue);
+      expect(c.read(videoLibraryProvider).totalVideos, 2);
+    });
+
+    test('从选择器缓存搬进 App 目录是搬，不是再拷一份', () async {
+      TestWidgetsFlutterBinding.ensureInitialized();
+      _mockPathProvider(docs: '${root.path}/docs', tmp: '${root.path}/tmp');
+
+      final cached = cachedCopy();
+      final dest = await importLocalVideo(
+          PickedVideo(name: '汪汪队.mp4', path: cached.path));
+
+      expect(dest, contains('xedu_videos'));
+      expect(File(dest).lengthSync(), 2048);
+      // 缓存里那份被搬走了：不再整份拷一遍，几百兆的视频能少等好几秒。
+      expect(cached.existsSync(), isFalse);
+
+      // 不在缓存目录里的路径（家长自己的文件）绝不能搬走，只能老老实实拷。
+      final real = File('${root.path}/我的电影.mp4')
+        ..writeAsBytesSync(List.filled(100, 1));
+      final dest2 = await importLocalVideo(
+          PickedVideo(name: '我的电影.mp4', path: real.path));
+      expect(real.existsSync(), isTrue);
+      expect(File(dest2).lengthSync(), 100);
+    });
+
+    test('搬过去的还是原来那个文件，不是又拷一份', () async {
+      TestWidgetsFlutterBinding.ensureInitialized();
+      _mockPathProvider(docs: '${root.path}/docs', tmp: '${root.path}/tmp');
+
+      // 缓存里那个是指向别处的软链：整份拷一遍会落成普通文件，直接改名搬过去
+      // 则还是软链——正好用来看清到底是「搬」还是「拷」。
+      final real = File('${root.path}/真的在这里.mp4')
+        ..writeAsBytesSync(List.filled(2048, 7));
+      final cachedDir = Directory('${root.path}/tmp/file_picker/1757500000000')
+        ..createSync(recursive: true);
+      final cached = Link('${cachedDir.path}/汪汪队.mp4')..createSync(real.path);
+
+      final dest = await importLocalVideo(
+          PickedVideo(name: '汪汪队.mp4', path: cached.path));
+
+      expect(FileSystemEntity.isLinkSync(dest), isTrue);
+      expect(File(dest).lengthSync(), 2048);
+      expect(cached.existsSync(), isFalse);
+      expect(real.existsSync(), isTrue); // 指向的真文件没被动过
+    });
+
+    testWidgets('选完文件马上盖进度框，界面点不动', (tester) async {
+      final gate = Completer<void>();
+      final cached = cachedCopy();
+      _useFakePicker(
+          [_pickedAndroid(name: '汪汪队.mp4', path: cached.path)],
+          gate: gate);
+      _mockPathProvider(docs: '${root.path}/docs', tmp: '${root.path}/tmp');
+
+      await tester.pumpWidget(await _host(const VideoManageScreen(),
+          seed: {kVideoLibraryKey: _seedLibraryJson()}));
+      await tester.pump();
+
+      await tester.tap(find.text('添加视频'));
+      await _settle(tester);
+      await tester.tap(find.text('从本机选择文件'));
+      await tester.pump();
+
+      // 插件这会儿还在后台拷文件（gate 卡着）。以前这一段界面上什么提示都没有，
+      // 家长能随便乱点，进度条要等好久才出来。
+      expect(find.text('正在读取你选中的视频…'), findsOneWidget);
+      expect(find.byType(LinearProgressIndicator), findsOneWidget);
+
+      // 盖着的时候点不动底下的按钮（能点的话会弹出「新建分类」的输入框）。
+      await tester.tap(find.text('新建分类'), warnIfMissed: false);
+      await _settle(tester);
+      expect(find.byType(TextField), findsNothing);
+
+      // 放行，导入跑完（也别留一个永远不返回的 future）。
+      gate.complete();
+      await _pumpIo(tester);
+
+      expect(find.text('正在读取你选中的视频…'), findsNothing);
+      expect(find.text('汪汪队'), findsOneWidget);
+      expect(find.text('3 个视频'), findsOneWidget);
+    });
+
+    testWidgets('已经在库里的那个不再加，并把被挡下的列出来', (tester) async {
+      final stored = File('${root.path}/docs/xedu_videos/1757500000000_汪汪队.mp4')
+        ..createSync(recursive: true)
+        ..writeAsBytesSync(List.filled(2048, 3));
+      final fresh = File('${root.path}/tmp/file_picker/1757500000000/佩奇.mp4')
+        ..createSync(recursive: true)
+        ..writeAsBytesSync(List.filled(4096, 5));
+
+      _useFakePicker([
+        _pickedAndroid(name: '汪汪队.mp4', path: cachedCopy().path),
+        _pickedAndroid(name: '佩奇.mp4', path: fresh.path),
+      ]);
+      _mockPathProvider(docs: '${root.path}/docs', tmp: '${root.path}/tmp');
+
+      await tester.pumpWidget(await _host(const VideoManageScreen(),
+          seed: {kVideoLibraryKey: seedOldLocal(stored.path)}));
+      await tester.pump();
+
+      await tester.tap(find.text('添加视频'));
+      await _settle(tester);
+      await tester.tap(find.text('从本机选择文件'));
+      await _pumpIo(tester);
+
+      // 挡下的是哪一个，得一个一个列出来给家长看。
+      expect(find.text('这些视频不能重复添加'), findsOneWidget);
+      expect(find.textContaining('已经在「动画片」里了'), findsOneWidget);
+      expect(find.text('· 汪汪队 第 2 集'), findsOneWidget);
+      expect(find.text('1 个视频'), findsOneWidget); // 还没动手加
+
+      await tester.tap(find.text('继续添加其余 1 个'));
+      await _pumpIo(tester);
+
+      // 只多了没重复的那一个。
+      expect(find.text('佩奇'), findsOneWidget);
+      expect(find.text('2 个视频'), findsOneWidget);
     });
   });
 
@@ -604,6 +857,27 @@ void main() {
             PickedVideo(name: '佩奇.mp4', path: '${dir.path}/没有这个.mp4')),
         '',
       );
+    });
+
+    test('老记录按落盘的文件现推一个指纹出来', () async {
+      final dir = await Directory.systemTemp.createTemp('xedu_stored');
+      addTearDown(() => dir.delete(recursive: true));
+
+      // 导入时落盘的名字形如「<微秒时间戳>_<文件名>」，大小就是当初那份拷贝。
+      final stored = File('${dir.path}/1757500000000_佩奇.mp4')
+        ..writeAsBytesSync(List.filled(2048, 7));
+      expect(await storedFingerprintOf(stored.path), '佩奇.mp4|2048');
+
+      // 链接、不是我们命名的路径、文件已经被删掉：都推不出来。
+      expect(await storedFingerprintOf('https://a.com/1.mp4'), isNull);
+      expect(await storedFingerprintOf('${dir.path}/别的应用的文件.mp4'), isNull);
+      expect(
+          await storedFingerprintOf('${dir.path}/1757500000000_没了.mp4'), isNull);
+    });
+
+    test('名字里有落盘时会被换掉的字符，两边按同一套写法算才对得上', () {
+      expect(safeVideoFileName('小猪:佩奇.mp4'), '小猪_佩奇.mp4');
+      expect(safeVideoFileName('小猪佩奇.mp4'), '小猪佩奇.mp4');
     });
   });
 
