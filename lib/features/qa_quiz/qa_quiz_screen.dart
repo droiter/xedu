@@ -51,6 +51,9 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen>
     with BackGuard<QaQuizScreen> {
   static const Duration _celebrateFor = Duration(milliseconds: 1150);
 
+  /// 四个选项闪一下辉光的时长（也是那一下闪光本身的时长，到点正好收干净）。
+  static const Duration _cueFlashFor = Duration(milliseconds: 450);
+
   static const List<String> _praises = [
     '太棒了！',
     '答对啦！',
@@ -179,10 +182,12 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen>
   }
 
   /// 辉光闪烁：四个选项边框一起亮一下（选项是图的时候，这就是「答案在这」的提示）。
+  ///
+  /// 整圈一起亮、不转圈 —— 转起来像是在指某一个格子，闪一下就只是「看这儿」。
   void _flashOptions() {
     _cueTimer?.cancel();
     setState(() => _cueOn = true);
-    _cueTimer = Timer(const Duration(milliseconds: 450), () {
+    _cueTimer = Timer(_cueFlashFor, () {
       if (!mounted) return;
       setState(() => _cueOn = false);
     });
@@ -751,7 +756,8 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen>
       radius: 14,
       strokeWidth: 3,
       colors: kAnswerGlowColors,
-      period: const Duration(milliseconds: 400),
+      period: _cueFlashFor,
+      spin: false,
       child: cell,
     );
   }

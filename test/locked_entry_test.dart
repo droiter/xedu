@@ -128,6 +128,8 @@ void main() {
 
     // 就首页那张入口卡一圈光辉 —— 底部选项卡不再常驻转光（见下一条）。
     expect(find.byType(GlowBorder), findsOneWidget);
+    // 这一处是转圈的流光（答案辉光才是不转的「闪一下」）。
+    expect(tester.widget<GlowBorder>(find.byType(GlowBorder)).spin, isTrue);
 
     // 首页那张入口卡（底部选项卡那格点了不跳转）。
     // Ink 只负责画渐变、不参与命中测试，真正接手势的是它外面的 InkWell。

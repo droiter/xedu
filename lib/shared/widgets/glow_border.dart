@@ -20,6 +20,9 @@ const List<Color> kAnswerGlowColors = [
 ///
 /// 用来把「现在能玩的那一个入口」从一堆置灰入口里挑出来。
 /// 系统开了「减弱动态效果」时不再转动，只留一圈静止的亮边。
+///
+/// [spin] 关掉就不转：整圈一起亮，再由亮到灭闪一下（[period] 就是这一下的时长），
+/// 给「答案就在这几个格子里」这种瞄一眼就够的提示用。
 class GlowBorder extends StatefulWidget {
   const GlowBorder({
     super.key,
@@ -28,6 +31,7 @@ class GlowBorder extends StatefulWidget {
     this.strokeWidth = 3,
     this.colors = kGlowColors,
     this.period = const Duration(seconds: 3),
+    this.spin = true,
   });
 
   final Widget child;
@@ -40,8 +44,11 @@ class GlowBorder extends StatefulWidget {
 
   final List<Color> colors;
 
-  /// 光辉绕一圈的时长。
+  /// 光辉绕一圈的时长；[spin] 为 false 时是「闪一下」的时长。
   final Duration period;
+
+  /// 光是否沿边框转圈。false = 整圈一起亮、闪一下。
+  final bool spin;
 
   @override
   State<GlowBorder> createState() => _GlowBorderState();
@@ -61,8 +68,11 @@ class _GlowBorderState extends State<GlowBorder>
     if (still) {
       _turn.stop();
       _turn.value = 0;
-    } else if (!_turn.isAnimating) {
-      _turn.repeat();
+    } else if (widget.spin) {
+      if (!_turn.isAnimating) _turn.repeat();
+    } else if (_turn.value == 0) {
+      // 闪一下：从 0 走到 1 就停，不回头。
+      _turn.forward();
     }
   }
 
@@ -80,6 +90,7 @@ class _GlowBorderState extends State<GlowBorder>
         radius: widget.radius,
         strokeWidth: widget.strokeWidth,
         colors: widget.colors,
+        spin: widget.spin,
       ),
       child: widget.child,
     );
@@ -92,19 +103,37 @@ class _GlowPainter extends CustomPainter {
     required this.radius,
     required this.strokeWidth,
     required this.colors,
+    required this.spin,
   }) : super(repaint: turn);
 
   final Animation<double> turn;
   final double radius;
   final double strokeWidth;
   final List<Color> colors;
+  final bool spin;
 
   // 亮带只占圆周约 1/3，看起来才像一段跑动的光而不是半个圈发亮。
   static const List<double> _stops = [0.0, 0.34, 0.52, 0.66, 1.0];
 
+  // 「闪一下」：先全亮，走过这一段再往灭里收。
+  static const double _holdUntil = 0.3;
+
+  /// 外圈柔光比实边宽多少、糊多深。都压得比实边高一点，光晕不会溢出去一大团。
+  static const double _softWidth = 1.6;
+  static const double _softBlur = 0.9;
+
+  double get _opacity {
+    if (spin) return 1;
+    final t = turn.value;
+    if (t <= _holdUntil) return 1;
+    return 1 - Curves.easeOutCubic.transform((t - _holdUntil) / (1 - _holdUntil));
+  }
+
   @override
   void paint(Canvas canvas, Size size) {
     if (size.isEmpty) return;
+    final opacity = _opacity;
+    if (opacity <= 0) return;
 
     final inset = strokeWidth / 2;
     final rect = (Offset.zero & size).deflate(inset);
@@ -112,17 +141,21 @@ class _GlowPainter extends CustomPainter {
       rect,
       Radius.circular(math.max(0, radius - inset)),
     );
-    final shader = SweepGradient(
-      transform: GradientRotation(turn.value * 2 * math.pi),
-      colors: [
-        colors.first.withOpacity(0),
-        colors.first,
-        colors[1],
-        colors.last,
-        colors.last.withOpacity(0),
-      ],
-      stops: _stops,
-    ).createShader(rect);
+    // 不转的时候整圈一个色：同一套画笔走下来，只是把流光换成一段匀光。
+    final lit = colors[1].withOpacity(opacity);
+    final shader = spin
+        ? SweepGradient(
+            transform: GradientRotation(turn.value * 2 * math.pi),
+            colors: [
+              colors.first.withOpacity(0),
+              colors.first,
+              colors[1],
+              colors.last,
+              colors.last.withOpacity(0),
+            ],
+            stops: _stops,
+          ).createShader(rect)
+        : SweepGradient(colors: [lit, lit]).createShader(rect);
 
     // 外圈柔光
     canvas.drawRRect(
@@ -130,8 +163,9 @@ class _GlowPainter extends CustomPainter {
       Paint()
         ..shader = shader
         ..style = PaintingStyle.stroke
-        ..strokeWidth = strokeWidth * 3
-        ..maskFilter = MaskFilter.blur(BlurStyle.normal, strokeWidth * 2),
+        ..strokeWidth = strokeWidth * _softWidth
+        ..maskFilter =
+            MaskFilter.blur(BlurStyle.normal, strokeWidth * _softBlur),
     );
     // 内圈实边
     canvas.drawRRect(
@@ -148,5 +182,6 @@ class _GlowPainter extends CustomPainter {
   bool shouldRepaint(_GlowPainter old) =>
       old.radius != radius ||
       old.strokeWidth != strokeWidth ||
-      old.colors != colors;
+      old.colors != colors ||
+      old.spin != spin;
 }

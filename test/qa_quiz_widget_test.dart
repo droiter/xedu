@@ -62,13 +62,20 @@ void main() {
     '单图 + 纯文字选项': _q('baby', 'dog'),
     '五张题面图 + 图文选项': _q('baby', 'one-plus-one-obj'),
     '两张题面图 + 两个选项': _q('baby', 'two-dogs'),
-    '无题面图 + 纯图选项': _q('baby', 'tallest-tree'),
+    '高矮图（树）：无题面图 + 纯图选项': _q('baby', 'tallest-tree'),
     '阅读选图（选项全是图）': _q('toddler', 'read-apple'),
     '找不一样的（重复选项）': _q('baby', 'find-diff-fruit'),
     '排队图（前后）': _q('lowerGrade', 'front-animal'),
     '快慢图': _q('preschool', 'fastest-car'),
     '深浅图': _q('preschool', 'deepest-well'),
     '粗细图（蜡烛）': _q('toddler', 'thickest-candle'),
+    '长短图（铅笔）': _q('baby', 'longest-pencil'),
+    '高矮图（楼）': _q('baby', 'tallest-house'),
+    '高矮图（塔）': _q('toddler', 'tallest-tower'),
+    '高矮图（柱子）': _q('preschool', 'read-tallest'),
+    '长短图（丝带）': _q('toddler', 'longest-ribbon-t'),
+    '长短图（小棒）': _q('toddler', 'shortest-stick'),
+    '粗细图（小棒）': _q('preschool', 'thinnest-stick'),
     '方位图（小球与箱子）': _q('preschool', 'where-ball'),
     '时钟图（整点）': _q('preschool', 'clock-three'),
     '时钟图（半点）': _q('lowerGrade', 'clock-half-ten'),
@@ -164,6 +171,10 @@ void main() {
         expect(
             tester.widget<GlowBorder>(find.byType(GlowBorder).first).colors,
             kAnswerGlowColors);
+        // 不转圈：整圈一起亮、闪一下就走（转着像在指某一个格子）。
+        expect(tester.widget<GlowBorder>(find.byType(GlowBorder).first).spin,
+            isFalse,
+            reason: '${q.qid} 的答案辉光还在绕圈转');
 
         // 闪一下就走，而且只有 450ms（原来 900ms 的一半）。
         await tester.pump(const Duration(milliseconds: 400));
