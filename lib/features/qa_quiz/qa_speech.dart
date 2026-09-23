@@ -14,8 +14,8 @@ import 'qa_models.dart';
 /// 音频打包进 App，运行时不联网。高亮不用音频做实时分析，而是读预生成时
 /// 记下的逐词时间轴（见 `scripts/gen_qa_voice.py`），所以又准又省电。
 ///
-/// 计时靠 [Stopwatch] 推（40ms 一跳，比位置回调细腻得多），但**播放启动有延迟**，
-/// 所以每收到一次真实播放位置就校准一次，高亮不会越跑越偏。
+/// 计时靠 [Stopwatch] 推（40ms 一跳，比位置回调细腻得多），再用真实播放位置校准。
+/// 校准的规矩见 [QaReadClock]：只补开播延迟和「表落后了」，不往回拨。
 class QaSpeech {
   QaSpeech._();
 
@@ -55,17 +55,14 @@ class QaSpeech {
   /// 播放代际：换一节或停下都 +1，用来丢掉上一节迟到的回调。
   int _gen = 0;
 
-  /// 本段的语速。
-  double _speed = 1.0;
+  /// 朗读进度：计时表读数 + 真实播放位置的对表。
+  final QaReadClock _sync = QaReadClock();
 
-  /// 已经**确认**走过的媒体时间（秒），加上表走的这段就是当前媒体时间。
-  double _base = 0.0;
-
-  /// 语速是否已经下发过（Android 上只有播放中设才生效，所以要等真的出声）。
-  bool _rateSent = false;
+  /// 计时表读数（秒），每对一次表就归零重走。
+  double get _elapsed => _clock.elapsedMicroseconds / 1e6;
 
   /// 当前媒体时间（秒）。媒体时间不受语速影响，和语音时间轴同一把尺子。
-  double get _media => _base + _clock.elapsedMicroseconds / 1e6 * _speed;
+  double get _media => _sync.media(_elapsed);
 
   /// 开始监听播放事件。任何环节失败都不抛出去 —— 朗读是锦上添花，
   /// 设备放不出声时不能把答题也带崩。
@@ -109,9 +106,7 @@ class QaSpeech {
     _key = key;
     _clip = clip;
     _spans = clip.spans;
-    _speed = speed;
-    _base = 0;
-    _rateSent = false;
+    _sync.begin(speed);
     speaking.value = key;
     activeSpan.value = null;
 
@@ -120,6 +115,11 @@ class QaSpeech {
       _doneSub = _player.onPlayerComplete.listen((_) {
         if (gen == _gen) _finish();
       });
+      // 语速要在起播**之前**送，而且每一段都送、1.0 也送。Android 和 iOS 都只是把
+      // 这个值存下来（播放中才立刻生效），再按它起播。要 1.0 时干脆不送，播放器里就
+      // 留着上一档的 0.6：声音慢着读，计时表却按 1.0 推 —— 高亮被一次次往回拨，
+      // 光标就在相邻两个字之间来回跳。
+      await _sendRate(speed);
       await _player.play(AssetSource(clip.asset));
     } catch (e) {
       debugPrint('QaSpeech: 播放失败，这一段静音：$e');
@@ -144,18 +144,12 @@ class QaSpeech {
     );
   }
 
-  /// 真实播放位置回调：≈200ms 一次，是「声音真的走到这儿了」的唯一可靠信号。
+  /// 真实播放位置回调。播放器报的位置粗、还带台阶，只拿它粗对一下表，
+  /// 怎么对见 [QaReadClock]。
   void _onPosition(Duration pos) {
     final media = pos.inMicroseconds / 1e6;
     if (media <= 0) return; // 0 表示还没真的出声
-
-    if (!_rateSent) {
-      _rateSent = true;
-      unawaited(_applyRate());
-    }
-    // 拿真实位置校准计时表，把「开播延迟」抹掉；差得少就不动，免得高亮抖。
-    if ((media - _media).abs() > 0.12) {
-      _base = media;
+    if (_sync.onPosition(media, _elapsed)) {
       _clock
         ..reset()
         ..start();
@@ -163,12 +157,6 @@ class QaSpeech {
   }
 
   void _tick() {
-    // 位置回调迟迟不来时的兜底：到点就先把语速设上。
-    if (!_rateSent && _clock.elapsedMilliseconds > 350) {
-      _rateSent = true;
-      unawaited(_applyRate());
-    }
-
     final media = _media;
     QaSpan? hit;
     for (final s in _spans) {
@@ -184,13 +172,8 @@ class QaSpeech {
     if (!identical(hit, activeSpan.value)) activeSpan.value = hit;
   }
 
-  /// 下发语速。
-  ///
-  /// Android 侧是 `if (playing) player.setRate(v)` —— 没在播时设了**不报错也不生效**，
-  /// 所以要等到真的出声才设。老系统（< 6.0）根本不支持变速，设不上就按原速播。
-  Future<void> _applyRate() async {
-    final speed = _speed;
-    if ((speed - 1.0).abs() < 0.001) return;
+  /// 下发语速。老系统（< 6.0）根本不支持变速，设不上就按原速播，高亮照样跟得上。
+  Future<void> _sendRate(double speed) async {
     try {
       await _player.setPlaybackRate(speed);
     } catch (e) {
@@ -223,7 +206,6 @@ class QaSpeech {
     _spans = const [];
     _key = null;
     _clip = null;
-    _base = 0;
     speaking.value = null;
     activeSpan.value = null;
   }
@@ -245,7 +227,6 @@ class QaSpeech {
     _spans = const [];
     _key = null;
     _clip = null;
-    _base = 0;
     speaking.value = null;
     activeSpan.value = null;
     completed.value++;
@@ -253,7 +234,7 @@ class QaSpeech {
     final next = _pending;
     if (next.isEmpty) return;
     _pending = next.sublist(1);
-    unawaited(_play(next.first.key, next.first.clip, _speed));
+    unawaited(_play(next.first.key, next.first.clip, _sync.speed));
   }
 
   /// 正在朗读的是不是 [key]。
@@ -275,6 +256,55 @@ class QaSpeech {
     try {
       await _player.dispose();
     } catch (_) {/* 释放失败无所谓 */}
+  }
+}
+
+/// 朗读进度的尺子：计时表读数 + 播放器报回的真实位置，算出此刻读到了哪儿。
+///
+/// 播放器报回来的位置比高亮需要的粒度粗得多（还常带台阶和抖动），所以
+/// **平时按计时表推**，只在两种情况下重新对表：
+///
+/// * 第一次收到真实位置 —— 播放启动比计时表晚，这一下正是那段启动延迟；
+/// * 声音跑到表**前面**一大截 —— 表落后了（设备没按档位播，或者卡完刚追上来）。
+///
+/// 「声音落在表后面」一律不管。位置回调自己就带台阶：表被拨回台阶值之后，再走到
+/// 台阶边上又被拨回来，光标就在相邻两个字之间来回跳 —— 就是「读答案时光标来回切」
+/// 的毛病。所以对表**只往一个方向**，拨不回去。
+class QaReadClock {
+  /// 声音比表快这么多（秒）才值得对表；更小的差是回调自己的台阶。
+  static const double _ahead = 0.12;
+
+  /// 这一节的语速（媒体秒 / 真实秒），按家长定的档位来。
+  double _speed = 1.0;
+
+  /// 上一次对表时的媒体时间（秒）。
+  double _base = 0.0;
+
+  /// 这一节是否对过表了（第一次无条件对，抹掉开播延迟）。
+  bool _synced = false;
+
+  /// 这一节的语速。整段跟读里后面几小节沿用同一个值。
+  double get speed => _speed;
+
+  /// 开一节新朗读：[speed] 是这一节的语速，调用方会把计时表归零。
+  void begin(double speed) {
+    _speed = speed;
+    _base = 0;
+    _synced = false;
+  }
+
+  /// 计时表走了 [elapsed] 秒时，音频应该在的位置（媒体秒）。
+  double media(double elapsed) => _base + elapsed * _speed;
+
+  /// 收到播放器报回来的真实位置 [reported]（媒体秒），[elapsed] 是计时表读数（秒）。
+  ///
+  /// 返回 true 表示基准改了，调用方要把计时表归零重走。
+  bool onPosition(double reported, double elapsed) {
+    if (reported <= 0) return false; // 0 表示还没真的出声
+    if (_synced && reported - media(elapsed) < _ahead) return false;
+    _base = reported;
+    _synced = true;
+    return true;
   }
 }
 
