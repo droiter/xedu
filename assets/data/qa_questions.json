@@ -915,18 +915,18 @@
       "answer": 2
     },
     {
-      "id": "farthest-ball",
+      "id": "farthest-dog-tree",
       "age": "toddler",
       "kind": "compare",
       "sub": "FAR",
       "stars": 3,
-      "prompt": "哪一个球离我们最远？",
+      "prompt": "哪个图里的小狗离树最远？",
       "scene": [],
       "options": [
-        { "pic": { "kind": "distance", "level": 0, "base": 1 } },
-        { "pic": { "kind": "distance", "level": 2, "base": 1 } },
-        { "pic": { "kind": "distance", "level": 4, "base": 1 } },
-        { "pic": { "kind": "distance", "level": 1, "base": 1 } }
+        { "pic": { "kind": "dogTree", "level": 0, "base": 1 } },
+        { "pic": { "kind": "dogTree", "level": 2, "base": 1 } },
+        { "pic": { "kind": "dogTree", "level": 4, "base": 1 } },
+        { "pic": { "kind": "dogTree", "level": 1, "base": 1 } }
       ],
       "answer": 2
     },
@@ -1348,19 +1348,19 @@
       ],
       "answer": 1
     },
-        {
-      "id": "nearest-ball-t",
+    {
+      "id": "nearest-dog-tree",
       "age": "toddler",
       "kind": "compare",
       "sub": "NEAR",
       "stars": 3,
-      "prompt": "哪一个球离我们最近？",
+      "prompt": "哪个图里的小狗离树最近？",
       "scene": [],
       "options": [
-        { "pic": { "kind": "distance", "level": 2, "base": 3 } },
-        { "pic": { "kind": "distance", "level": 0, "base": 3 } },
-        { "pic": { "kind": "distance", "level": 4, "base": 3 } },
-        { "pic": { "kind": "distance", "level": 1, "base": 3 } }
+        { "pic": { "kind": "dogTree", "level": 2, "base": 0 } },
+        { "pic": { "kind": "dogTree", "level": 0, "base": 0 } },
+        { "pic": { "kind": "dogTree", "level": 4, "base": 0 } },
+        { "pic": { "kind": "dogTree", "level": 1, "base": 0 } }
       ],
       "answer": 1
     },
@@ -2251,18 +2251,18 @@
       "answer": 2
     },
     {
-      "id": "nearest-ball",
+      "id": "nearest-dog-tree",
       "age": "lowerGrade",
       "kind": "compare",
       "sub": "NEAR",
       "stars": 3,
-      "prompt": "哪一个球离我们最近？",
+      "prompt": "哪个图里的小狗离树最近？",
       "scene": [],
       "options": [
-        { "pic": { "kind": "distance", "level": 4, "base": 2 } },
-        { "pic": { "kind": "distance", "level": 2, "base": 2 } },
-        { "pic": { "kind": "distance", "level": 0, "base": 2 } },
-        { "pic": { "kind": "distance", "level": 3, "base": 2 } }
+        { "pic": { "kind": "dogTree", "level": 4, "base": 2 } },
+        { "pic": { "kind": "dogTree", "level": 2, "base": 2 } },
+        { "pic": { "kind": "dogTree", "level": 0, "base": 2 } },
+        { "pic": { "kind": "dogTree", "level": 3, "base": 2 } }
       ],
       "answer": 2
     },

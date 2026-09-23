@@ -80,11 +80,24 @@ enum PicKind {
   /// 粗细（小棒）：竖放的小棒，粗细随档位变化（0 最细 … 4 最粗），长短不变。
   rod,
 
+  /// 粗细（树干）：树冠不变，树干越粗（0 最细 … 4 最粗）。
+  trunkWidth,
+
+  /// 粗细（柱子）：柱头、柱础不变，柱身越粗（0 最细 … 4 最粗）。
+  pillarWidth,
+
   /// 长短（丝带）：横向丝带，长度随档位变化（0 最短 … 4 最长），宽度不变。
   ribbon,
 
   /// 胖瘦：椭圆，[Pic.level] 为胖瘦档（0 最瘦 … 4 最胖）。
   blob,
+
+  /// 胖瘦（气球）：气球高不变，越胖越宽（0 最瘦 … 4 最胖）。
+  balloon,
+
+  /// 远近（小狗离树）：树站在左边不动，小狗离树的间距随档位变化
+  /// （0 紧挨着树 … 4 离得最远）。
+  dogTree,
 
   /// 远近：地平线上的小球，[Pic.level] 为远近档（0 最近 … 4 最远）。
   distance,
@@ -372,6 +385,36 @@ class Pic {
         label: '长短',
       );
 
+  /// 粗细（树干）：树干宽度随档位增长，树冠不变。
+  /// [level] 0 最细 … 4 最粗；[base] 为树冠颜色编号。
+  static Pic trunkWidth(int level, {int base = 0}) => Pic(
+        kind: PicKind.trunkWidth,
+        id: 'trw:$base:$level',
+        level: level,
+        base: base,
+        label: '粗细',
+      );
+
+  /// 粗细（柱子）：柱身宽度随档位增长，柱头柱础不变。
+  /// [level] 0 最细 … 4 最粗；[base] 为柱子颜色编号。
+  static Pic pillarWidth(int level, {int base = 0}) => Pic(
+        kind: PicKind.pillarWidth,
+        id: 'plw:$base:$level',
+        level: level,
+        base: base,
+        label: '粗细',
+      );
+
+  /// 胖瘦（气球）：气球越胖越宽，高度不变。
+  /// [level] 0 最瘦 … 4 最胖；[base] 为气球颜色编号。
+  static Pic balloon(int level, {int base = 0}) => Pic(
+        kind: PicKind.balloon,
+        id: 'bln:$base:$level',
+        level: level,
+        base: base,
+        label: '胖瘦',
+      );
+
   /// 胖瘦：椭圆。[level] 0 最瘦 … 4 最胖；[base] 为颜色编号。
   static Pic blob(int level, {int base = 0}) => Pic(
         kind: PicKind.blob,
@@ -379,6 +422,16 @@ class Pic {
         level: level,
         base: base,
         label: '胖瘦',
+      );
+
+  /// 远近（小狗离树）：树站在左边不动，小狗离树的间距随档位变
+  /// （[level] 0 紧挨着树 … 4 离得最远）；[base] 为树冠颜色编号。
+  static Pic dogTree(int level, {int base = 0}) => Pic(
+        kind: PicKind.dogTree,
+        id: 'dgt:$base:$level',
+        level: level,
+        base: base,
+        label: '离树远近',
       );
 
   /// 远近：地平线上的小球。[level] 0 最近 … 4 最远；[base] 为颜色编号。

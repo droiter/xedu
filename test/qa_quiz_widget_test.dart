@@ -63,6 +63,7 @@ void main() {
     '五张题面图 + 图文选项': _q('baby', 'one-plus-one-obj'),
     '两张题面图 + 两个选项': _q('baby', 'two-dogs'),
     '高矮图（树）：无题面图 + 纯图选项': _q('baby', 'tallest-tree'),
+    '远近图（小狗与树）': _q('toddler', 'nearest-dog-tree'),
     '阅读选图（选项全是图）': _q('toddler', 'read-apple'),
     '找不一样的（重复选项）': _q('baby', 'find-diff-fruit'),
     '排队图（前后）': _q('lowerGrade', 'front-animal'),

@@ -137,6 +137,7 @@ void main() {
       expect(Pic.candle(4).kind, PicKind.candle);
       expect(Pic.pencil(4).kind, PicKind.pencil);
       expect(Pic.tree(4).kind, PicKind.tree);
+      expect(Pic.dogTree(4).kind, PicKind.dogTree);
       expect(Pic.house(4).kind, PicKind.house);
       expect(Pic.tower(4).kind, PicKind.tower);
       expect(Pic.pillar(4).kind, PicKind.pillar);
@@ -195,7 +196,7 @@ void main() {
       }
     });
 
-    test('题面说到树的题，选项就得是树图', () {
+    test('题面说到树的题，选项就得画着树', () {
       final trees = [
         for (final q in bank.questions)
           if (q.kind == QaKind.compare && q.prompt.contains('树')) q,
@@ -203,11 +204,40 @@ void main() {
       expect(trees, isNotEmpty);
       for (final q in trees) {
         for (final o in q.options) {
-          expect(o.pic?.kind, PicKind.tree, reason: '${q.qid} 选项不是树图');
+          // 比高矮的是光秃秃一棵树；「离树最近」画的是小狗和树（树在里面）。
+          expect(o.pic?.kind, anyOf(PicKind.tree, PicKind.dogTree),
+              reason: '${q.qid} 选项里没有树');
         }
-        // 高矮题的四个档位必须各不相同，否则最高那棵不唯一。
+        // 四个档位必须各不相同，否则最高那棵 / 最近那张不唯一。
         final levels = [for (final o in q.options) o.pic!.level];
         expect(levels.toSet().length, levels.length, reason: q.qid);
+      }
+    });
+
+    test('题面说小狗离树远近的题：选项画的是小狗离树，答案那档真的最远 / 最近', () {
+      final dogs = [
+        for (final q in bank.questions)
+          if (q.kind == QaKind.compare && q.prompt.contains('小狗')) q,
+      ];
+      // 2–3 岁两道（最近 / 最远）+ 7–8 岁一道（最近）；短名可以重名，题号里有年龄段。
+      expect(dogs, hasLength(3), reason: '小狗离树的题多了 / 少了就来看一眼');
+      for (final q in dogs) {
+        for (final o in q.options) {
+          expect(o.pic?.kind, PicKind.dogTree,
+              reason: '${q.qid}「${q.prompt}」的选项不是小狗离树的图');
+        }
+        final levels = [for (final o in q.options) o.pic!.level];
+        expect(levels.toSet().length, levels.length, reason: q.qid);
+        // 0 档 = 小狗紧挨着树，4 档 = 离得最远：说「最近」答案取最小档、说「最远」取最大档。
+        // 图上的远近画反了（档位越大反而越近）这条会红。
+        final isNear = q.prompt.contains('最近');
+        expect(isNear || q.prompt.contains('最远'), isTrue,
+            reason: '${q.qid} 的题面既不说最近也不说最远');
+        final want = isNear
+            ? levels.reduce((a, b) => a < b ? a : b)
+            : levels.reduce((a, b) => a > b ? a : b);
+        expect(levels[q.answer], want,
+            reason: '${q.qid} 的答案不是离树${isNear ? '最近' : '最远'}的那档');
       }
     });
 

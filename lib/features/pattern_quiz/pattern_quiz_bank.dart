@@ -88,23 +88,32 @@ List<Pic> _dice(List<int> counts) => [for (final c in counts) Pic.dice(c)];
 List<Pic> _blocks(List<int> colors) =>
     [for (final c in colors) Pic.colorBlock(c)];
 
-List<Pic> _bars(List<int> units) => [for (final u in units) Pic.bar(u)];
-
 // ---------- 属性规律（长短 / 厚薄 / 粗细 / 胖瘦 / 远近） ----------
-List<Pic> _lenBars(int base, List<int> levels) =>
-    [for (final l in levels) Pic.lengthBar(l, base: base)];
+//
+// 属性题一律画成「实物」，不画光秃秃的方条：题面说柱子就得是柱子，说小棒就得
+// 是小棒。比哪个属性，就只有那个属性随档位变（比高矮时柱子粗细不变，反之亦然）。
+List<Pic> _pillars(List<int> levels) =>
+    [for (final l in levels) Pic.pillar(l)];
+
+List<Pic> _trees(List<int> levels) => [for (final l in levels) Pic.tree(l)];
+
+List<Pic> _sticks(int base, List<int> levels) =>
+    [for (final l in levels) Pic.stick(l, base: base)];
+
+List<Pic> _pillarWidths(int base, List<int> levels) =>
+    [for (final l in levels) Pic.pillarWidth(l, base: base)];
+
+List<Pic> _trunkWidths(int base, List<int> levels) =>
+    [for (final l in levels) Pic.trunkWidth(l, base: base)];
+
+List<Pic> _balloons(int base, List<int> levels) =>
+    [for (final l in levels) Pic.balloon(l, base: base)];
 
 List<Pic> _thickBars(int base, List<int> levels) =>
     [for (final l in levels) Pic.thickness(l, base: base)];
 
-List<Pic> _widthBars(int base, List<int> levels) =>
-    [for (final l in levels) Pic.widthBar(l, base: base)];
-
-List<Pic> _blobs(int base, List<int> levels) =>
-    [for (final l in levels) Pic.blob(l, base: base)];
-
 List<Pic> _dists(int base, List<int> levels) =>
-    [for (final l in levels) Pic.distance(l, base: base)];
+    [for (final l in levels) Pic.dogTree(l, base: base)];
 
 List<Pic> _singles(List<String> emoji) =>
     [for (final e in emoji) Pic.emojiSingle(e)];
@@ -154,34 +163,35 @@ List<Pic> _dicePool() => _dice([1, 2, 3, 4, 5, 6]);
 List<Pic> _blockPool([int n = 6]) =>
     [for (var c = 0; c < n; c++) Pic.colorBlock(c)];
 
-List<Pic> _barPool() => _bars([1, 2, 3, 4, 5]);
+List<Pic> _pillarPool() => _pillars([0, 1, 2, 3, 4]);
+List<Pic> _treePool() => _trees([0, 1, 2, 3, 4]);
 
 /// 属性规律的干扰项池：同色系下 0..4 五个档位。
-List<Pic> _lenPool(int base) => _lenBars(base, [0, 1, 2, 3, 4]);
+List<Pic> _stickPool(int base) => _sticks(base, [0, 1, 2, 3, 4]);
+List<Pic> _pillarWidthPool(int base) => _pillarWidths(base, [0, 1, 2, 3, 4]);
+List<Pic> _trunkPool(int base) => _trunkWidths(base, [0, 1, 2, 3, 4]);
+List<Pic> _balloonPool(int base) => _balloons(base, [0, 1, 2, 3, 4]);
 List<Pic> _thickPool(int base) => _thickBars(base, [0, 1, 2, 3, 4]);
-List<Pic> _widthPool(int base) => _widthBars(base, [0, 1, 2, 3, 4]);
-List<Pic> _blobPool(int base) => _blobs(base, [0, 1, 2, 3, 4]);
-List<Pic> _distPool(int base) => _dists(base, [0, 1, 2, 3, 4]);
-
-/// 「属性 + 颜色」二维题的干扰项池：[bases] 种颜色 × [levels] 个档位。
-List<Pic> _lenPool2(int bases, int levels) => [
-      for (var b = 0; b < bases; b++)
-        for (var l = 0; l < levels; l++) Pic.lengthBar(l, base: b),
-    ];
-
 List<Pic> _thickPool2(int bases, int levels) => [
       for (var b = 0; b < bases; b++)
         for (var l = 0; l < levels; l++) Pic.thickness(l, base: b),
     ];
+List<Pic> _distPool(int base) => _dists(base, [0, 1, 2, 3, 4]);
 
-List<Pic> _widthPool2(int bases, int levels) => [
+/// 「属性 + 颜色」二维题的干扰项池：[bases] 种颜色 × [levels] 个档位。
+List<Pic> _stickPool2(int bases, int levels) => [
       for (var b = 0; b < bases; b++)
-        for (var l = 0; l < levels; l++) Pic.widthBar(l, base: b),
+        for (var l = 0; l < levels; l++) Pic.stick(l, base: b),
     ];
 
-List<Pic> _blobPool2(int bases, int levels) => [
+List<Pic> _pillarWidthPool2(int bases, int levels) => [
       for (var b = 0; b < bases; b++)
-        for (var l = 0; l < levels; l++) Pic.blob(l, base: b),
+        for (var l = 0; l < levels; l++) Pic.pillarWidth(l, base: b),
+    ];
+
+List<Pic> _balloonPool2(int bases, int levels) => [
+      for (var b = 0; b < bases; b++)
+        for (var l = 0; l < levels; l++) Pic.balloon(l, base: b),
     ];
 
 /// 「数字 ↔ 数量」配对题的干扰项池：数字 1..max 与对应数量的圆点。
@@ -560,8 +570,8 @@ List<PatternQuestion> _buildBank() {
         diff: 2),
 
     // —— 阶梯柱高 ——
-    _q('p-bar-asc', '柱子一级比一级高', _bars([1, 2, 3, 4]), _barPool(), p),
-    _q('p-bar-desc', '柱子一级比一级矮', _bars([4, 3, 2, 1]), _barPool(), p),
+    _q('p-bar-asc', '柱子一级比一级高', _pillars([0, 1, 2, 3]), _pillarPool(), p),
+    _q('p-bar-desc', '柱子一级比一级矮', _pillars([3, 2, 1, 0]), _pillarPool(), p),
 
     // —— 图形数量 ——
     _q('p-shcount-asc', '圆形从 1 个增加到 4 个', _shcount(0, [1, 2, 3, 4]),
@@ -592,8 +602,8 @@ List<PatternQuestion> _buildBank() {
         _shcountPool(3, 6), p, diff: 2),
     _q('p-dice-alt', '骰子 1 点、6 点轮流出现', _dice([1, 6, 1, 6]),
         _dicePool(), p, diff: 2, blankable: _p2),
-    _q('p-bar-alt', '柱子一会儿矮、一会儿高', _bars([2, 5, 2, 5]),
-        _barPool(), p, blankable: _p2),
+    _q('p-bar-alt', '柱子一会儿矮、一会儿高', _pillars([1, 4, 1, 4]),
+        _pillarPool(), p, blankable: _p2),
 
     // —— 数字与数量配对：数字几，旁边就有几个 ——
     _q('p-num-count-1', '数字后面跟着同样多的圆点：1、●、2、●●',
@@ -692,9 +702,9 @@ List<PatternQuestion> _buildBank() {
 
     // —— 阶梯柱高 ——
     _q('l-bar-asc-2', '柱子每次升高 1 格：2、3、4、5',
-        _bars([2, 3, 4, 5]), _barPool(), l, diff: 2),
+        _pillars([1, 2, 3, 4]), _pillarPool(), l, diff: 2),
     _q('l-bar-desc-2', '柱子每次降低 1 格：5、4、3、2',
-        _bars([5, 4, 3, 2]), _barPool(), l, diff: 2),
+        _pillars([4, 3, 2, 1]), _pillarPool(), l, diff: 2),
 
     // —— 同类辨认 ——
     _q('l-cat-sport', '找同类：这些全是运动器材',
@@ -831,8 +841,8 @@ List<PatternQuestion> _buildBank() {
         _numPool([9, 18, 27, 36], span: 5), u, diff: 2),
 
     // —— 阶梯柱高 ——
-    _q('u-bar-desc', '柱子每次降低 1 格：5、4、3、2', _bars([5, 4, 3, 2]),
-        _barPool(), u, diff: 2),
+    _q('u-bar-desc', '柱子每次降低 1 格：5、4、3、2', _pillars([4, 3, 2, 1]),
+        _pillarPool(), u, diff: 2),
 
     // —— 同类辨认 ——
     _q('u-cat-clothes', '找同类：这些全是衣物',
@@ -905,135 +915,135 @@ List<PatternQuestion> _buildBank() {
     // ============================================================
     // —— 2–3 岁 · 先认「一样」和最简单的两两交替 ——
     _q('b-len-same', '四根小棒一样长，找出缺少的那根',
-        _lenBars(0, [2, 2, 2, 2]), _lenPool(0), b),
-    _q('b-len-alt', '长、短一个隔一个', _lenBars(0, [4, 0, 4, 0]),
-        _lenPool(0), b, blankable: _p2),
+        _sticks(0, [2, 2, 2, 2]), _stickPool(0), b),
+    _q('b-len-alt', '小棒长、短一个隔一个', _sticks(0, [4, 0, 4, 0]),
+        _stickPool(0), b, blankable: _p2),
     _q('b-thick-same', '四块木板一样厚，找出缺少的那块',
         _thickBars(1, [3, 3, 3, 3]), _thickPool(1), b),
     _q('b-thick-alt', '厚、薄一个隔一个', _thickBars(1, [4, 0, 4, 0]),
         _thickPool(1), b, blankable: _p2),
     _q('b-width-same', '四根柱子一样粗，找出缺少的那根',
-        _widthBars(2, [2, 2, 2, 2]), _widthPool(2), b),
-    _q('b-width-alt', '粗、细一个隔一个', _widthBars(2, [4, 0, 4, 0]),
-        _widthPool(2), b, blankable: _p2),
-    _q('b-blob-same', '四个小球一样胖，找出缺少的那个',
-        _blobs(3, [3, 3, 3, 3]), _blobPool(3), b),
-    _q('b-blob-alt', '胖、瘦一个隔一个', _blobs(3, [4, 0, 4, 0]),
-        _blobPool(3), b, blankable: _p2),
-    _q('b-dist-same', '四个小球一样远，找出缺少的那个',
+        _pillarWidths(2, [2, 2, 2, 2]), _pillarWidthPool(2), b),
+    _q('b-width-alt', '柱子粗、细一个隔一个', _pillarWidths(2, [4, 0, 4, 0]),
+        _pillarWidthPool(2), b, blankable: _p2),
+    _q('b-blob-same', '四个气球一样胖，找出缺少的那个',
+        _balloons(3, [3, 3, 3, 3]), _balloonPool(3), b),
+    _q('b-blob-alt', '气球胖、瘦一个隔一个', _balloons(3, [4, 0, 4, 0]),
+        _balloonPool(3), b, blankable: _p2),
+    _q('b-dist-same', '四只小狗离树一样远，找出缺少的那个',
         _dists(4, [1, 1, 1, 1]), _distPool(4), b),
     _q('b-tall-same', '四根柱子一样高，找出缺少的那根',
-        _bars([3, 3, 3, 3]), _barPool(), b),
-    _q('b-tall-alt', '高、矮一个隔一个', _bars([4, 1, 4, 1]), _barPool(), b,
+        _pillars([2, 2, 2, 2]), _pillarPool(), b),
+    _q('b-tall-alt', '柱子高、矮一个隔一个', _pillars([3, 0, 3, 0]), _pillarPool(), b,
         blankable: _p2),
 
     // —— 3–4 岁 · 认一样 / 交替，迈出「越来越…」第一步 ——
     _q('t-len-same', '四根小棒一样长，找出缺少的那根',
-        _lenBars(1, [3, 3, 3, 3]), _lenPool(1), t),
-    _q('t-len-alt', '长、短轮流出现', _lenBars(1, [4, 0, 4, 0]), _lenPool(1),
+        _sticks(1, [3, 3, 3, 3]), _stickPool(1), t),
+    _q('t-len-alt', '小棒长、短轮流出现', _sticks(1, [4, 0, 4, 0]), _stickPool(1),
         t, blankable: _p2),
-    _q('t-len-asc', '小棒一根比一根长', _lenBars(1, [0, 1, 2, 3]), _lenPool(1),
+    _q('t-len-asc', '小棒一根比一根长', _sticks(1, [0, 1, 2, 3]), _stickPool(1),
         t, diff: 2),
     _q('t-thick-alt', '厚、薄轮流出现', _thickBars(2, [4, 0, 4, 0]),
         _thickPool(2), t, blankable: _p2),
     _q('t-thick-asc', '木板一块比一块厚', _thickBars(2, [0, 1, 2, 3]),
         _thickPool(2), t, diff: 2),
     _q('t-width-same', '四根柱子一样粗，找出缺少的那根',
-        _widthBars(3, [2, 2, 2, 2]), _widthPool(3), t),
-    _q('t-width-alt', '粗、细轮流出现', _widthBars(3, [4, 0, 4, 0]),
-        _widthPool(3), t, blankable: _p2),
-    _q('t-blob-alt', '胖、瘦轮流出现', _blobs(4, [0, 4, 0, 4]), _blobPool(4),
+        _pillarWidths(3, [2, 2, 2, 2]), _pillarWidthPool(3), t),
+    _q('t-width-alt', '柱子粗、细轮流出现', _pillarWidths(3, [4, 0, 4, 0]),
+        _pillarWidthPool(3), t, blankable: _p2),
+    _q('t-blob-alt', '气球胖、瘦轮流出现', _balloons(4, [0, 4, 0, 4]), _balloonPool(4),
         t, blankable: _p2),
-    _q('t-blob-asc', '圆球一圈比一圈胖', _blobs(4, [0, 1, 2, 3]), _blobPool(4),
+    _q('t-blob-asc', '气球一圈比一圈胖', _balloons(4, [0, 1, 2, 3]), _balloonPool(4),
         t, diff: 2),
-    _q('t-dist-alt', '小球一会儿近、一会儿远', _dists(1, [0, 4, 0, 4]),
+    _q('t-dist-alt', '小狗一会儿离树近、一会儿离树远', _dists(1, [0, 4, 0, 4]),
         _distPool(1), t, diff: 2, blankable: _p2),
-    _q('t-tall-asc', '小树一棵比一棵高', _bars([1, 2, 3, 4]), _barPool(), t,
+    _q('t-tall-asc', '小树一棵比一棵高', _trees([0, 1, 2, 3]), _treePool(), t,
         diff: 2),
-    _q('t-tall-alt', '高、矮轮流出现', _bars([1, 4, 1, 4]), _barPool(), t,
+    _q('t-tall-alt', '小树高、矮轮流出现', _trees([0, 3, 0, 3]), _treePool(), t,
         blankable: _p2),
 
     // —— 5–6 岁 · 「越来越…」双向序列 + 交替 ——
-    _q('p-len-asc', '小棒一根比一根长', _lenBars(0, [0, 1, 2, 3]), _lenPool(0),
+    _q('p-len-asc', '小棒一根比一根长', _sticks(0, [0, 1, 2, 3]), _stickPool(0),
         p),
-    _q('p-len-desc', '小棒一根比一根短', _lenBars(0, [4, 3, 2, 1]),
-        _lenPool(0), p),
-    _q('p-len-alt', '长、短轮流出现', _lenBars(0, [0, 4, 0, 4]), _lenPool(0), p,
+    _q('p-len-desc', '小棒一根比一根短', _sticks(0, [4, 3, 2, 1]),
+        _stickPool(0), p),
+    _q('p-len-alt', '小棒长、短轮流出现', _sticks(0, [0, 4, 0, 4]), _stickPool(0), p,
         blankable: _p2),
-    _q('p-tall-asc', '柱子一根比一根高', _bars([1, 2, 3, 4]), _barPool(), p),
-    _q('p-tall-desc', '柱子一根比一根矮', _bars([5, 4, 3, 2]), _barPool(), p),
+    _q('p-tall-asc', '柱子一根比一根高', _pillars([0, 1, 2, 3]), _pillarPool(), p),
+    _q('p-tall-desc', '柱子一根比一根矮', _pillars([4, 3, 2, 1]), _pillarPool(), p),
     _q('p-thick-asc', '书本一本比一本厚', _thickBars(1, [0, 1, 2, 3]),
         _thickPool(1), p),
     _q('p-thick-desc', '木板一块比一块薄', _thickBars(1, [4, 3, 2, 1]),
         _thickPool(1), p),
-    _q('p-width-asc', '树干一根比一根粗', _widthBars(2, [0, 1, 2, 3]),
-        _widthPool(2), p),
-    _q('p-width-desc', '树干一根比一根细', _widthBars(2, [4, 3, 2, 1]),
-        _widthPool(2), p),
-    _q('p-width-alt', '粗、细轮流出现', _widthBars(2, [4, 0, 4, 0]),
-        _widthPool(2), p, blankable: _p2),
-    _q('p-blob-asc', '圆球一个比一个胖', _blobs(3, [0, 1, 2, 3]), _blobPool(3),
+    _q('p-width-asc', '树干一根比一根粗', _trunkWidths(2, [0, 1, 2, 3]),
+        _trunkPool(2), p),
+    _q('p-width-desc', '树干一根比一根细', _trunkWidths(2, [4, 3, 2, 1]),
+        _trunkPool(2), p),
+    _q('p-width-alt', '树干粗、细轮流出现', _trunkWidths(2, [4, 0, 4, 0]),
+        _trunkPool(2), p, blankable: _p2),
+    _q('p-blob-asc', '气球一个比一个胖', _balloons(3, [0, 1, 2, 3]), _balloonPool(3),
         p),
-    _q('p-blob-desc', '圆球一个比一个瘦', _blobs(3, [4, 3, 2, 1]), _blobPool(3),
+    _q('p-blob-desc', '气球一个比一个瘦', _balloons(3, [4, 3, 2, 1]), _balloonPool(3),
         p),
-    _q('p-dist-asc', '小球越走越远', _dists(4, [0, 1, 2, 3]), _distPool(4), p),
-    _q('p-dist-desc', '小球越走越近', _dists(4, [4, 3, 2, 1]), _distPool(4), p),
-    _q('p-dist-alt', '小球一会儿近、一会儿远', _dists(4, [0, 4, 0, 4]),
+    _q('p-dist-asc', '小狗离树越来越远', _dists(4, [0, 1, 2, 3]), _distPool(4), p),
+    _q('p-dist-desc', '小狗离树越来越近', _dists(4, [4, 3, 2, 1]), _distPool(4), p),
+    _q('p-dist-alt', '小狗一会儿离树近、一会儿离树远', _dists(4, [0, 4, 0, 4]),
         _distPool(4), p, blankable: _p2),
 
     // —— 7–8 岁 · 双向序列 + 「属性 + 颜色」二维规律 ——
-    _q('l-len-asc', '小棒一根比一根长', _lenBars(0, [0, 1, 2, 3]), _lenPool(0),
+    _q('l-len-asc', '小棒一根比一根长', _sticks(0, [0, 1, 2, 3]), _stickPool(0),
         l, diff: 2),
-    _q('l-len-desc', '小棒一根比一根短', _lenBars(0, [4, 3, 2, 1]),
-        _lenPool(0), l, diff: 2),
+    _q('l-len-desc', '小棒一根比一根短', _sticks(0, [4, 3, 2, 1]),
+        _stickPool(0), l, diff: 2),
     _q('l-thick-asc', '木板一块比一块厚', _thickBars(1, [0, 1, 2, 3]),
         _thickPool(1), l, diff: 2),
-    _q('l-width-asc', '树干一根比一根粗', _widthBars(2, [0, 1, 2, 3]),
-        _widthPool(2), l, diff: 2),
-    _q('l-blob-desc', '圆球一个比一个瘦', _blobs(3, [4, 3, 2, 1]), _blobPool(3),
+    _q('l-width-asc', '树干一根比一根粗', _trunkWidths(2, [0, 1, 2, 3]),
+        _trunkPool(2), l, diff: 2),
+    _q('l-blob-desc', '气球一个比一个瘦', _balloons(3, [4, 3, 2, 1]), _balloonPool(3),
         l, diff: 2),
-    _q('l-dist-asc', '小球越走越远', _dists(4, [0, 1, 2, 3]), _distPool(4), l,
+    _q('l-dist-asc', '小狗离树越来越远', _dists(4, [0, 1, 2, 3]), _distPool(4), l,
         diff: 2),
-    _q('l-tall-desc', '柱子一根比一根矮', _bars([5, 4, 3, 2]), _barPool(), l,
+    _q('l-tall-desc', '柱子一根比一根矮', _pillars([4, 3, 2, 1]), _pillarPool(), l,
         diff: 2),
     _q('l-two-len-color', '小棒越来越长，颜色也跟着换：红、橙、黄、绿',
         [
-          Pic.lengthBar(0, base: 0),
-          Pic.lengthBar(1, base: 1),
-          Pic.lengthBar(2, base: 2),
-          Pic.lengthBar(3, base: 3),
+          Pic.stick(0, base: 0),
+          Pic.stick(1, base: 1),
+          Pic.stick(2, base: 2),
+          Pic.stick(3, base: 3),
         ],
-        _lenPool2(4, 5), l, diff: 3),
-    _q('l-two-blob-color', '圆球越来越胖，颜色红、黄、绿循环',
+        _stickPool2(4, 5), l, diff: 3),
+    _q('l-two-blob-color', '气球越来越胖，颜色红、黄、绿循环',
         [
-          Pic.blob(0, base: 0),
-          Pic.blob(1, base: 2),
-          Pic.blob(2, base: 3),
-          Pic.blob(3, base: 0),
+          Pic.balloon(0, base: 0),
+          Pic.balloon(1, base: 2),
+          Pic.balloon(2, base: 3),
+          Pic.balloon(3, base: 0),
         ],
-        _blobPool2(4, 5), l, diff: 3),
+        _balloonPool2(4, 5), l, diff: 3),
 
     // —— 9–10 岁 · 属性序列 + 属性/颜色二维循环 ——
-    _q('u-len-asc', '小棒一根比一根长', _lenBars(1, [0, 1, 2, 3]), _lenPool(1),
+    _q('u-len-asc', '小棒一根比一根长', _sticks(1, [0, 1, 2, 3]), _stickPool(1),
         u, diff: 2),
-    _q('u-len-desc', '小棒一根比一根短', _lenBars(1, [4, 3, 2, 1]),
-        _lenPool(1), u, diff: 2),
-    _q('u-width-desc', '树干一根比一根细', _widthBars(3, [4, 3, 2, 1]),
-        _widthPool(3), u, diff: 2),
+    _q('u-len-desc', '小棒一根比一根短', _sticks(1, [4, 3, 2, 1]),
+        _stickPool(1), u, diff: 2),
+    _q('u-width-desc', '树干一根比一根细', _trunkWidths(3, [4, 3, 2, 1]),
+        _trunkPool(3), u, diff: 2),
     _q('u-thick-desc', '木板一块比一块薄', _thickBars(3, [4, 3, 2, 1]),
         _thickPool(3), u, diff: 2),
-    _q('u-dist-asc', '小球越走越远', _dists(0, [0, 1, 2, 3]), _distPool(0), u,
+    _q('u-dist-asc', '小狗离树越来越远', _dists(0, [0, 1, 2, 3]), _distPool(0), u,
         diff: 2),
-    _q('u-dist-desc', '小球越走越近', _dists(0, [4, 3, 2, 1]), _distPool(0), u,
+    _q('u-dist-desc', '小狗离树越来越近', _dists(0, [4, 3, 2, 1]), _distPool(0), u,
         diff: 2),
     _q('u-two-len-color', '小棒越来越长，颜色红、黄、绿循环',
         [
-          Pic.lengthBar(0, base: 0),
-          Pic.lengthBar(1, base: 2),
-          Pic.lengthBar(2, base: 3),
-          Pic.lengthBar(3, base: 0),
+          Pic.stick(0, base: 0),
+          Pic.stick(1, base: 2),
+          Pic.stick(2, base: 3),
+          Pic.stick(3, base: 0),
         ],
-        _lenPool2(4, 5), u, diff: 3),
+        _stickPool2(4, 5), u, diff: 3),
     _q('u-two-thick-color', '木板越来越厚，颜色红、绿、蓝循环',
         [
           Pic.thickness(0, base: 0),
@@ -1042,13 +1052,13 @@ List<PatternQuestion> _buildBank() {
           Pic.thickness(3, base: 0),
         ],
         _thickPool2(5, 5), u, diff: 3),
-    _q('u-two-width-color', '树干越来越粗，颜色橙、绿、紫循环',
+    _q('u-two-width-color', '柱子越来越粗，颜色橙、绿、紫循环',
         [
-          Pic.widthBar(0, base: 1),
-          Pic.widthBar(1, base: 3),
-          Pic.widthBar(2, base: 5),
-          Pic.widthBar(3, base: 1),
+          Pic.pillarWidth(0, base: 1),
+          Pic.pillarWidth(1, base: 3),
+          Pic.pillarWidth(2, base: 5),
+          Pic.pillarWidth(3, base: 1),
         ],
-        _widthPool2(6, 5), u, diff: 3),
+        _pillarWidthPool2(6, 5), u, diff: 3),
   ];
 }

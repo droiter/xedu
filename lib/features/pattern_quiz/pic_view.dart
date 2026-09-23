@@ -181,8 +181,12 @@ class PicView extends StatelessWidget {
           PicKind.pillar => _pillar(box),
           PicKind.stick => _stick(box),
           PicKind.rod => _rod(box),
+          PicKind.trunkWidth => _trunkWidth(box),
+          PicKind.pillarWidth => _pillarWidth(box),
           PicKind.ribbon => _ribbon(box),
           PicKind.blob => _blob(box),
+          PicKind.balloon => _balloon(box),
+          PicKind.dogTree => _dogTree(w, h, scheme),
           PicKind.distance => _distance(box, scheme),
           PicKind.speed => _speed(box, scheme),
           PicKind.depth => _depth(box, scheme),
@@ -647,6 +651,32 @@ class PicView extends StatelessWidget {
     );
   }
 
+  // 粗细（树干）：树冠不动，树干越粗（0 最细 … 4 最粗）。
+  //
+  // 树冠的大小、离地高度全由 box 定死 —— 比「粗细」时别的属性不能跟着变。
+  Widget _trunkWidth(double box) {
+    const trunk = [0.06, 0.10, 0.15, 0.21, 0.28];
+    final w = box * 0.74;
+    return SizedBox(
+      width: w,
+      height: box,
+      child: Align(
+        alignment: Alignment.bottomCenter,
+        child: SizedBox(
+          width: w,
+          height: box * 0.90,
+          child: CustomPaint(
+            painter: _TreePainter(
+              box: box,
+              leaf: kLeafColors[_mod(pic.base, kLeafColors.length)],
+              trunkWidth: box * trunk[_lvl5(pic.level)],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   // 高矮（楼）：房子的高度随档位增长（0 最矮 … 4 最高）。
   //
   // 屋顶、门、窗的大小全由 box 定死，且都贴着地面 —— 比「高矮」时只有墙有多高变。
@@ -714,6 +744,30 @@ class PicView extends StatelessWidget {
     );
   }
 
+  // 粗细（柱子）：柱头、柱础不动，柱身越粗（0 最细 … 4 最粗）。
+  Widget _pillarWidth(double box) {
+    const shaft = [0.10, 0.19, 0.28, 0.38, 0.48];
+    final w = box * 0.60;
+    return SizedBox(
+      width: w,
+      height: box,
+      child: Align(
+        alignment: Alignment.bottomCenter,
+        child: SizedBox(
+          width: w,
+          height: box * 0.86,
+          child: CustomPaint(
+            painter: _PillarPainter(
+              box: box,
+              color: _barColor(),
+              shaftWidth: box * shaft[_lvl5(pic.level)],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   // 长短（小棒）：横放的小棒，长度随档位增长（0 最短 … 4 最长）。
   //
   // 小棒的粗细（方框高的 0.20）由 box 定死，只有长度变。
@@ -757,8 +811,8 @@ class PicView extends StatelessWidget {
 
   // 长短（丝带）：丝带长度随档位增长（0 最短 … 4 最长）。
   //
-  // 丝带宽度、左端的剪口、右端的蝴蝶结都由 box 定死，只有长度变；
-  // 蝴蝶结挂在右端，一眼就能看出丝带到哪儿为止。
+  // 丝带宽度、两端的剪口、中间的蝴蝶结都由 box 定死，只有长度变；
+  // 蝴蝶结打在正中间，比挂在右端更像「一条丝带」。
   Widget _ribbon(double box) {
     const frac = [0.34, 0.51, 0.68, 0.85, 1.0];
     return SizedBox(
@@ -767,7 +821,7 @@ class PicView extends StatelessWidget {
       child: Center(
         child: SizedBox(
           width: box * frac[_lvl5(pic.level)],
-          height: box * 0.22,
+          height: box * 0.40,
           child: CustomPaint(
             painter: _RibbonPainter(box: box, color: _barColor()),
           ),
@@ -795,6 +849,96 @@ class PicView extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  // 胖瘦（气球）：气球的高、气球嘴、绳子都不动，只有胖瘦在变
+  // （0 最瘦 … 4 最胖）—— 光画个椭圆看不出是气球，加上嘴和绳就认得出。
+  Widget _balloon(double box) {
+    const frac = [0.34, 0.44, 0.55, 0.66, 0.78];
+    const bodyH = 0.64;
+    final color = _barColor();
+    final w = box * frac[_lvl5(pic.level)];
+    final knot = box * 0.055;
+    return SizedBox(
+      width: box,
+      height: box,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: w,
+            height: box * bodyH,
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius:
+                  BorderRadius.all(Radius.elliptical(w / 2, box * bodyH / 2)),
+            ),
+          ),
+          Transform.rotate(
+            angle: math.pi / 4,
+            child: Container(width: knot, height: knot, color: color),
+          ),
+          Container(
+            width: box * 0.012,
+            height: box * 0.10,
+            color: Color.lerp(color, Colors.black, 0.35),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // 远近（小狗离树）：树站在左边不动，小狗离它越来越远 —— 间距越来越大、
+  // 个头越来越小（近大远小，和 [_distance] 的小球一个道理）。
+  //
+  // 树的大小和位置按画面定死，每一档都一样：它是孩子比较的基准，动了就没法比。
+  // 「间距 + 个头」两个线索一起画，是因为找规律那边一格只有七十来像素宽，只管
+  // 间距的话五档只差十几个像素，「越走越远」根本看不出来。
+  Widget _dogTree(double w, double h, ColorScheme scheme) {
+    // 0 紧挨着树，4 顶到最右边；中间几档均匀分布。
+    const gapFrac = [0.0, 0.25, 0.5, 0.75, 1.0];
+    const shrink = 0.45; // 最远那档缩到最近那档的 55%
+    final lvl = _lvl5(pic.level);
+    // 「树 + 最近那只小狗」的自然宽度按高度算，宽度不够就整体等比缩小
+    // —— 缩的倍数是各档共用的，所以树在每一档里还是同样大小。
+    final k = math.min(1.0, w / (h * 1.02));
+    final treeH = h * 0.92 * k;
+    final treeW = treeH * 0.55;
+    final dog = h * 0.46 * k * (1 - shrink * lvl / 4);
+    final gap = w - treeW - dog;
+    final ground = scheme.onSurface.withOpacity(0.30);
+    return SizedBox(
+      width: w,
+      height: h,
+      child: Stack(
+        children: [
+          // 地平线：树和小狗都站在它上面。
+          Positioned(
+            left: 0,
+            right: 0,
+            top: h - 2,
+            child: Container(height: 2, color: ground),
+          ),
+          Positioned(
+            left: 0,
+            bottom: 2,
+            width: treeW,
+            height: treeH,
+            child: CustomPaint(
+              painter: _TreePainter(
+                box: treeH,
+                leaf: kLeafColors[_mod(pic.base, kLeafColors.length)],
+              ),
+            ),
+          ),
+          Positioned(
+            left: treeW + gap * gapFrac[lvl],
+            bottom: 2,
+            child: _glyph('🐶', dog, photoSide: dog),
+          ),
+        ],
       ),
     );
   }
@@ -1248,10 +1392,14 @@ class _PencilPainter extends CustomPainter {
 /// 画布就是树的外接矩形（宽由调用处定死、高随档位变），[box] 是外层方格边长：
 /// 树干粗细、树冠底宽都按 box 算，所以只有高度跟着档位走。
 class _TreePainter extends CustomPainter {
-  _TreePainter({required this.box, required this.leaf});
+  _TreePainter({required this.box, required this.leaf, double? trunkWidth})
+      : trunkWidth = trunkWidth ?? box * 0.12;
 
   final double box;
   final Color leaf;
+
+  /// 树干宽度。不传就是按 [box] 算的默认粗细（比高矮时用）。
+  final double trunkWidth;
 
   static const Color _trunkColor = Color(0xFF8D6E63);
 
@@ -1262,11 +1410,10 @@ class _TreePainter extends CustomPainter {
     final fill = Paint()..isAntiAlias = true;
 
     // 树干先画，上半截会被树冠盖住。
-    final trunkW = box * 0.12;
     canvas.drawRRect(
       RRect.fromRectAndRadius(
-        Rect.fromLTWH((w - trunkW) / 2, h * 0.52, trunkW, h * 0.48),
-        Radius.circular(trunkW * 0.3),
+        Rect.fromLTWH((w - trunkWidth) / 2, h * 0.52, trunkWidth, h * 0.48),
+        Radius.circular(trunkWidth * 0.3),
       ),
       fill..color = _trunkColor,
     );
@@ -1291,7 +1438,7 @@ class _TreePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_TreePainter old) =>
-      old.box != box || old.leaf != leaf;
+      old.box != box || old.leaf != leaf || old.trunkWidth != trunkWidth;
 }
 
 /// 正面的房子：屋顶 + 墙体 + 门 + 两扇窗。
@@ -1426,10 +1573,14 @@ class _TowerPainter extends CustomPainter {
 /// 画布 = 柱子的外接矩形（宽由调用处定死、高随档位变），[box] 是外层方格边长：
 /// 柱头、柱础和柱身粗细都按 box 算，只有柱身高度跟着档位走。
 class _PillarPainter extends CustomPainter {
-  _PillarPainter({required this.box, required this.color});
+  _PillarPainter({required this.box, required this.color, double? shaftWidth})
+      : shaftWidth = shaftWidth ?? box * 0.34;
 
   final double box;
   final Color color;
+
+  /// 柱身宽度。不传就是按 [box] 算的默认粗细（比高矮时用）。
+  final double shaftWidth;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -1438,7 +1589,7 @@ class _PillarPainter extends CustomPainter {
     final fill = Paint()..isAntiAlias = true;
     final capH = box * 0.05;
     final baseH = box * 0.06;
-    final shaftW = box * 0.34;
+    final shaftW = shaftWidth;
     final trim = Color.lerp(color, Colors.black, 0.30)!;
 
     canvas.drawRRect(
@@ -1472,7 +1623,7 @@ class _PillarPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_PillarPainter old) =>
-      old.box != box || old.color != color;
+      old.box != box || old.color != color || old.shaftWidth != shaftWidth;
 }
 
 /// 横放的小棒：两头圆的木棒 + 一道高光 + 右端的断面。
@@ -1560,10 +1711,14 @@ class _RodPainter extends CustomPainter {
       old.box != box || old.color != color;
 }
 
-/// 丝带：左端剪成 V 口、右端打了个蝴蝶结的带子。
+/// 丝带：微微起伏、两端剪成 V 口、正中间打了个蝴蝶结的带子。
 ///
-/// 画布宽度 = 丝带全长，[box] 是外层方格边长：带宽、剪口、蝴蝶结都按 box 算，
+/// 画布宽度 = 丝带全长，[box] 是外层方格边长：带宽、剪口、起伏、蝴蝶结都按 box 算，
 /// 所以比「长短」时只有长度变。
+///
+/// 蝴蝶结打在两端的正中间、翼比带身浅一号：以前挂在右端、颜色又跟带身几乎一样，
+/// 缩到选项格里就是一根亮闪闪的粗条加个疙瘩，像铅笔也像电池；现在两边都露出剪口和
+/// 缎面高光，中间一个浅色的结，才认得出是「一条丝带」。
 class _RibbonPainter extends CustomPainter {
   _RibbonPainter({required this.box, required this.color});
 
@@ -1574,53 +1729,77 @@ class _RibbonPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final w = size.width;
     final h = size.height;
-    final fill = Paint()..isAntiAlias = true;
-    final notch = h * 0.55;
+    final cy = h / 2;
+    final t = box * 0.17; // 带宽，不随档位变
+    final notch = t * 0.55; // 两端剪口的深度：浅一点，免得收成个箭头
+    final amp = box * 0.035; // 起伏幅度：小到不影响比长短，只让带子看着软
+    double band(double x) => cy + amp * math.sin(2 * math.pi * x / w);
+    final fill = Paint()
+      ..isAntiAlias = true
+      ..color = color;
 
+    // 带身：两端剪成 V 口，是它和「小棒」最省事的区别。
     canvas.drawPath(
       Path()
-        ..moveTo(notch, 0)
-        ..lineTo(w, 0)
-        ..lineTo(w, h)
-        ..lineTo(notch, h)
-        ..lineTo(0, h / 2)
+        ..moveTo(0, band(0) - t / 2)
+        ..lineTo(notch, band(notch))
+        ..lineTo(0, band(0) + t / 2)
+        ..lineTo(w - notch, band(w - notch) + t / 2)
+        ..lineTo(w, band(w))
+        ..lineTo(w - notch, band(w - notch) - t / 2)
         ..close(),
-      fill..color = color,
-    );
-    canvas.drawRect(
-      Rect.fromLTWH(notch * 0.8, h * 0.36, math.max(w - notch * 0.8, 1), h * 0.28),
-      fill..color = Color.lerp(color, Colors.white, 0.50)!,
+      fill,
     );
 
-    // 蝴蝶结：两个环 + 中间的结，挂在右端。
+    // 缎面高光：贴着上沿的一条细亮线，跟着起伏走，被蝴蝶结隔成左右两段。
+    final kx = w / 2;
+    for (final seg in [
+      [notch + t * 0.6, kx - box * 0.20],
+      [kx + box * 0.20, w - notch - t * 0.6],
+    ]) {
+      if (seg[1] <= seg[0]) continue;
+      canvas.drawLine(
+        Offset(seg[0], band(seg[0]) - t * 0.22),
+        Offset(seg[1], band(seg[1]) - t * 0.22),
+        Paint()
+          ..isAntiAlias = true
+          ..strokeCap = StrokeCap.round
+          ..strokeWidth = t * 0.22
+          ..color = Color.lerp(color, Colors.white, 0.55)!,
+      );
+    }
+
+    // 蝴蝶结：上下两片翼 + 中间一道结。
     //
-    // 环画成两头圆的水滴形（三角太尖，缩到选项格里就成了一颗菱形），
-    // 颜色比带子略浅、描一圈深边，才不会跟带子糊成一块。
-    final cx = w - box * 0.11;
-    final cy = h / 2;
-    final loop = box * 0.16;
-    final wing = Color.lerp(color, Colors.black, 0.06)!;
+    // 翼画成「帽形」（尖朝结、外边圆平）、比带身浅一号再描一圈深边：缩到选项格里
+    // 靠的是一整块轮廓，浅色让两片翼从带身上分出来，不会糊成一个疙瘩。
+    final wing = Paint()
+      ..isAntiAlias = true
+      ..color = Color.lerp(color, Colors.white, 0.30)!;
     final edge = Paint()
+      ..isAntiAlias = true
       ..style = PaintingStyle.stroke
       ..strokeWidth = box * 0.014
-      ..color = Color.lerp(color, Colors.black, 0.35)!;
+      ..color = Color.lerp(color, Colors.black, 0.38)!;
+    final hw = box * 0.11;
+    final ht = box * 0.095;
     for (final dir in [-1.0, 1.0]) {
-      final path = Path()
-        ..moveTo(cx, cy)
-        ..quadraticBezierTo(
-            cx + dir * box * 0.13, cy - loop, cx + dir * box * 0.20, cy)
-        ..quadraticBezierTo(
-            cx + dir * box * 0.13, cy + loop, cx, cy)
+      final loop = Path()
+        ..moveTo(kx, cy)
+        ..lineTo(kx - hw, cy + dir * ht)
+        ..quadraticBezierTo(kx, cy + dir * ht * 1.22, kx + hw, cy + dir * ht)
         ..close();
-      canvas.drawPath(path, fill..color = wing);
-      canvas.drawPath(path, edge);
+      canvas.drawPath(loop, wing);
+      canvas.drawPath(loop, edge);
     }
-    canvas.drawCircle(
-      Offset(cx, cy),
-      box * 0.05,
-      fill..color = Color.lerp(color, Colors.white, 0.30)!,
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(
+            center: Offset(kx, cy), width: box * 0.085, height: t * 0.78),
+        Radius.circular(t * 0.3),
+      ),
+      fill..color = Color.lerp(color, Colors.black, 0.30)!,
     );
-    canvas.drawCircle(Offset(cx, cy), box * 0.05, edge);
   }
 
   @override

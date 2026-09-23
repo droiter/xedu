@@ -144,5 +144,81 @@ void main() {
       final families = kPatternQuestions.map(familyOf).toSet();
       expect(families.length, PatternFamily.values.length);
     });
+
+    test('题库里不再出现光秃秃的方条 / 椭圆：属性题一律画实物', () {
+      const retired = {
+        PicKind.bar, // 光秃秃的竖条，看不出是柱子还是树
+        PicKind.lengthBar, // 光秃秃的横条
+        PicKind.widthBar, // 光秃秃的竖条
+        PicKind.blob, // 椭圆
+        PicKind.distance, // 地平线上的小球
+      };
+      for (final q in kPatternQuestions) {
+        for (final p in [...q.items, ...q.distractors]) {
+          expect(retired.contains(p.kind), isFalse,
+              reason: '${q.id} 又用回了 ${p.kind}（换成实物图）');
+        }
+      }
+    });
+
+    test('「越来越…」这类题的档位方向和题面说的一致', () {
+      // 档位一律「0 = 最小」：0 最短 / 最矮 / 最细 / 最瘦 / 最薄 / 最近，4 是另一头。
+      const up = ['长', '高', '粗', '胖', '厚', '远', '升高'];
+      const down = ['短', '矮', '细', '瘦', '薄', '近', '降低'];
+      const markers = [
+        '越来越', '一根比一根', '一块比一块', '一本比一本',
+        '一棵比一棵', '一圈比一圈', '一级比一级', '一个比一个', '每次',
+      ];
+      var checked = 0;
+      for (final q in kPatternQuestions) {
+        for (final m in markers) {
+          final i = q.title.indexOf(m);
+          if (i < 0) continue;
+          final tail = q.title.substring(i + m.length);
+          // 说法词表里没有就跳过（「一会儿近、一会儿远」这种不是单调序列）。
+          final grow = up.any(tail.startsWith);
+          final shrink = down.any(tail.startsWith);
+          if (!grow && !shrink) continue;
+          checked++;
+          final levels = [for (final p in q.items) p.level];
+          for (var k = 1; k < levels.length; k++) {
+            expect(grow ? levels[k] > levels[k - 1] : levels[k] < levels[k - 1],
+                isTrue,
+                reason: '${q.id}「${q.title}」的档位顺序和说法不一致：$levels');
+          }
+          break;
+        }
+      }
+      expect(checked, greaterThanOrEqualTo(25),
+          reason: '能自动查方向的题变少了，看一眼是不是说法换了');
+    });
+
+    test('「小狗离树」的远近题：画的是小狗离树，序列方向和题面说的一致', () {
+      // 按题面筛（「小猫、小狗一个隔一个」那种只是提到小狗，不是远近题）。
+      final dist =
+          [for (final q in kPatternQuestions) if (q.title.contains('离树')) q];
+      // 五档各一道：2–3 岁找一样、3–4 岁交替、学前远近各一、7–8 岁、9–10 岁两向。
+      expect(dist, hasLength(8), reason: '远近题多了 / 少了就来看一眼');
+      for (final q in dist) {
+        for (final p in [...q.items, ...q.distractors]) {
+          expect(p.kind, PicKind.dogTree, reason: '${q.id} 里还有旧的小球图');
+        }
+        final levels = [for (final p in q.items) p.level];
+        if (q.title.contains('一样远')) {
+          expect(levels.toSet().length, 1, reason: q.id);
+        } else if (q.title.contains('越来越远')) {
+          // 0 档 = 小狗紧挨着树 —— 「越走越远」就得一档比一档大。
+          for (var i = 1; i < levels.length; i++) {
+            expect(levels[i], greaterThan(levels[i - 1]), reason: q.id);
+          }
+        } else if (q.title.contains('越来越近')) {
+          for (var i = 1; i < levels.length; i++) {
+            expect(levels[i], lessThan(levels[i - 1]), reason: q.id);
+          }
+        } else {
+          expect(q.title.contains('一会儿离树近'), isTrue, reason: '${q.id} 题面换说法了');
+        }
+      }
+    });
   });
 }

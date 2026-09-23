@@ -181,6 +181,55 @@ void main() {
     expect(heights.toSet(), hasLength(1), reason: '小棒的长短不随档位变');
   });
 
+  testWidgets('小狗离树远近题：树是基准不动，小狗越远越小、离树越远', (tester) async {
+    // 真实格子：找规律的 4 格（手机/平板）、找规律的选项格、看图问答的选项格。
+    for (final cell in const [
+      Size(76, 118),
+      Size(83.5, 104),
+      Size(139, 90),
+      Size(181, 162),
+    ]) {
+      final trees = <Rect>[];
+      final dogs = <Rect>[];
+      for (var lvl = 0; lvl <= 4; lvl++) {
+        await tester.pumpWidget(_host(Pic.dogTree(lvl), cell.width, cell.height));
+        trees.add(tester.getRect(find.byType(CustomPaint).last));
+        dogs.add(tester.getRect(find.byType(Image)));
+      }
+      final where = '$cell';
+
+      // 树是基准：五档大小、位置完全一样，否则没法比。
+      expect(trees.map((r) => r.width).toSet(), hasLength(1), reason: '$where 树的大小变了');
+      expect(trees.map((r) => r.height).toSet(), hasLength(1), reason: '$where 树的大小变了');
+      expect(trees.map((r) => r.left).toSet(), hasLength(1), reason: '$where 树挪位置了');
+
+      // 小狗：一档比一档离树远、一档比一档小，两条线索都要单调。
+      for (var i = 1; i < dogs.length; i++) {
+        expect(dogs[i].left, greaterThan(dogs[i - 1].left),
+            reason: '$where 第 $i 档没走得更远');
+        expect(dogs[i].width, lessThan(dogs[i - 1].width),
+            reason: '$where 第 $i 档没变得更小');
+      }
+      // 都站在同一条地平线上（尺寸不同，底边会有浮点尾数，所以给点容差）。
+      for (final r in dogs) {
+        expect(r.bottom, closeTo(dogs.first.bottom, 0.01),
+            reason: '$where 小狗没站在地平线上');
+      }
+      expect(dogs.first.bottom, closeTo(trees.first.bottom, 0.01),
+          reason: '$where 小狗和树不在同一条地平线上');
+
+      // 0 档紧挨着树，4 档顶到格子右边。
+      expect(dogs.first.left - trees.first.right, lessThan(1.0), reason: '$where 0 档没挨着树');
+      expect(cell.width - dogs.last.right, lessThan(1.0), reason: '$where 4 档没到最右边');
+
+      // 远近得看得出来：最远那只明显更小、也明显更靠右。
+      expect(dogs.last.width / dogs.first.width, lessThan(0.7),
+          reason: '$where 最远那档没小下去');
+      expect(dogs.last.left - dogs.first.left, greaterThan(cell.width * 0.15),
+          reason: '$where 最远那档没拉开距离');
+    }
+  });
+
   testWidgets('没有照片的字形照旧按字形画', (tester) async {
     await tester.pumpWidget(_host(Pic.emojiSingle('➕'), box, box));
     expect(find.byType(Image), findsNothing);
