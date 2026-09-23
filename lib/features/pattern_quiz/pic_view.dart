@@ -61,6 +61,15 @@ const List<Color> kBlockColors = [
   Color(0xFF546E7A), // 蓝灰
 ];
 
+/// 树冠色板：下标按 base 取，都是看着像树叶的绿。
+const List<Color> kLeafColors = [
+  Color(0xFF43A047), // 绿
+  Color(0xFF00796B), // 青绿
+  Color(0xFF7CB342), // 黄绿
+  Color(0xFF2E7D32), // 深绿
+  Color(0xFF827717), // 橄榄
+];
+
 /// 骰子点阵布局：值为每个点的相对位置 (x, y)，范围 0..1。
 const Map<int, List<List<double>>> kDiceLayouts = {
   1: [
@@ -165,6 +174,14 @@ class PicView extends StatelessWidget {
           PicKind.thickness => _thickness(box),
           PicKind.widthBar => _widthBar(box),
           PicKind.candle => _candle(box),
+          PicKind.pencil => _pencil(box),
+          PicKind.tree => _tree(box),
+          PicKind.house => _house(box),
+          PicKind.tower => _tower(box),
+          PicKind.pillar => _pillar(box),
+          PicKind.stick => _stick(box),
+          PicKind.rod => _rod(box),
+          PicKind.ribbon => _ribbon(box),
           PicKind.blob => _blob(box),
           PicKind.distance => _distance(box, scheme),
           PicKind.speed => _speed(box, scheme),
@@ -581,7 +598,184 @@ class PicView extends StatelessWidget {
     );
   }
 
-  // 胖瘦：椭圆（高度固定），宽度随档位增长（0..4）。
+  // 长短（铅笔）：横向铅笔，笔身长度随档位增长（0..4）。
+  //
+  // 笔尖、金属箍、橡皮的尺寸都由 box 定死 —— 比「长短」时只有长短能变。
+  // 最短那档也得比「笔尖 + 金属箍 + 橡皮」长（约 0.33box），否则笔身成了负的。
+  Widget _pencil(double box) {
+    const frac = [0.46, 0.595, 0.73, 0.865, 1.0];
+    final lvl = _lvl5(pic.level);
+    return SizedBox(
+      width: box,
+      height: box,
+      child: Center(
+        child: SizedBox(
+          width: box * frac[lvl],
+          height: box * 0.16,
+          child: CustomPaint(
+            painter: _PencilPainter(box: box, color: _barColor()),
+          ),
+        ),
+      ),
+    );
+  }
+
+
+  // 高矮（树）：整棵树的高度随档位增长（0 最矮 … 4 最高）。
+  //
+  // 树干粗细、树冠底宽全由 box 定死 —— 比「高矮」时别的属性不能跟着变。
+  // 所有档位都从方框底部长起（同一条地平线），否则没法比高矮。
+  Widget _tree(double box) {
+    const frac = [0.52, 0.64, 0.76, 0.88, 1.0];
+    final w = box * 0.74;
+    return SizedBox(
+      width: w,
+      height: box,
+      child: Align(
+        alignment: Alignment.bottomCenter,
+        child: SizedBox(
+          width: w,
+          height: box * frac[_lvl5(pic.level)],
+          child: CustomPaint(
+            painter: _TreePainter(
+              box: box,
+              leaf: kLeafColors[_mod(pic.base, kLeafColors.length)],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // 高矮（楼）：房子的高度随档位增长（0 最矮 … 4 最高）。
+  //
+  // 屋顶、门、窗的大小全由 box 定死，且都贴着地面 —— 比「高矮」时只有墙有多高变。
+  // 所有档位都站在方框底部（同一条地平线）。
+  Widget _house(double box) {
+    const frac = [0.62, 0.72, 0.82, 0.91, 1.0];
+    final w = box * 0.62;
+    return SizedBox(
+      width: w,
+      height: box,
+      child: Align(
+        alignment: Alignment.bottomCenter,
+        child: SizedBox(
+          width: w,
+          height: box * frac[_lvl5(pic.level)],
+          child: CustomPaint(
+            painter: _HousePainter(box: box, color: _barColor()),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // 高矮（塔）：塔的高度随档位增长（0 最矮 … 4 最高）。
+  //
+  // 塔基、屋檐、尖顶都由 box 定死，只有塔身多高变；档位同样站在同一条地平线上。
+  Widget _tower(double box) {
+    const frac = [0.62, 0.72, 0.82, 0.91, 1.0];
+    final w = box * 0.56;
+    return SizedBox(
+      width: w,
+      height: box,
+      child: Align(
+        alignment: Alignment.bottomCenter,
+        child: SizedBox(
+          width: w,
+          height: box * frac[_lvl5(pic.level)],
+          child: CustomPaint(
+            painter: _TowerPainter(box: box, color: _barColor()),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // 高矮（柱子）：柱子的高度随档位增长（0 最矮 … 4 最高）。
+  //
+  // 柱头、柱础、柱身粗细都由 box 定死，只有柱身多高变。
+  Widget _pillar(double box) {
+    const frac = [0.58, 0.69, 0.80, 0.90, 1.0];
+    final w = box * 0.60;
+    return SizedBox(
+      width: w,
+      height: box,
+      child: Align(
+        alignment: Alignment.bottomCenter,
+        child: SizedBox(
+          width: w,
+          height: box * frac[_lvl5(pic.level)],
+          child: CustomPaint(
+            painter: _PillarPainter(box: box, color: _barColor()),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // 长短（小棒）：横放的小棒，长度随档位增长（0 最短 … 4 最长）。
+  //
+  // 小棒的粗细（方框高的 0.20）由 box 定死，只有长度变。
+  Widget _stick(double box) {
+    const frac = [0.34, 0.51, 0.68, 0.85, 1.0];
+    return SizedBox(
+      width: box,
+      height: box,
+      child: Center(
+        child: SizedBox(
+          width: box * frac[_lvl5(pic.level)],
+          height: box * 0.20,
+          child: CustomPaint(
+            painter: _StickPainter(box: box, color: _barColor()),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // 粗细（小棒）：竖放的小棒，粗细随档位增长（0 最细 … 4 最粗）。
+  //
+  // 长短（方框高的 0.84）由 box 定死，只有粗细变。
+  Widget _rod(double box) {
+    const frac = [0.10, 0.18, 0.28, 0.40, 0.54];
+    final w = box * frac[_lvl5(pic.level)];
+    return SizedBox(
+      width: box,
+      height: box,
+      child: Center(
+        child: SizedBox(
+          width: w,
+          height: box * 0.84,
+          child: CustomPaint(
+            painter: _RodPainter(box: box, color: _barColor()),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // 长短（丝带）：丝带长度随档位增长（0 最短 … 4 最长）。
+  //
+  // 丝带宽度、左端的剪口、右端的蝴蝶结都由 box 定死，只有长度变；
+  // 蝴蝶结挂在右端，一眼就能看出丝带到哪儿为止。
+  Widget _ribbon(double box) {
+    const frac = [0.34, 0.51, 0.68, 0.85, 1.0];
+    return SizedBox(
+      width: box,
+      height: box,
+      child: Center(
+        child: SizedBox(
+          width: box * frac[_lvl5(pic.level)],
+          height: box * 0.22,
+          child: CustomPaint(
+            painter: _RibbonPainter(box: box, color: _barColor()),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _blob(double box) {
     const frac = [0.30, 0.45, 0.62, 0.80, 0.96];
     final color = _barColor();
@@ -983,6 +1177,455 @@ class _FlamePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_FlamePainter oldDelegate) => false;
+}
+
+/// 横向铅笔：橡皮 + 金属箍 + 笔身（颜色随 base）+ 木锥 + 笔芯。
+///
+/// 画布宽度 = 铅笔全长，[box] 是外层方格边长：除笔身外的部件尺寸全由 box 定死，
+/// 这样比「长短」时只有笔身跟着变。
+class _PencilPainter extends CustomPainter {
+  _PencilPainter({required this.box, required this.color});
+
+  final double box;
+  final Color color;
+
+  static const Color _eraserColor = Color(0xFFF06292);
+  static const Color _ferruleColor = Color(0xFFB0BEC5);
+  static const Color _woodColor = Color(0xFFFFE0B2);
+  static const Color _leadColor = Color(0xFF455A64);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final h = size.height;
+    final cy = h / 2;
+    final eraser = box * 0.055;
+    final ferrule = box * 0.05;
+    final cone = box * 0.18;
+    final lead = box * 0.055;
+    final bodyEnd = size.width - cone;
+    final fill = Paint()..isAntiAlias = true;
+
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(0, 0, eraser, h),
+        Radius.circular(h * 0.42),
+      ),
+      fill..color = _eraserColor,
+    );
+    canvas.drawRect(
+      Rect.fromLTWH(eraser, 0, ferrule, h),
+      fill..color = _ferruleColor,
+    );
+    canvas.drawRect(
+      Rect.fromLTWH(eraser + ferrule, 0, bodyEnd - eraser - ferrule, h),
+      fill..color = color,
+    );
+    canvas.drawPath(
+      Path()
+        ..moveTo(bodyEnd, 0)
+        ..lineTo(bodyEnd, h)
+        ..lineTo(size.width - lead, cy)
+        ..close(),
+      fill..color = _woodColor,
+    );
+    canvas.drawPath(
+      Path()
+        ..moveTo(size.width - lead, h * 0.28)
+        ..lineTo(size.width - lead, h * 0.72)
+        ..lineTo(size.width, cy)
+        ..close(),
+      fill..color = _leadColor,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_PencilPainter old) =>
+      old.box != box || old.color != color;
+}
+
+/// 纵向的树：树干 + 上下两层三角树冠。
+///
+/// 画布就是树的外接矩形（宽由调用处定死、高随档位变），[box] 是外层方格边长：
+/// 树干粗细、树冠底宽都按 box 算，所以只有高度跟着档位走。
+class _TreePainter extends CustomPainter {
+  _TreePainter({required this.box, required this.leaf});
+
+  final double box;
+  final Color leaf;
+
+  static const Color _trunkColor = Color(0xFF8D6E63);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final fill = Paint()..isAntiAlias = true;
+
+    // 树干先画，上半截会被树冠盖住。
+    final trunkW = box * 0.12;
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH((w - trunkW) / 2, h * 0.52, trunkW, h * 0.48),
+        Radius.circular(trunkW * 0.3),
+      ),
+      fill..color = _trunkColor,
+    );
+
+    canvas.drawPath(
+      Path()
+        ..moveTo(w / 2, h * 0.12)
+        ..lineTo(w * 0.02, h * 0.68)
+        ..lineTo(w * 0.98, h * 0.68)
+        ..close(),
+      fill..color = Color.lerp(leaf, Colors.black, 0.22)!,
+    );
+    canvas.drawPath(
+      Path()
+        ..moveTo(w / 2, 0)
+        ..lineTo(w * 0.16, h * 0.46)
+        ..lineTo(w * 0.84, h * 0.46)
+        ..close(),
+      fill..color = leaf,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_TreePainter old) =>
+      old.box != box || old.leaf != leaf;
+}
+
+/// 正面的房子：屋顶 + 墙体 + 门 + 两扇窗。
+///
+/// 画布 = 房子的外接矩形（宽由调用处定死、高随档位变），[box] 是外层方格边长：
+/// 屋顶、门、窗的大小和离地高度都按 box 算，所以只有墙的高度跟着档位走。
+class _HousePainter extends CustomPainter {
+  _HousePainter({required this.box, required this.color});
+
+  final double box;
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final fill = Paint()..isAntiAlias = true;
+    final roofH = box * 0.20;
+    final wall = Color.lerp(color, Colors.white, 0.62)!;
+    final roof = Color.lerp(color, Colors.black, 0.18)!;
+    final door = Color.lerp(color, Colors.black, 0.42)!;
+
+    canvas.drawRect(Rect.fromLTWH(0, roofH, w, h - roofH), fill..color = wall);
+
+    // 屋顶比墙宽一点，两侧就是屋檐。
+    final eave = w * 1.10;
+    canvas.drawPath(
+      Path()
+        ..moveTo(w / 2, 0)
+        ..lineTo(w / 2 - eave / 2, roofH)
+        ..lineTo(w / 2 + eave / 2, roofH)
+        ..close(),
+      fill..color = roof,
+    );
+
+    // 门（贴地）与两扇窗（离地高度固定，所以矮房子只是墙少一截）。
+    final doorW = box * 0.17;
+    final doorH = box * 0.24;
+    canvas.drawRRect(
+      RRect.fromRectAndCorners(
+        Rect.fromLTWH((w - doorW) / 2, h - doorH, doorW, doorH),
+        topLeft: Radius.circular(doorW * 0.45),
+        topRight: Radius.circular(doorW * 0.45),
+      ),
+      fill..color = door,
+    );
+    final win = box * 0.12;
+    final winY = h - box * 0.36;
+    final frame = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = box * 0.014
+      ..color = Color.lerp(color, Colors.black, 0.30)!;
+    for (final dx in [-box * 0.19, box * 0.19]) {
+      final rect = Rect.fromLTWH(w / 2 + dx - win / 2, winY, win, win);
+      final rrect =
+          RRect.fromRectAndRadius(rect, Radius.circular(win * 0.18));
+      canvas.drawRRect(rrect, fill..color = const Color(0xFFFFF8E1));
+      canvas.drawRRect(rrect, frame);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_HousePainter old) =>
+      old.box != box || old.color != color;
+}
+
+/// 塔：塔身（上窄下宽）+ 屋檐 + 尖顶 + 塔基。
+///
+/// 画布 = 塔的外接矩形（宽由调用处定死、高随档位变），[box] 是外层方格边长：
+/// 尖顶、屋檐、塔基都按 box 算，只有塔身高度跟着档位走。
+class _TowerPainter extends CustomPainter {
+  _TowerPainter({required this.box, required this.color});
+
+  final double box;
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final fill = Paint()..isAntiAlias = true;
+    final roofH = box * 0.18;
+    final plinthH = box * 0.07;
+    final body = Color.lerp(color, Colors.black, 0.08)!;
+    final roof = Color.lerp(color, Colors.black, 0.42)!;
+
+    // 塔基
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(0, h - plinthH, w, plinthH),
+        Radius.circular(plinthH * 0.3),
+      ),
+      fill..color = Color.lerp(color, Colors.black, 0.30)!,
+    );
+
+    // 塔身：底边略收一点、顶边收得更多，看上去是往上收的。
+    canvas.drawPath(
+      Path()
+        ..moveTo(w * 0.07, h - plinthH)
+        ..lineTo(w * 0.93, h - plinthH)
+        ..lineTo(w * 0.73, roofH)
+        ..lineTo(w * 0.27, roofH)
+        ..close(),
+      fill..color = body,
+    );
+
+    // 尖顶 + 屋檐
+    canvas.drawPath(
+      Path()
+        ..moveTo(w / 2, 0)
+        ..lineTo(-w * 0.04, roofH)
+        ..lineTo(w * 1.04, roofH)
+        ..close(),
+      fill..color = roof,
+    );
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(-w * 0.06, roofH - box * 0.015, w * 1.12, box * 0.05),
+        Radius.circular(box * 0.02),
+      ),
+      fill..color = roof,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_TowerPainter old) =>
+      old.box != box || old.color != color;
+}
+
+/// 柱子：柱头 + 柱础 + 柱身（带两道凹槽）。
+///
+/// 画布 = 柱子的外接矩形（宽由调用处定死、高随档位变），[box] 是外层方格边长：
+/// 柱头、柱础和柱身粗细都按 box 算，只有柱身高度跟着档位走。
+class _PillarPainter extends CustomPainter {
+  _PillarPainter({required this.box, required this.color});
+
+  final double box;
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final fill = Paint()..isAntiAlias = true;
+    final capH = box * 0.05;
+    final baseH = box * 0.06;
+    final shaftW = box * 0.34;
+    final trim = Color.lerp(color, Colors.black, 0.30)!;
+
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(0, h - baseH, w, baseH),
+        Radius.circular(baseH * 0.3),
+      ),
+      fill..color = trim,
+    );
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH((w - w * 0.94) / 2, 0, w * 0.94, capH),
+        Radius.circular(capH * 0.3),
+      ),
+      fill..color = trim,
+    );
+
+    final sx = (w - shaftW) / 2;
+    canvas.drawRect(
+      Rect.fromLTWH(sx, capH, shaftW, h - capH - baseH),
+      fill..color = color,
+    );
+    final groove = Paint()
+      ..color = Color.lerp(color, Colors.white, 0.45)!
+      ..strokeWidth = box * 0.018;
+    for (final fx in [0.30, 0.70]) {
+      final x = sx + shaftW * fx;
+      canvas.drawLine(Offset(x, capH), Offset(x, h - baseH), groove);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_PillarPainter old) =>
+      old.box != box || old.color != color;
+}
+
+/// 横放的小棒：两头圆的木棒 + 一道高光 + 右端的断面。
+///
+/// 画布宽度 = 小棒全长，[box] 是外层方格边长：粗细（画布高度）由调用处按 box
+/// 定死，所以比「长短」时只有长度变。
+class _StickPainter extends CustomPainter {
+  _StickPainter({required this.box, required this.color});
+
+  final double box;
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final h = size.height;
+    final w = size.width;
+    final r = h / 2;
+    final fill = Paint()..isAntiAlias = true;
+
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(Rect.fromLTWH(0, 0, w, h), Radius.circular(r)),
+      fill..color = color,
+    );
+    // 高光：两头留出一段，免得在圆头上露出直角。
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(r * 1.3, h * 0.24, math.max(w - r * 2.6, 1), h * 0.24),
+        Radius.circular(h * 0.12),
+      ),
+      fill..color = Color.lerp(color, Colors.white, 0.55)!,
+    );
+    // 右端的断面，看着像一根木头。
+    canvas.drawCircle(
+      Offset(w - r, r),
+      r * 0.62,
+      fill..color = Color.lerp(color, Colors.black, 0.30)!,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_StickPainter old) =>
+      old.box != box || old.color != color;
+}
+
+/// 竖放的小棒：两头圆的木棒 + 一道竖高光 + 上下两道竹节。
+///
+/// 画布高度 = 小棒全长，[box] 是外层方格边长：长短由调用处按 box 定死，
+/// 所以比「粗细」时只有宽度变。
+class _RodPainter extends CustomPainter {
+  _RodPainter({required this.box, required this.color});
+
+  final double box;
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final r = w / 2;
+    final fill = Paint()..isAntiAlias = true;
+
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(Rect.fromLTWH(0, 0, w, h), Radius.circular(r)),
+      fill..color = color,
+    );
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(w * 0.24, r * 1.3, math.max(w * 0.20, 1), h - r * 2.6),
+        Radius.circular(w * 0.10),
+      ),
+      fill..color = Color.lerp(color, Colors.white, 0.50)!,
+    );
+    final ring = Color.lerp(color, Colors.black, 0.22)!;
+    final ringH = math.max(w * 0.10, box * 0.012);
+    for (final fy in [0.16, 0.84]) {
+      canvas.drawRect(
+        Rect.fromLTWH(w * 0.10, h * fy - ringH / 2, w * 0.80, ringH),
+        fill..color = ring,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(_RodPainter old) =>
+      old.box != box || old.color != color;
+}
+
+/// 丝带：左端剪成 V 口、右端打了个蝴蝶结的带子。
+///
+/// 画布宽度 = 丝带全长，[box] 是外层方格边长：带宽、剪口、蝴蝶结都按 box 算，
+/// 所以比「长短」时只有长度变。
+class _RibbonPainter extends CustomPainter {
+  _RibbonPainter({required this.box, required this.color});
+
+  final double box;
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final fill = Paint()..isAntiAlias = true;
+    final notch = h * 0.55;
+
+    canvas.drawPath(
+      Path()
+        ..moveTo(notch, 0)
+        ..lineTo(w, 0)
+        ..lineTo(w, h)
+        ..lineTo(notch, h)
+        ..lineTo(0, h / 2)
+        ..close(),
+      fill..color = color,
+    );
+    canvas.drawRect(
+      Rect.fromLTWH(notch * 0.8, h * 0.36, math.max(w - notch * 0.8, 1), h * 0.28),
+      fill..color = Color.lerp(color, Colors.white, 0.50)!,
+    );
+
+    // 蝴蝶结：两个环 + 中间的结，挂在右端。
+    //
+    // 环画成两头圆的水滴形（三角太尖，缩到选项格里就成了一颗菱形），
+    // 颜色比带子略浅、描一圈深边，才不会跟带子糊成一块。
+    final cx = w - box * 0.11;
+    final cy = h / 2;
+    final loop = box * 0.16;
+    final wing = Color.lerp(color, Colors.black, 0.06)!;
+    final edge = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = box * 0.014
+      ..color = Color.lerp(color, Colors.black, 0.35)!;
+    for (final dir in [-1.0, 1.0]) {
+      final path = Path()
+        ..moveTo(cx, cy)
+        ..quadraticBezierTo(
+            cx + dir * box * 0.13, cy - loop, cx + dir * box * 0.20, cy)
+        ..quadraticBezierTo(
+            cx + dir * box * 0.13, cy + loop, cx, cy)
+        ..close();
+      canvas.drawPath(path, fill..color = wing);
+      canvas.drawPath(path, edge);
+    }
+    canvas.drawCircle(
+      Offset(cx, cy),
+      box * 0.05,
+      fill..color = Color.lerp(color, Colors.white, 0.30)!,
+    );
+    canvas.drawCircle(Offset(cx, cy), box * 0.05, edge);
+  }
+
+  @override
+  bool shouldRepaint(_RibbonPainter old) =>
+      old.box != box || old.color != color;
 }
 
 /// 绘制内置几何图形，可绕中心旋转 90° 的整数倍。

@@ -135,6 +135,93 @@ void main() {
       expect(Pic.queue(const ['🐼', '🐰']).kind, PicKind.queue);
       expect(Pic.queue(const ['🐼', '🐰']).emojis.length, 2);
       expect(Pic.candle(4).kind, PicKind.candle);
+      expect(Pic.pencil(4).kind, PicKind.pencil);
+      expect(Pic.tree(4).kind, PicKind.tree);
+      expect(Pic.house(4).kind, PicKind.house);
+      expect(Pic.tower(4).kind, PicKind.tower);
+      expect(Pic.pillar(4).kind, PicKind.pillar);
+      expect(Pic.stick(4).kind, PicKind.stick);
+      expect(Pic.rod(4).kind, PicKind.rod);
+      expect(Pic.ribbon(4).kind, PicKind.ribbon);
+    });
+
+    test('题面说到楼 / 塔 / 柱子的题，选项就得是那种东西的图', () {
+      // 光秃秃的竖条看不出是楼、是塔还是柱子 —— 题面写了什么就得画什么。
+      const wanted = {'楼': PicKind.house, '塔': PicKind.tower, '柱子': PicKind.pillar};
+      var hits = 0;
+      for (final q in bank.questions) {
+        for (final e in wanted.entries) {
+          if (!q.prompt.contains(e.key)) continue;
+          hits++;
+          for (final o in q.options) {
+            expect(o.pic?.kind, e.value,
+                reason: '${q.qid}「${q.prompt}」的选项不是${e.key}图');
+          }
+          // 高矮题的四个档位必须各不相同，否则最高 / 最矮那个不唯一。
+          final levels = [for (final o in q.options) o.pic!.level];
+          expect(levels.toSet().length, levels.length, reason: q.qid);
+        }
+      }
+      expect(hits, 6, reason: '楼 / 塔 / 柱子各有几道题，数量变了就来看一眼');
+    });
+
+    test('题面说到小棒的题：比长短的横着画、比粗细的竖着画', () {
+      var hits = 0;
+      for (final q in bank.questions) {
+        if (!q.prompt.contains('小棒')) continue;
+        hits++;
+        final thick = q.prompt.contains('粗') || q.prompt.contains('细');
+        final want = thick ? PicKind.rod : PicKind.stick;
+        for (final o in q.options) {
+          expect(o.pic?.kind, want,
+              reason: '${q.qid}「${q.prompt}」的选项不是小棒图');
+        }
+      }
+      expect(hits, 3, reason: '小棒题的数量变了就来看一眼');
+    });
+
+    test('题面说到丝带的题，选项就得是丝带图', () {
+      final ribbons = [
+        for (final q in bank.questions)
+          if (q.prompt.contains('丝带')) q,
+      ];
+      expect(ribbons, isNotEmpty);
+      for (final q in ribbons) {
+        for (final o in q.options) {
+          expect(o.pic?.kind, PicKind.ribbon, reason: '${q.qid} 选项不是丝带图');
+        }
+        final levels = [for (final o in q.options) o.pic!.level];
+        expect(levels.toSet().length, levels.length, reason: q.qid);
+      }
+    });
+
+    test('题面说到树的题，选项就得是树图', () {
+      final trees = [
+        for (final q in bank.questions)
+          if (q.kind == QaKind.compare && q.prompt.contains('树')) q,
+      ];
+      expect(trees, isNotEmpty);
+      for (final q in trees) {
+        for (final o in q.options) {
+          expect(o.pic?.kind, PicKind.tree, reason: '${q.qid} 选项不是树图');
+        }
+        // 高矮题的四个档位必须各不相同，否则最高那棵不唯一。
+        final levels = [for (final o in q.options) o.pic!.level];
+        expect(levels.toSet().length, levels.length, reason: q.qid);
+      }
+    });
+
+    test('题面说到铅笔的题，选项就得是铅笔图', () {
+      final pens = [
+        for (final q in bank.questions)
+          if (q.kind == QaKind.compare && q.prompt.contains('铅笔')) q,
+      ];
+      expect(pens, isNotEmpty);
+      for (final q in pens) {
+        for (final o in q.options) {
+          expect(o.pic?.kind, PicKind.pencil, reason: '${q.qid} 选项不是铅笔图');
+        }
+      }
     });
 
     test('比粗细的题用蜡烛图标：光秃秃的竖条看不出是绳子还是蜡烛', () {

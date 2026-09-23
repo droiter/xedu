@@ -179,10 +179,10 @@
       "prompt": "哪一棵树最高？",
       "scene": [],
       "options": [
-        { "pic": { "kind": "bar", "n": 2 } },
-        { "pic": { "kind": "bar", "n": 5 } },
-        { "pic": { "kind": "bar", "n": 3 } },
-        { "pic": { "kind": "bar", "n": 4 } }
+        { "pic": { "kind": "tree", "level": 1 } },
+        { "pic": { "kind": "tree", "level": 4 } },
+        { "pic": { "kind": "tree", "level": 2 } },
+        { "pic": { "kind": "tree", "level": 3 } }
       ],
       "answer": 1
     },
@@ -195,10 +195,10 @@
       "prompt": "哪一支铅笔最长？",
       "scene": [],
       "options": [
-        { "pic": { "kind": "lengthBar", "level": 0, "base": 2 } },
-        { "pic": { "kind": "lengthBar", "level": 3, "base": 2 } },
-        { "pic": { "kind": "lengthBar", "level": 1, "base": 2 } },
-        { "pic": { "kind": "lengthBar", "level": 2, "base": 2 } }
+        { "pic": { "kind": "pencil", "level": 0, "base": 2 } },
+        { "pic": { "kind": "pencil", "level": 3, "base": 2 } },
+        { "pic": { "kind": "pencil", "level": 1, "base": 2 } },
+        { "pic": { "kind": "pencil", "level": 2, "base": 2 } }
       ],
       "answer": 1
     },
@@ -624,13 +624,13 @@
       "kind": "compare",
       "sub": "SHORT",
       "stars": 2,
-      "prompt": "哪一根小棒最短？",
+      "prompt": "哪个铅笔最短？",
       "scene": [],
       "options": [
-        { "pic": { "kind": "lengthBar", "level": 1, "base": 2 } },
-        { "pic": { "kind": "lengthBar", "level": 0, "base": 2 } },
-        { "pic": { "kind": "lengthBar", "level": 3, "base": 2 } },
-        { "pic": { "kind": "lengthBar", "level": 2, "base": 2 } }
+        { "pic": { "kind": "pencil", "level": 1, "base": 2 } },
+        { "pic": { "kind": "pencil", "level": 0, "base": 2 } },
+        { "pic": { "kind": "pencil", "level": 3, "base": 2 } },
+        { "pic": { "kind": "pencil", "level": 2, "base": 2 } }
       ],
       "answer": 1
     },
@@ -657,10 +657,10 @@
       "prompt": "哪一座楼最高？",
       "scene": [],
       "options": [
-        { "pic": { "kind": "bar", "n": 3 } },
-        { "pic": { "kind": "bar", "n": 5 } },
-        { "pic": { "kind": "bar", "n": 2 } },
-        { "pic": { "kind": "bar", "n": 4 } }
+        { "pic": { "kind": "house", "level": 2 } },
+        { "pic": { "kind": "house", "level": 4 } },
+        { "pic": { "kind": "house", "level": 1 } },
+        { "pic": { "kind": "house", "level": 3 } }
       ],
       "answer": 1
     },
@@ -859,10 +859,10 @@
       "prompt": "哪一座塔最高？",
       "scene": [],
       "options": [
-        { "pic": { "kind": "bar", "n": 5 } },
-        { "pic": { "kind": "bar", "n": 2 } },
-        { "pic": { "kind": "bar", "n": 4 } },
-        { "pic": { "kind": "bar", "n": 3 } }
+        { "pic": { "kind": "tower", "level": 4 } },
+        { "pic": { "kind": "tower", "level": 1 } },
+        { "pic": { "kind": "tower", "level": 3 } },
+        { "pic": { "kind": "tower", "level": 2 } }
       ],
       "answer": 0
     },
@@ -875,10 +875,10 @@
       "prompt": "哪一根小棒最短？",
       "scene": [],
       "options": [
-        { "pic": { "kind": "lengthBar", "level": 2, "base": 3 } },
-        { "pic": { "kind": "lengthBar", "level": 3, "base": 3 } },
-        { "pic": { "kind": "lengthBar", "level": 0, "base": 3 } },
-        { "pic": { "kind": "lengthBar", "level": 1, "base": 3 } }
+        { "pic": { "kind": "stick", "level": 2, "base": 3 } },
+        { "pic": { "kind": "stick", "level": 3, "base": 3 } },
+        { "pic": { "kind": "stick", "level": 0, "base": 3 } },
+        { "pic": { "kind": "stick", "level": 1, "base": 3 } }
       ],
       "answer": 2
     },
@@ -1341,10 +1341,10 @@
       "prompt": "哪一条丝带最长？",
       "scene": [],
       "options": [
-        { "pic": { "kind": "lengthBar", "level": 1, "base": 4 } },
-        { "pic": { "kind": "lengthBar", "level": 4, "base": 4 } },
-        { "pic": { "kind": "lengthBar", "level": 2, "base": 4 } },
-        { "pic": { "kind": "lengthBar", "level": 0, "base": 4 } }
+        { "pic": { "kind": "ribbon", "level": 1, "base": 4 } },
+        { "pic": { "kind": "ribbon", "level": 4, "base": 4 } },
+        { "pic": { "kind": "ribbon", "level": 2, "base": 4 } },
+        { "pic": { "kind": "ribbon", "level": 0, "base": 4 } }
       ],
       "answer": 1
     },
@@ -1453,10 +1453,10 @@
       "prompt": "请选出最高的柱子。",
       "scene": [],
       "options": [
-        { "pic": { "kind": "bar", "n": 2 } },
-        { "pic": { "kind": "bar", "n": 5 } },
-        { "pic": { "kind": "bar", "n": 3 } },
-        { "pic": { "kind": "bar", "n": 4 } }
+        { "pic": { "kind": "pillar", "level": 1 } },
+        { "pic": { "kind": "pillar", "level": 4 } },
+        { "pic": { "kind": "pillar", "level": 2 } },
+        { "pic": { "kind": "pillar", "level": 3 } }
       ],
       "answer": 1
     },
@@ -1589,10 +1589,10 @@
       "prompt": "哪一根小棒最细？",
       "scene": [],
       "options": [
-        { "pic": { "kind": "widthBar", "level": 3, "base": 5 } },
-        { "pic": { "kind": "widthBar", "level": 0, "base": 5 } },
-        { "pic": { "kind": "widthBar", "level": 2, "base": 5 } },
-        { "pic": { "kind": "widthBar", "level": 1, "base": 5 } }
+        { "pic": { "kind": "rod", "level": 3, "base": 5 } },
+        { "pic": { "kind": "rod", "level": 0, "base": 5 } },
+        { "pic": { "kind": "rod", "level": 2, "base": 5 } },
+        { "pic": { "kind": "rod", "level": 1, "base": 5 } }
       ],
       "answer": 1
     },
@@ -2123,10 +2123,10 @@
       "prompt": "请选出最高的柱子。",
       "scene": [],
       "options": [
-        { "pic": { "kind": "bar", "n": 3 } },
-        { "pic": { "kind": "bar", "n": 5 } },
-        { "pic": { "kind": "bar", "n": 2 } },
-        { "pic": { "kind": "bar", "n": 4 } }
+        { "pic": { "kind": "pillar", "level": 2 } },
+        { "pic": { "kind": "pillar", "level": 4 } },
+        { "pic": { "kind": "pillar", "level": 1 } },
+        { "pic": { "kind": "pillar", "level": 3 } }
       ],
       "answer": 1
     },
@@ -2275,10 +2275,10 @@
       "prompt": "哪一条丝带最长？",
       "scene": [],
       "options": [
-        { "pic": { "kind": "lengthBar", "level": 3, "base": 6 } },
-        { "pic": { "kind": "lengthBar", "level": 1, "base": 6 } },
-        { "pic": { "kind": "lengthBar", "level": 2, "base": 6 } },
-        { "pic": { "kind": "lengthBar", "level": 0, "base": 6 } }
+        { "pic": { "kind": "ribbon", "level": 3, "base": 6 } },
+        { "pic": { "kind": "ribbon", "level": 1, "base": 6 } },
+        { "pic": { "kind": "ribbon", "level": 2, "base": 6 } },
+        { "pic": { "kind": "ribbon", "level": 0, "base": 6 } }
       ],
       "answer": 0
     },
@@ -2581,10 +2581,10 @@
       "prompt": "请选出最矮的柱子。",
       "scene": [],
       "options": [
-        { "pic": { "kind": "bar", "n": 4 } },
-        { "pic": { "kind": "bar", "n": 2 } },
-        { "pic": { "kind": "bar", "n": 5 } },
-        { "pic": { "kind": "bar", "n": 3 } }
+        { "pic": { "kind": "pillar", "level": 3 } },
+        { "pic": { "kind": "pillar", "level": 1 } },
+        { "pic": { "kind": "pillar", "level": 4 } },
+        { "pic": { "kind": "pillar", "level": 2 } }
       ],
       "answer": 1
     },
@@ -2717,10 +2717,10 @@
       "prompt": "哪一座塔最高？",
       "scene": [],
       "options": [
-        { "pic": { "kind": "bar", "n": 2 } },
-        { "pic": { "kind": "bar", "n": 5 } },
-        { "pic": { "kind": "bar", "n": 3 } },
-        { "pic": { "kind": "bar", "n": 4 } }
+        { "pic": { "kind": "tower", "level": 1 } },
+        { "pic": { "kind": "tower", "level": 4 } },
+        { "pic": { "kind": "tower", "level": 2 } },
+        { "pic": { "kind": "tower", "level": 3 } }
       ],
       "answer": 1
     },
@@ -2733,10 +2733,10 @@
       "prompt": "哪一根小棒最细？",
       "scene": [],
       "options": [
-        { "pic": { "kind": "widthBar", "level": 2, "base": 7 } },
-        { "pic": { "kind": "widthBar", "level": 0, "base": 7 } },
-        { "pic": { "kind": "widthBar", "level": 3, "base": 7 } },
-        { "pic": { "kind": "widthBar", "level": 1, "base": 7 } }
+        { "pic": { "kind": "rod", "level": 2, "base": 7 } },
+        { "pic": { "kind": "rod", "level": 0, "base": 7 } },
+        { "pic": { "kind": "rod", "level": 3, "base": 7 } },
+        { "pic": { "kind": "rod", "level": 1, "base": 7 } }
       ],
       "answer": 1
     },

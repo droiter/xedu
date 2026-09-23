@@ -79,6 +79,108 @@ void main() {
     }
   });
 
+  testWidgets('铅笔长短题：档位只改长短，不改粗细', (tester) async {
+    final widths = <double>[];
+    final heights = <double>[];
+    for (var lvl = 0; lvl <= 4; lvl++) {
+      await tester.pumpWidget(_host(Pic.pencil(lvl), box, box));
+      final r = tester.getRect(find.byType(CustomPaint).last);
+      widths.add(r.width);
+      heights.add(r.height);
+    }
+
+    for (var i = 1; i < widths.length; i++) {
+      expect(widths[i], greaterThan(widths[i - 1]), reason: '第 $i 档');
+    }
+    expect(widths.last, greaterThan(box * 0.95), reason: '最长那档铺满方框');
+    // 最短那档也得留得下笔尖 + 金属箍 + 橡皮（约 0.33box），别画成一条线。
+    expect(widths.first, greaterThan(box * 0.36));
+    expect(heights.toSet(), hasLength(1), reason: '笔的粗细不随档位变');
+  });
+
+  testWidgets('树的高矮题：档位只改高矮，不改粗细', (tester) async {
+    final widths = <double>[];
+    final heights = <double>[];
+    final bottoms = <double>[];
+    for (var lvl = 0; lvl <= 4; lvl++) {
+      await tester.pumpWidget(_host(Pic.tree(lvl), box, box));
+      final r = tester.getRect(find.byType(CustomPaint).last);
+      widths.add(r.width);
+      heights.add(r.height);
+      bottoms.add(r.bottom);
+    }
+
+    for (var i = 1; i < heights.length; i++) {
+      expect(heights[i], greaterThan(heights[i - 1]), reason: '第 $i 档');
+    }
+    expect(heights.last, closeTo(box, 0.5), reason: '最高那档顶到方框顶');
+    expect(heights.first, greaterThan(box * 0.5), reason: '最矮那档也是棵树');
+    expect(widths.toSet(), hasLength(1), reason: '树的粗细不随档位变');
+    expect(bottoms.toSet(), hasLength(1), reason: '所有档位站在同一条地平线上');
+  });
+
+  testWidgets('楼 / 塔 / 柱子的高矮题：档位只改高矮，底边齐平', (tester) async {
+    for (final pic in ['楼', '塔', '柱子']) {
+      final maker = switch (pic) {
+        '楼' => Pic.house,
+        '塔' => Pic.tower,
+        _ => Pic.pillar,
+      };
+      final widths = <double>[];
+      final heights = <double>[];
+      final bottoms = <double>[];
+      for (var lvl = 0; lvl <= 4; lvl++) {
+        await tester.pumpWidget(_host(maker(lvl), box, box));
+        final r = tester.getRect(find.byType(CustomPaint).last);
+        widths.add(r.width);
+        heights.add(r.height);
+        bottoms.add(r.bottom);
+      }
+      for (var i = 1; i < heights.length; i++) {
+        expect(heights[i], greaterThan(heights[i - 1]), reason: '$pic 第 $i 档');
+      }
+      expect(heights.last, closeTo(box, 0.5), reason: '$pic 最高那档顶到方框顶');
+      expect(heights.first, greaterThan(box * 0.5), reason: '$pic 最矮那档也是座$pic');
+      expect(widths.toSet(), hasLength(1), reason: '$pic 的宽度不随档位变');
+      expect(bottoms.toSet(), hasLength(1), reason: '$pic 所有档位站在同一条地平线上');
+    }
+  });
+
+  testWidgets('横着的小棒 / 丝带：档位只改长短，不改粗细', (tester) async {
+    for (final entry in {'小棒': Pic.stick, '丝带': Pic.ribbon}.entries) {
+      final widths = <double>[];
+      final heights = <double>[];
+      for (var lvl = 0; lvl <= 4; lvl++) {
+        await tester.pumpWidget(_host(entry.value(lvl), box, box));
+        final r = tester.getRect(find.byType(CustomPaint).last);
+        widths.add(r.width);
+        heights.add(r.height);
+      }
+      for (var i = 1; i < widths.length; i++) {
+        expect(widths[i], greaterThan(widths[i - 1]), reason: '${entry.key} 第 $i 档');
+      }
+      expect(widths.last, greaterThan(box * 0.95), reason: '${entry.key} 最长那档铺满方框');
+      expect(widths.first, greaterThan(box * 0.3), reason: '${entry.key} 最短那档也看得出是${entry.key}');
+      expect(heights.toSet(), hasLength(1), reason: '${entry.key} 的粗细不随档位变');
+    }
+  });
+
+  testWidgets('竖着的小棒：档位只改粗细，不改长短', (tester) async {
+    final widths = <double>[];
+    final heights = <double>[];
+    for (var lvl = 0; lvl <= 4; lvl++) {
+      await tester.pumpWidget(_host(Pic.rod(lvl), box, box));
+      final r = tester.getRect(find.byType(CustomPaint).last);
+      widths.add(r.width);
+      heights.add(r.height);
+    }
+    for (var i = 1; i < widths.length; i++) {
+      expect(widths[i], greaterThan(widths[i - 1]), reason: '第 $i 档');
+    }
+    expect(widths.last, greaterThan(box * 0.4), reason: '最粗那档看得出粗细差');
+    expect(heights.toSet(), hasLength(1), reason: '小棒的长短不随档位变');
+  });
+
   testWidgets('没有照片的字形照旧按字形画', (tester) async {
     await tester.pumpWidget(_host(Pic.emojiSingle('➕'), box, box));
     expect(find.byType(Image), findsNothing);

@@ -54,6 +54,35 @@ enum PicKind {
   /// 粗细（蜡烛）：蜡烛身子的粗细随档位变化（0 最细 … 4 最粗），火苗大小不变。
   candle,
 
+  /// 长短（铅笔）：横向铅笔，笔身长度随档位变化（0 最短 … 4 最长），
+  /// 笔尖 / 金属箍 / 橡皮大小不变。
+  pencil,
+
+  /// 高矮（树）：整棵树的高度随档位变化（0 最矮 … 4 最高），
+  /// 树干粗细与树冠底宽不变。
+  tree,
+
+  /// 高矮（楼）：房子的高度随档位变化（0 最矮 … 4 最高），
+  /// 屋顶、门窗的大小不变。
+  house,
+
+  /// 高矮（塔）：塔的高度随档位变化（0 最矮 … 4 最高），
+  /// 塔顶、塔尖的大小不变。
+  tower,
+
+  /// 高矮（柱子）：柱子高度随档位变化（0 最矮 … 4 最高），
+  /// 柱头、柱础的大小与柱子粗细不变。
+  pillar,
+
+  /// 长短（小棒）：横放的小棒，长度随档位变化（0 最短 … 4 最长），粗细不变。
+  stick,
+
+  /// 粗细（小棒）：竖放的小棒，粗细随档位变化（0 最细 … 4 最粗），长短不变。
+  rod,
+
+  /// 长短（丝带）：横向丝带，长度随档位变化（0 最短 … 4 最长），宽度不变。
+  ribbon,
+
   /// 胖瘦：椭圆，[Pic.level] 为胖瘦档（0 最瘦 … 4 最胖）。
   blob,
 
@@ -115,11 +144,11 @@ class Pic {
 
   /// 档位：emojiSize 的大小档、arrowQuarter 的朝向(0上 1右 2下 3左)、
   /// colorRamp 的深浅档、shape 的旋转格数、shapeCount 的颜色编号，
-  /// 以及 lengthBar/thickness/widthBar/candle/blob/distance 的属性档（0..4）。
+  /// 以及 lengthBar/thickness/widthBar/candle/pencil/blob/distance 的属性档（0..4）。
   final int level;
 
   /// 底座下标：dots / colorRamp 的调色板编号、shape/shapeCount 的图形编号、
-  /// colorBlock 与各属性条（含 candle）的颜色编号。
+  /// colorBlock 与各属性条（含 candle/pencil）的颜色编号。
   final int base;
 
   /// 资源路径（asset 类型用）。
@@ -261,6 +290,86 @@ class Pic {
         level: level,
         base: base,
         label: '粗细',
+      );
+
+  /// 长短（铅笔）：笔身长度随档位增长。
+  /// [level] 0 最短 … 4 最长；[base] 为颜色编号。
+  static Pic pencil(int level, {int base = 0}) => Pic(
+        kind: PicKind.pencil,
+        id: 'pen:$base:$level',
+        level: level,
+        base: base,
+        label: '长短',
+      );
+
+  /// 高矮（树）：整棵树的高度随档位增长。
+  /// [level] 0 最矮 … 4 最高；[base] 为树叶颜色编号。
+  static Pic tree(int level, {int base = 0}) => Pic(
+        kind: PicKind.tree,
+        id: 'tre:$base:$level',
+        level: level,
+        base: base,
+        label: '高矮',
+      );
+
+  /// 高矮（楼）：房子的高度随档位增长。
+  /// [level] 0 最矮 … 4 最高；[base] 为墙体颜色编号。
+  static Pic house(int level, {int base = 0}) => Pic(
+        kind: PicKind.house,
+        id: 'hse:$base:$level',
+        level: level,
+        base: base,
+        label: '高矮',
+      );
+
+  /// 高矮（塔）：塔的高度随档位增长。
+  /// [level] 0 最矮 … 4 最高；[base] 为塔身颜色编号。
+  static Pic tower(int level, {int base = 0}) => Pic(
+        kind: PicKind.tower,
+        id: 'twr:$base:$level',
+        level: level,
+        base: base,
+        label: '高矮',
+      );
+
+  /// 高矮（柱子）：柱子的高度随档位增长。
+  /// [level] 0 最矮 … 4 最高；[base] 为柱身颜色编号。
+  static Pic pillar(int level, {int base = 0}) => Pic(
+        kind: PicKind.pillar,
+        id: 'pil:$base:$level',
+        level: level,
+        base: base,
+        label: '高矮',
+      );
+
+  /// 长短（小棒）：横放的小棒长度随档位增长。
+  /// [level] 0 最短 … 4 最长；[base] 为小棒颜色编号。
+  static Pic stick(int level, {int base = 0}) => Pic(
+        kind: PicKind.stick,
+        id: 'stk:$base:$level',
+        level: level,
+        base: base,
+        label: '长短',
+      );
+
+  /// 粗细（小棒）：竖放的小棒粗细随档位增长。
+  /// [level] 0 最细 … 4 最粗；[base] 为小棒颜色编号。
+  static Pic rod(int level, {int base = 0}) => Pic(
+        kind: PicKind.rod,
+        id: 'rod:$base:$level',
+        level: level,
+        base: base,
+        label: '粗细',
+      );
+
+  /// 长短（丝带）：丝带长度随档位增长。
+  /// [level] 0 最短 … 4 最长；[base] 为丝带颜色编号。
+  static Pic ribbon(int level, {int base = 0}) => Pic(
+        kind: PicKind.ribbon,
+        id: 'rib:$base:$level',
+        level: level,
+        base: base,
+        label: '长短',
       );
 
   /// 胖瘦：椭圆。[level] 0 最瘦 … 4 最胖；[base] 为颜色编号。
