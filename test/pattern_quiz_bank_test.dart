@@ -6,11 +6,23 @@ import 'package:xedu/features/pattern_quiz/question_taxonomy.dart';
 void main() {
   group('规律题库', () {
     test('题库总量足够，且每个年龄档位都至少有 30 题', () {
+      // 「规律只重复一次」的交替题删掉后，2–3 岁与 3–4 岁档各补了 5 道
+      // 「越来越…」补回 30 题，下限仍是 30。
       expect(kPatternQuestions.length, greaterThanOrEqualTo(150));
       for (final g in PatternAgeGroup.values) {
         expect(patternBankFor(g).length, greaterThanOrEqualTo(30),
             reason: '${g.ageText} 的题量偏少');
       }
+    });
+
+    test('不再有「规律只重复一次」的交替题：短名不以 -alt 结尾', () {
+      // 4 格里规律只重复一次，孩子归纳不出来，这类题已全部删掉。
+      // 真正的交替题短名形如 `b-alt-red-blue`（`alt` 在第 2 段），整题挪进「100 岁」。
+      final tails = [
+        for (final q in kPatternQuestions)
+          if (q.id.endsWith('-alt')) q.id,
+      ];
+      expect(tails, isEmpty, reason: tails.join('、'));
     });
 
     test('合并题库按年龄顺序拼接且不丢题', () {
@@ -95,6 +107,13 @@ void main() {
       expect(Pic.shapeCount(0, 2).id, isNot(Pic.shapeCount(1, 2).id));
       // 单图形与多图形不是同一种渲染
       expect(Pic.shape(0).id, isNot(Pic.shapeCount(0, 1).id));
+      // 皮球的八个朝向互不相同；转满一整圈回到原样
+      expect(Pic.ballTurn(1).kind, PicKind.ballTurn);
+      expect(
+        {for (var i = 0; i < 8; i++) Pic.ballTurn(i).id}.length,
+        8,
+      );
+      expect(Pic.ballTurn(8).id, Pic.ballTurn(0).id);
     });
 
     test('每个年龄档位都包含多种题型（标题去重后不少于 8 种）', () {
@@ -193,12 +212,73 @@ void main() {
           reason: '能自动查方向的题变少了，看一眼是不是说法换了');
     });
 
+    test('球的旋转题：画的就是皮球，转的方向和步子跟题面说的一致', () {
+      // 按题型 token（`*-turn-*`）筛，别按题面 —— 「都是皮球，找出缺少的那张」
+      // 这类辨认题也带着「皮球」两个字。
+      final rot = [
+        for (final q in kPatternQuestions)
+          if (typeOf(q) == PatternType.turn) q,
+      ];
+      // 5–6 岁两向（四分之一圈）、7–8 岁两向（转过一整圈）、9–10 岁两向（八分之一圈）
+      expect(rot, hasLength(6), reason: '球的旋转题多了 / 少了就来看一眼');
+      for (final q in rot) {
+        expect(q.title.contains('皮球'), isTrue,
+            reason: '${q.id} 的题面没说是皮球：${q.title}');
+        for (final p in [...q.items, ...q.distractors]) {
+          expect(p.kind, PicKind.ballTurn, reason: '${q.id} 里还混着别的图');
+        }
+        final cw = q.title.contains('顺时针');
+        // 「四分之一圈」= 走两格（每格 45°），「八分之一圈」= 走一格
+        final step = q.title.contains('八分之一') ? 1 : 2;
+        expect(q.title.contains('顺时针') || q.title.contains('逆时针'), isTrue,
+            reason: '${q.id} 的题面没说转的方向：${q.title}');
+        final turns = [for (final p in q.items) p.level];
+        for (var i = 1; i < turns.length; i++) {
+          final d = cw ? turns[i] - turns[i - 1] : turns[i - 1] - turns[i];
+          expect(d % 8, step, reason: '${q.id} 第 $i 格的朝向：$turns');
+        }
+      }
+    });
+
+    test('时针旋转题：画的就是表盘，走的方向和格数跟题面说的一致', () {
+      // 同样按题型 token（`*-clk-*`）筛：「顺时针」三个字里也含「时针」。
+      final qs = [
+        for (final q in kPatternQuestions)
+          if (typeOf(q) == PatternType.clock) q,
+      ];
+      expect(qs, hasLength(8), reason: '时针旋转题多了 / 少了就来看一眼');
+      // 题面说法 → 每格走多少个「半小时」
+      const steps = {'半个小时': 1, '一个小时': 2, '两个小时': 4, '三个小时': 6};
+      for (final q in qs) {
+        expect(q.title.contains('时针'), isTrue,
+            reason: '${q.id} 的题面没说是时针：${q.title}');
+        for (final p in [...q.items, ...q.distractors]) {
+          expect(p.kind, PicKind.clock, reason: '${q.id} 里还混着别的图');
+        }
+        var step = 0;
+        for (final e in steps.entries) {
+          if (q.title.contains(e.key)) step = e.value;
+        }
+        expect(step, greaterThan(0), reason: '${q.id} 题面换说法了：${q.title}');
+        final cw = q.title.contains('往前走');
+        expect(cw || q.title.contains('往回走'), isTrue,
+            reason: '${q.id} 的题面没说走的方向：${q.title}');
+        // 一格 = 半小时：整点 2n 格、半点 2n+1 格，绕一圈 24 格
+        int ticks(Pic p) => (p.n % 12) * 2 + p.level;
+        final ts = [for (final p in q.items) ticks(p)];
+        for (var i = 1; i < ts.length; i++) {
+          final d = cw ? ts[i] - ts[i - 1] : ts[i - 1] - ts[i];
+          expect(d % 24, step, reason: '${q.id} 第 $i 格指着：$ts');
+        }
+      }
+    });
+
     test('「小狗离树」的远近题：画的是小狗离树，序列方向和题面说的一致', () {
       // 按题面筛（「小猫、小狗一个隔一个」那种只是提到小狗，不是远近题）。
       final dist =
           [for (final q in kPatternQuestions) if (q.title.contains('离树')) q];
-      // 五档各一道：2–3 岁找一样、3–4 岁交替、学前远近各一、7–8 岁、9–10 岁两向。
-      expect(dist, hasLength(8), reason: '远近题多了 / 少了就来看一眼');
+      // 五档各一道：2–3 岁找一样、3–4 岁升序、学前远近各一、7–8 岁升序、9–10 岁两向。
+      expect(dist, hasLength(7), reason: '远近题多了 / 少了就来看一眼');
       for (final q in dist) {
         for (final p in [...q.items, ...q.distractors]) {
           expect(p.kind, PicKind.dogTree, reason: '${q.id} 里还有旧的小球图');

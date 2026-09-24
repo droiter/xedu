@@ -117,6 +117,10 @@ enum PicKind {
   /// 时钟：时针分针指着整点或半点，[Pic.n] 为小时（1..12），[Pic.level] 0 整点 1 半点。
   clock,
 
+  /// 球的旋转：皮球上的四瓣花纹整组旋转，[Pic.level] 是顺时针转过的
+  /// 八分之一圈数（0..7，每格 45°）。球面的高光不跟着转。
+  ballTurn,
+
   /// 外部图片资源（预留，需要配合 pubspec.yaml 的 assets 目录）。
   asset,
 }
@@ -490,6 +494,16 @@ class Pic {
         label: minute == 0 ? '$hour 点' : '$hour 点半',
       );
 
+  /// 球的旋转：皮球上的四瓣花纹顺时针转过 [eighth] 个八分之一圈。
+  ///
+  /// 八分之一圈（45°）是最小步子 —— 转四分之一圈就是走两格。
+  static Pic ballTurn(int eighth) => Pic(
+        kind: PicKind.ballTurn,
+        id: 'blt:${eighth % 8}',
+        level: eighth % 8,
+        label: '球转 ${eighth % 8} 格',
+      );
+
   /// 队伍里的第 [index] 位（0 = 最后面）。
   String queueAt(int index) =>
       emojis.isEmpty ? '' : emojis[index % emojis.length];
@@ -504,10 +518,10 @@ class Pic {
 
 /// 题库按年龄分层：每个年龄档位提供难度合适的题型。
 enum PatternAgeGroup {
-  /// 2–3 岁：找一样、认颜色、最大最简单的交替。
+  /// 2–3 岁：找一样、认颜色、最长最粗的那种「越来越…」。
   baby,
 
-  /// 3–4 岁：大小、颜色、简单交替。
+  /// 3–4 岁：长短、厚薄、粗细、胖瘦、高矮，升着降着都认。
   toddler,
 
   /// 5–6 岁：数量增减、方向、阶梯、深浅。
@@ -546,8 +560,8 @@ extension PatternAgeGroupX on PatternAgeGroup {
 
   /// 一句话说明题库侧重。
   String get blurb => switch (this) {
-        PatternAgeGroup.baby => '找一样 · 认颜色 · 最简单交替',
-        PatternAgeGroup.toddler => '大小 · 长短 · 粗细 · 简单交替',
+        PatternAgeGroup.baby => '找一样 · 认颜色 · 越来越长',
+        PatternAgeGroup.toddler => '长短 · 粗细 · 胖瘦 · 越来越…',
         PatternAgeGroup.preschool => '数量 · 长短 · 高矮 · 厚薄 · 粗细 · 胖瘦 · 远近 · 深浅',
         PatternAgeGroup.lowerGrade => '数列 · 旋转 · 组合 · 属性规律',
         PatternAgeGroup.upperGrade => '等差等比 · 二维规律 · 属性规律',

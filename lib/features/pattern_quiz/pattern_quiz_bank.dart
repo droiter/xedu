@@ -129,6 +129,28 @@ List<Pic> _esizePool(String emoji) => _esize(emoji, [0, 1, 2, 3]);
 
 List<Pic> _arrowPool() => _arrows([0, 1, 2, 3]);
 
+// ---------- 旋转（皮球上的花纹 / 钟表上的时针） ----------
+List<Pic> _balls(List<int> eighths) => [
+      for (final e in eighths) Pic.ballTurn(e),
+    ];
+
+/// 皮球旋转题的干扰项池：八个朝向（每格 45°），
+/// 交给四分之一圈（走两格）和八分之一圈（走一格）两种题共用。
+List<Pic> _ballTurnPool() => _balls([0, 1, 2, 3, 4, 5, 6, 7]);
+
+List<Pic> _clocks(List<int> hours) => [
+      for (final h in hours) Pic.clock(h),
+    ];
+
+/// 时针旋转题的干扰项池：整点题用十二个整点；
+/// 半点题的正解一会儿整点一会儿半点，干扰项也得两种都有。
+List<Pic> _clockPool({bool halfHour = false}) => halfHour
+    ? [
+        ..._clocks([for (var h = 1; h <= 12; h++) h]),
+        for (var h = 1; h <= 12; h++) Pic.clock(h, minute: 30),
+      ]
+    : _clocks([for (var h = 1; h <= 12; h++) h]);
+
 List<Pic> _rampPool() => [
       for (var b = 0; b < 5; b++)
         for (var l = 0; l < 4; l++) Pic.colorRamp(b, l),
@@ -481,9 +503,6 @@ List<PatternQuestion> _buildBank() {
         diff: 3, blankable: _p2),
     _q('t-cycle3-block', '红、黄、绿轮流出现', _blocks([0, 2, 3, 0]),
         _blockPool(), t, diff: 3, blankable: _p2),
-    _q('t-cycle3-animal', '小狗、小猫、小兔轮流出现',
-        _singles(['🐶', '🐱', '🐰', '🐶']), _altPool(['🐶', '🐱', '🐰']), t,
-        diff: 3, blankable: _p2),
 
     // —— 找同类：补充更多类别 ——
     _q('t-cat-food', '找同类：这些全是好吃的',
@@ -498,8 +517,6 @@ List<PatternQuestion> _buildBank() {
         _singles(_weather.take(4).toList()), _catPool(_weather), t, diff: 3),
 
     // —— 三个一循环 / 大小三步 ——
-    _q('t-cycle3-block2', '红、蓝、黄轮流出现', _blocks([0, 4, 2, 0]),
-        _blockPool(), t, diff: 3, blankable: _p2),
     _q('t-cycle3-shape', '圆、方、三角轮流出现',
         [Pic.shape(0), Pic.shape(1), Pic.shape(2), Pic.shape(0)], _shapePool(),
         t, diff: 3, blankable: _p2),
@@ -600,11 +617,6 @@ List<PatternQuestion> _buildBank() {
         _esizePool('⭐'), p),
     _q('p-shcount-star', '五角星从 1 个增加到 4 个', _shcount(3, [1, 2, 3, 4]),
         _shcountPool(3, 6), p, diff: 2),
-    _q('p-dice-alt', '骰子 1 点、6 点轮流出现', _dice([1, 6, 1, 6]),
-        _dicePool(), p, diff: 2, blankable: _p2),
-    _q('p-bar-alt', '柱子一会儿矮、一会儿高', _pillars([1, 4, 1, 4]),
-        _pillarPool(), p, blankable: _p2),
-
     // —— 数字与数量配对：数字几，旁边就有几个 ——
     _q('p-num-count-1', '数字后面跟着同样多的圆点：1、●、2、●●',
         [Pic.number(1), Pic.dots(1), Pic.number(2), Pic.dots(2)],
@@ -635,6 +647,18 @@ List<PatternQuestion> _buildBank() {
         _singles(_toys.take(4).toList()), _catPool(_toys), p, diff: 2),
     _q('p-cat-animal', '找同类：这些全是小动物',
         _singles(_animals.take(4).toList()), _catPool(_animals), p),
+
+    // —— 旋转：皮球上的花纹、钟表上的时针 ——
+    _q('p-turn-ball-cw', '皮球上的花纹每次往顺时针方向转四分之一圈',
+        _balls([0, 2, 4, 6]), _ballTurnPool(), p, diff: 2),
+    _q('p-turn-ball-ccw', '皮球上的花纹每次往逆时针方向转四分之一圈',
+        _balls([0, 6, 4, 2]), _ballTurnPool(), p, diff: 2),
+    _q('p-clk-hour-cw', '钟表的时针每次往前走一个小时',
+        _clocks([1, 2, 3, 4]), _clockPool(), p, diff: 2),
+    _q('p-clk-hour-ccw', '钟表的时针每次往回走一个小时',
+        _clocks([4, 3, 2, 1]), _clockPool(), p, diff: 2),
+    _q('p-clk-jump3', '钟表的时针每次往前走三个小时',
+        _clocks([12, 3, 6, 9]), _clockPool(), p, diff: 3),
 
     // ============================================================
     // 7–8 岁 · 小学低年级：数列 / 旋转 / 组合
@@ -680,10 +704,6 @@ List<PatternQuestion> _buildBank() {
         _shcount(1, [1, 2, 3, 4]), _shcountPool(1, 6), l),
     _q('l-shcount-star', '五角星从 2 个增加到 5 个',
         _shcount(3, [2, 3, 4, 5]), _shcountPool(3, 7), l, diff: 2),
-    _q('l-shape-alt', '圆形和三角形轮流出现',
-        [Pic.shape(0), Pic.shape(2), Pic.shape(0), Pic.shape(2)], _shapePool(),
-        l, blankable: _p2),
-
     // —— 颜色循环 ——
     _q('l-block-cycle3', '红、黄、绿循环出现', _blocks([0, 2, 3, 0]),
         _blockPool(), l, diff: 3, blankable: _p2),
@@ -764,6 +784,18 @@ List<PatternQuestion> _buildBank() {
     _q('l-num-dice', '数字和骰子点数一一对应：3 点、5 点',
         [Pic.number(3), Pic.dice(3), Pic.number(5), Pic.dice(5)],
         _numDicePool(), l, diff: 3),
+
+    // —— 旋转：转过一整圈再从头开始 / 一次走两三个小时 ——
+    _q('l-turn-ball-cw-wrap', '皮球上的花纹每次顺时针转四分之一圈，转过一整圈再从头开始',
+        _balls([2, 4, 6, 0]), _ballTurnPool(), l, diff: 3),
+    _q('l-turn-ball-ccw-wrap', '皮球上的花纹每次逆时针转四分之一圈，转过一整圈再从头开始',
+        _balls([4, 2, 0, 6]), _ballTurnPool(), l, diff: 3),
+    _q('l-clk-hour2-cw', '钟表的时针每次往前走两个小时',
+        _clocks([1, 3, 5, 7]), _clockPool(), l, diff: 3),
+    _q('l-clk-hour2-ccw', '钟表的时针每次往回走两个小时',
+        _clocks([9, 7, 5, 3]), _clockPool(), l, diff: 3),
+    _q('l-clk-jump3-ccw', '钟表的时针每次往回走三个小时',
+        _clocks([12, 9, 6, 3]), _clockPool(), l, diff: 3),
 
     // ============================================================
     // 9–10 岁 · 小学高年级：等差 / 等比 / 二维规律
@@ -908,68 +940,88 @@ List<PatternQuestion> _buildBank() {
     _q('u-dir-cycle3', '箭头：上、右、下、上……', _arrows([0, 1, 2, 0]),
         _arrowPool(), u, diff: 3, blankable: [1, 2]),
 
+    // —— 旋转：更小的步子（八分之一圈）/ 一次走半个小时 ——
+    _q('u-turn-ball-eighth-cw', '皮球上的花纹每次往顺时针方向转八分之一圈',
+        _balls([0, 1, 2, 3]), _ballTurnPool(), u, diff: 3),
+    _q('u-turn-ball-eighth-ccw', '皮球上的花纹每次往逆时针方向转八分之一圈',
+        _balls([0, 7, 6, 5]), _ballTurnPool(), u, diff: 3),
+    _q('u-clk-half-cw', '钟表的时针每次往前走半个小时',
+        [
+          Pic.clock(12),
+          Pic.clock(12, minute: 30),
+          Pic.clock(1),
+          Pic.clock(1, minute: 30),
+        ],
+        _clockPool(halfHour: true), u, diff: 3),
+    _q('u-clk-half-ccw', '钟表的时针每次往回走半个小时',
+        [
+          Pic.clock(2),
+          Pic.clock(1, minute: 30),
+          Pic.clock(1),
+          Pic.clock(12, minute: 30),
+        ],
+        _clockPool(halfHour: true), u, diff: 3),
+
     // ============================================================
     // 属性规律 · 长短 / 高矮 / 厚薄 / 粗细 / 胖瘦 / 远近
     // 「多少、大小、深浅」在原有题目里已有覆盖，这里补齐其余维度，
-    // 每个维度用同色系的 0..4 五档表达「越来越…」和「…交替」。
+    // 每个维度用同色系的 0..4 五档表达「越来越…」。
     // ============================================================
-    // —— 2–3 岁 · 先认「一样」和最简单的两两交替 ——
+    // —— 2–3 岁 · 先认「一样」 ——
     _q('b-len-same', '四根小棒一样长，找出缺少的那根',
         _sticks(0, [2, 2, 2, 2]), _stickPool(0), b),
-    _q('b-len-alt', '小棒长、短一个隔一个', _sticks(0, [4, 0, 4, 0]),
-        _stickPool(0), b, blankable: _p2),
     _q('b-thick-same', '四块木板一样厚，找出缺少的那块',
         _thickBars(1, [3, 3, 3, 3]), _thickPool(1), b),
-    _q('b-thick-alt', '厚、薄一个隔一个', _thickBars(1, [4, 0, 4, 0]),
-        _thickPool(1), b, blankable: _p2),
     _q('b-width-same', '四根柱子一样粗，找出缺少的那根',
         _pillarWidths(2, [2, 2, 2, 2]), _pillarWidthPool(2), b),
-    _q('b-width-alt', '柱子粗、细一个隔一个', _pillarWidths(2, [4, 0, 4, 0]),
-        _pillarWidthPool(2), b, blankable: _p2),
     _q('b-blob-same', '四个气球一样胖，找出缺少的那个',
         _balloons(3, [3, 3, 3, 3]), _balloonPool(3), b),
-    _q('b-blob-alt', '气球胖、瘦一个隔一个', _balloons(3, [4, 0, 4, 0]),
-        _balloonPool(3), b, blankable: _p2),
     _q('b-dist-same', '四只小狗离树一样远，找出缺少的那个',
         _dists(4, [1, 1, 1, 1]), _distPool(4), b),
     _q('b-tall-same', '四根柱子一样高，找出缺少的那根',
         _pillars([2, 2, 2, 2]), _pillarPool(), b),
-    _q('b-tall-alt', '柱子高、矮一个隔一个', _pillars([3, 0, 3, 0]), _pillarPool(), b,
-        blankable: _p2),
 
-    // —— 3–4 岁 · 认一样 / 交替，迈出「越来越…」第一步 ——
+    // —— 2–3 岁 · 迈出「越来越…」第一步：四格里只有被比的那个属性一档比一档大 ——
+    _q('b-len-asc', '小棒一根比一根长', _sticks(0, [0, 1, 2, 3]), _stickPool(0),
+        b, diff: 2),
+    _q('b-tall-asc', '小树越来越高', _trees([0, 1, 2, 3]), _treePool(), b,
+        diff: 2),
+    _q('b-blob-asc', '气球越来越胖', _balloons(0, [0, 1, 2, 3]), _balloonPool(0),
+        b, diff: 2),
+    _q('b-thick-asc', '木板一块比一块厚', _thickBars(0, [0, 1, 2, 3]),
+        _thickPool(0), b, diff: 2),
+    _q('b-width-asc', '柱子越来越粗', _pillarWidths(1, [0, 1, 2, 3]),
+        _pillarWidthPool(1), b, diff: 2),
+
+    // —— 3–4 岁 · 认一样，迈出「越来越…」第一步 ——
     _q('t-len-same', '四根小棒一样长，找出缺少的那根',
         _sticks(1, [3, 3, 3, 3]), _stickPool(1), t),
-    _q('t-len-alt', '小棒长、短轮流出现', _sticks(1, [4, 0, 4, 0]), _stickPool(1),
-        t, blankable: _p2),
     _q('t-len-asc', '小棒一根比一根长', _sticks(1, [0, 1, 2, 3]), _stickPool(1),
         t, diff: 2),
-    _q('t-thick-alt', '厚、薄轮流出现', _thickBars(2, [4, 0, 4, 0]),
-        _thickPool(2), t, blankable: _p2),
     _q('t-thick-asc', '木板一块比一块厚', _thickBars(2, [0, 1, 2, 3]),
         _thickPool(2), t, diff: 2),
     _q('t-width-same', '四根柱子一样粗，找出缺少的那根',
         _pillarWidths(3, [2, 2, 2, 2]), _pillarWidthPool(3), t),
-    _q('t-width-alt', '柱子粗、细轮流出现', _pillarWidths(3, [4, 0, 4, 0]),
-        _pillarWidthPool(3), t, blankable: _p2),
-    _q('t-blob-alt', '气球胖、瘦轮流出现', _balloons(4, [0, 4, 0, 4]), _balloonPool(4),
-        t, blankable: _p2),
     _q('t-blob-asc', '气球一圈比一圈胖', _balloons(4, [0, 1, 2, 3]), _balloonPool(4),
         t, diff: 2),
-    _q('t-dist-alt', '小狗一会儿离树近、一会儿离树远', _dists(1, [0, 4, 0, 4]),
-        _distPool(1), t, diff: 2, blankable: _p2),
     _q('t-tall-asc', '小树一棵比一棵高', _trees([0, 1, 2, 3]), _treePool(), t,
         diff: 2),
-    _q('t-tall-alt', '小树高、矮轮流出现', _trees([0, 3, 0, 3]), _treePool(), t,
-        blankable: _p2),
+    _q('t-width-asc', '柱子一根比一根粗', _pillarWidths(3, [0, 1, 2, 3]),
+        _pillarWidthPool(3), t, diff: 2),
+    _q('t-width-asc2', '树干越来越粗', _trunkWidths(4, [0, 1, 2, 3]),
+        _trunkPool(4), t, diff: 2),
+    _q('t-dist-asc', '小狗离树越来越远', _dists(1, [0, 1, 2, 3]), _distPool(1), t,
+        diff: 2),
+    _q('t-len-desc', '小棒一根比一根短', _sticks(1, [4, 3, 2, 1]), _stickPool(1),
+        t, diff: 2),
+    _q('t-tall-desc', '柱子一根比一根矮', _pillars([4, 3, 2, 1]), _pillarPool(), t,
+        diff: 2),
 
-    // —— 5–6 岁 · 「越来越…」双向序列 + 交替 ——
+    // —— 5–6 岁 · 「越来越…」双向序列 ——
     _q('p-len-asc', '小棒一根比一根长', _sticks(0, [0, 1, 2, 3]), _stickPool(0),
         p),
     _q('p-len-desc', '小棒一根比一根短', _sticks(0, [4, 3, 2, 1]),
         _stickPool(0), p),
-    _q('p-len-alt', '小棒长、短轮流出现', _sticks(0, [0, 4, 0, 4]), _stickPool(0), p,
-        blankable: _p2),
     _q('p-tall-asc', '柱子一根比一根高', _pillars([0, 1, 2, 3]), _pillarPool(), p),
     _q('p-tall-desc', '柱子一根比一根矮', _pillars([4, 3, 2, 1]), _pillarPool(), p),
     _q('p-thick-asc', '书本一本比一本厚', _thickBars(1, [0, 1, 2, 3]),
@@ -980,16 +1032,12 @@ List<PatternQuestion> _buildBank() {
         _trunkPool(2), p),
     _q('p-width-desc', '树干一根比一根细', _trunkWidths(2, [4, 3, 2, 1]),
         _trunkPool(2), p),
-    _q('p-width-alt', '树干粗、细轮流出现', _trunkWidths(2, [4, 0, 4, 0]),
-        _trunkPool(2), p, blankable: _p2),
     _q('p-blob-asc', '气球一个比一个胖', _balloons(3, [0, 1, 2, 3]), _balloonPool(3),
         p),
     _q('p-blob-desc', '气球一个比一个瘦', _balloons(3, [4, 3, 2, 1]), _balloonPool(3),
         p),
     _q('p-dist-asc', '小狗离树越来越远', _dists(4, [0, 1, 2, 3]), _distPool(4), p),
     _q('p-dist-desc', '小狗离树越来越近', _dists(4, [4, 3, 2, 1]), _distPool(4), p),
-    _q('p-dist-alt', '小狗一会儿离树近、一会儿离树远', _dists(4, [0, 4, 0, 4]),
-        _distPool(4), p, blankable: _p2),
 
     // —— 7–8 岁 · 双向序列 + 「属性 + 颜色」二维规律 ——
     _q('l-len-asc', '小棒一根比一根长', _sticks(0, [0, 1, 2, 3]), _stickPool(0),

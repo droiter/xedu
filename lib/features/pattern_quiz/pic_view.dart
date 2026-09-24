@@ -61,6 +61,14 @@ const List<Color> kBlockColors = [
   Color(0xFF546E7A), // 蓝灰
 ];
 
+/// 皮球旋转用的四瓣颜色：红、黄、绿、蓝，彼此差别大，转一小步就看得出。
+const List<Color> kBallColors = [
+  Color(0xFFE53935), // 红
+  Color(0xFFFDD835), // 黄
+  Color(0xFF43A047), // 绿
+  Color(0xFF1E88E5), // 蓝
+];
+
 /// 树冠色板：下标按 base 取，都是看着像树叶的绿。
 const List<Color> kLeafColors = [
   Color(0xFF43A047), // 绿
@@ -193,6 +201,7 @@ class PicView extends StatelessWidget {
           PicKind.queue => _queue(w, h, scheme),
           PicKind.place => _place(box, scheme),
           PicKind.clock => _clock(box, scheme),
+          PicKind.ballTurn => _ballTurn(box, scheme),
           PicKind.asset => _asset(box),
         };
         return Center(child: art);
@@ -1216,6 +1225,26 @@ class PicView extends StatelessWidget {
     );
   }
 
+  Widget _ballTurn(double box, ColorScheme scheme) {
+    final d = box * 0.94;
+    return SizedBox(
+      width: box,
+      height: box,
+      child: Center(
+        child: SizedBox(
+          width: d,
+          height: d,
+          child: CustomPaint(
+            painter: _BallTurnPainter(
+              eighth: _mod(pic.level, 8),
+              outline: scheme.onSurface.withOpacity(0.45),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _asset(double box) {
     return Container(
       width: box,
@@ -1228,6 +1257,81 @@ class PicView extends StatelessWidget {
       child: Icon(Icons.image_outlined, size: box * 0.45, color: Colors.black38),
     );
   }
+}
+
+/// 皮球：四瓣彩色花纹 + 球面高光。花纹跟着 [eighth] 转，高光不动
+/// （光一直照在球的左上角，动的是球上的花纹，这样才像球在转）。
+class _BallTurnPainter extends CustomPainter {
+  _BallTurnPainter({required this.eighth, required this.outline});
+
+  /// 顺时针转过的八分之一圈数，0..7。
+  final int eighth;
+
+  final Color outline;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final r = size.shortestSide / 2;
+    final c = Offset(size.width / 2, size.height / 2);
+    final rect = Rect.fromCircle(center: c, radius: r);
+
+    canvas.save();
+    canvas.clipPath(Path()..addOval(rect));
+    final start = -math.pi / 2 + eighth * math.pi / 4;
+    for (var k = 0; k < 4; k++) {
+      canvas.drawArc(
+        rect,
+        start + k * math.pi / 2,
+        math.pi / 2,
+        true,
+        Paint()..color = kBallColors[k % kBallColors.length],
+      );
+    }
+    // 球面明暗：左上亮、右边和下方暗，四瓣花纹才不像一块圆色盘
+    canvas.drawCircle(
+      c,
+      r,
+      Paint()
+        ..shader = RadialGradient(
+          center: const Alignment(-0.5, -0.5),
+          radius: 0.78,
+          colors: [
+            Colors.white.withOpacity(0.40),
+            Colors.white.withOpacity(0.02),
+            Colors.black.withOpacity(0.0),
+            Colors.black.withOpacity(0.26),
+          ],
+          stops: const [0.0, 0.38, 0.78, 1.0],
+        ).createShader(rect),
+    );
+    // 左上角一小片柔光（球的反光），跟着光走、不跟着花纹转
+    final hl = Rect.fromCenter(
+      center: c + Offset(-r * 0.40, -r * 0.46),
+      width: r * 0.66,
+      height: r * 0.46,
+    );
+    canvas.drawOval(
+      hl,
+      Paint()
+        ..shader = RadialGradient(
+          colors: [Colors.white.withOpacity(0.9), Colors.white.withOpacity(0)],
+        ).createShader(hl),
+    );
+    canvas.restore();
+
+    canvas.drawCircle(
+      c,
+      r - r * 0.035,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = r * 0.07
+        ..color = outline,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_BallTurnPainter old) =>
+      old.eighth != eighth || old.outline != outline;
 }
 
 /// 时钟表盘：十二个刻度 + 时针分针。十二点在上，顺时针走。

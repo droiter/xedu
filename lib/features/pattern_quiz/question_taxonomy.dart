@@ -53,6 +53,8 @@ enum PatternType {
   shapeColor('图形+颜色', 'SHPC', PatternFamily.color),
   shape('形状旋转', 'SHP', PatternFamily.geometry),
   direction('方向', 'DIR', PatternFamily.geometry),
+  turn('球的旋转', 'TURN', PatternFamily.geometry),
+  clock('时针旋转', 'CLK', PatternFamily.geometry),
   other('其他', 'OTH', PatternFamily.sequence);
 
   const PatternType(this.label, this.code, this.family);
@@ -97,6 +99,8 @@ const Map<String, PatternType> _tokenType = {
   'shapecolor': PatternType.shapeColor,
   'shape': PatternType.shape,
   'dir': PatternType.direction,
+  'turn': PatternType.turn,
+  'clk': PatternType.clock,
 };
 
 /// 题目短名形如 `p-len-asc-1`：第 1 段年龄、第 2 段题型、其余为实例名。
