@@ -147,7 +147,7 @@ void main() {
       expect(prefs.getString(patternStatsKeyFor('u1')), isNotNull);
     });
 
-    test('未登录时记录被忽略，不会写入', () async {
+    test('没登录时记录写进游客档，登录后看的是账号那一档', () async {
       SharedPreferences.setMockInitialValues({});
       final prefs = await SharedPreferences.getInstance();
       final container = ProviderContainer(
@@ -155,10 +155,24 @@ void main() {
       );
       addTearDown(container.dispose);
 
-      container
-          .read(patternStatsProvider.notifier)
-          .record(qid: qidOf(kPatternQuestions.first), wrong: 0);
+      final qid = qidOf(kPatternQuestions.first);
+      container.read(patternStatsProvider.notifier).record(qid: qid, wrong: 0);
+      expect(container.read(patternStatsProvider).totalAttempts, 1);
+      expect(prefs.getString(patternStatsKeyFor(kGuestUid)), isNotNull);
+
+      // 注册一个账号：游客档的题不进账号里，账号自己从零开始记。
+      await container
+          .read(authControllerProvider.notifier)
+          .register('小明', 'x@x.com', '1234');
       expect(container.read(patternStatsProvider).totalAttempts, 0);
+
+      container.read(patternStatsProvider.notifier).record(qid: qid, wrong: 0);
+      expect(container.read(patternStatsProvider).totalAttempts, 1);
+      expect(
+        container.read(patternStatsProvider).byQuestion[qid]!.attempts,
+        1,
+        reason: '账号这一档只该有登录之后做的那一次',
+      );
     });
   });
 }

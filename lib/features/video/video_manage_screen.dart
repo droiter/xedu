@@ -43,7 +43,7 @@ class _VideoManageScreenState extends ConsumerState<VideoManageScreen> {
         padding: const EdgeInsets.fromLTRB(18, 12, 18, 28),
         children: [
           Text(
-            '这里的分类会出现在「看视频」选项卡里，点分类就能看到里面的视频。',
+            '这里的分类和视频只存在本机 xEdu 里；孩子看视频请用「xVideo」应用。',
             style: TextStyle(fontSize: 13, color: scheme.onSurfaceVariant),
           ),
           const SizedBox(height: 16),

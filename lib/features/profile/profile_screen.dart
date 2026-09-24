@@ -5,6 +5,7 @@ import '../../core/constants.dart';
 import '../../core/theme.dart';
 import '../../data/models.dart';
 import '../../state/providers.dart';
+import '../auth/login_screen.dart';
 import '../qa_quiz/qa_rate_chips.dart';
 import '../qa_quiz/qa_speech.dart';
 import '../video/video_manage_screen.dart';
@@ -43,7 +44,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           const Text('我的',
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800)),
           const SizedBox(height: 14),
-          if (user != null) _userCard(context, scheme, user),
+          if (user != null) _userCard(context, scheme, user) else _guestCard(context),
           const SizedBox(height: 16),
           const _SectionLabel('视频'),
           Card(
@@ -114,18 +115,42 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             ),
           ),
           const SizedBox(height: 16),
-          const _SectionLabel('账号'),
-          Card(
-            margin: EdgeInsets.zero,
-            color: scheme.errorContainer.withOpacity(0.35),
-            child: ListTile(
-              leading: Icon(Icons.logout_rounded, color: scheme.error),
-              title: Text('退出登录', style: TextStyle(color: scheme.error)),
-              trailing: Icon(Icons.chevron_right_rounded, color: scheme.error),
-              onTap: () => _confirmLogout(context),
+          if (user != null) ...[
+            const _SectionLabel('账号'),
+            Card(
+              margin: EdgeInsets.zero,
+              color: scheme.errorContainer.withOpacity(0.35),
+              child: ListTile(
+                leading: Icon(Icons.logout_rounded, color: scheme.error),
+                title: Text('退出登录', style: TextStyle(color: scheme.error)),
+                trailing: Icon(Icons.chevron_right_rounded, color: scheme.error),
+                onTap: () => _confirmLogout(context),
+              ),
             ),
-          ),
+          ],
         ],
+      ),
+    );
+  }
+
+  /// 没登录时的入口卡片：不登录也能学，想用账号从这里去注册或登录。
+  Widget _guestCard(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Card(
+      margin: EdgeInsets.zero,
+      clipBehavior: Clip.antiAlias,
+      color: scheme.primaryContainer.withOpacity(0.55),
+      child: ListTile(
+        leading: const CircleAvatar(
+          backgroundColor: kBrand,
+          child: Icon(Icons.person_outline_rounded, color: Colors.white),
+        ),
+        title: const Text('未登录', style: TextStyle(fontWeight: FontWeight.w800)),
+        subtitle: const Text('点这里注册或登录账号'),
+        trailing: const Icon(Icons.chevron_right_rounded),
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => const LoginScreen()),
+        ),
       ),
     );
   }
@@ -209,7 +234,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('退出登录'),
-        content: const Text('确定要退出当前账号吗？学习进度会保存在本机。'),
+        content: const Text('退出后不登录也能继续用；学习进度按账号存在本机，'
+            '重新登录还能看到。'),
         actions: [
           TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('取消')),
           FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('退出')),

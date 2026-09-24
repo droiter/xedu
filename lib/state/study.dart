@@ -77,12 +77,12 @@ class StudyState {
       };
 }
 
-/// 学习进度控制器。切换登录用户时自动加载 / 清空。
+/// 学习进度控制器。切换登录用户时自动加载 / 清空；没登录就记在游客档里。
 class StudyController extends Notifier<StudyState> {
   @override
   StudyState build() {
-    final uid = ref.watch(authControllerProvider.select((s) => s.user?.id));
-    if (uid == null) return const StudyState();
+    final uid = ref.watch(authControllerProvider.select((s) => s.user?.id)) ??
+        kGuestUid;
     final raw = ref.watch(prefsProvider).getString(studyKeyFor(uid));
     if (raw == null || raw.isEmpty) return const StudyState();
     try {
@@ -92,7 +92,7 @@ class StudyController extends Notifier<StudyState> {
     }
   }
 
-  String? get _uid => ref.read(authControllerProvider).user?.id;
+  String get _uid => ref.read(authControllerProvider).user?.id ?? kGuestUid;
 
   // ---- 派生查询 ----
   bool isEnrolled(String courseId) => state.courses.containsKey(courseId);
@@ -114,7 +114,7 @@ class StudyController extends Notifier<StudyState> {
   // ---- 变更操作 ----
   void enroll(String courseId) {
     final uid = _uid;
-    if (uid == null || state.courses.containsKey(courseId)) return;
+    if (state.courses.containsKey(courseId)) return;
     _mutate(uid, (s) => StudyState(
           courses: {...s.courses, courseId: CourseStudy(courseId: courseId)},
           dayMinutes: s.dayMinutes,
@@ -125,7 +125,6 @@ class StudyController extends Notifier<StudyState> {
 
   void completeLesson(Course course, Lesson lesson) {
     final uid = _uid;
-    if (uid == null) return;
     _mutate(uid, (s) {
       final already = s.courses[course.id]?.done.contains(lesson.id) ?? false;
       if (already) return s; // 幂等：已完成的课时不再重复累计学习时长
@@ -158,7 +157,6 @@ class StudyController extends Notifier<StudyState> {
 
   void recordQuizBest(String courseId, String lessonId, int percent) {
     final uid = _uid;
-    if (uid == null) return;
     _mutate(uid, (s) {
       final prev = s.courses[courseId] ?? CourseStudy(courseId: courseId);
       final old = prev.quizBest[lessonId];

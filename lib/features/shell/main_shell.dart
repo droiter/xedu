@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 
 import '../../core/constants.dart';
 import '../catalog/catalog_screen.dart';
-import '../home/home_screen.dart';
+import '../pattern_quiz/pattern_age_select_screen.dart';
 import '../profile/profile_screen.dart';
 import '../progress/progress_screen.dart';
 import '../qa_quiz/qa_age_select_screen.dart';
-import '../video/video_library_screen.dart';
 
 /// 底部导航主框架。
+///
+/// 原来那页「首页」（问候语 + 搜索栏 + 精选 + 继续学习）已经隐藏：一进 App
+/// 就停在「看图找规律」的年龄选择页，「看图找规律」那格也就是选中状态。
+/// 首页的代码还在 `features/home/home_screen.dart`，只是没人引用。
 class MainShell extends StatefulWidget {
   const MainShell({super.key});
 
@@ -25,9 +28,8 @@ class _MainShellState extends State<MainShell> {
       body: IndexedStack(
         index: _index,
         children: [
-          HomeScreen(onOpenTab: _goTab),
+          const PatternAgeSelectScreen(),
           const QaAgeSelectScreen(),
-          VideoLibraryScreen(onOpenManage: () => _goTab(kProfileTab)),
           const CatalogScreen(),
           ProgressScreen(onExplore: () => _goTab(kCourseTab)),
           const ProfileScreen(),
@@ -49,7 +51,7 @@ class _MainShellState extends State<MainShell> {
 /// 「现在在哪个分类」只靠高亮表示（当前那格是主色 + 药丸底色），不转光辉 ——
 /// 转着的光既晃眼，也说不清到底在哪个分类。置灰的格子点不进去。
 ///
-/// 六格并排比原来挤，字号和内边距都收了一点，字太长会省略号收尾。
+/// 并排的格子挨得近，字号和内边距都收了一点，字太长会省略号收尾。
 class _TabBar extends StatelessWidget {
   const _TabBar({required this.index, required this.onSelect});
 
@@ -62,7 +64,6 @@ class _TabBar extends StatelessWidget {
     const cells = [
       (Icons.auto_awesome_rounded, '看图找规律'),
       (Icons.question_answer_rounded, '看图问答'),
-      (Icons.ondemand_video_rounded, '看视频'),
       (Icons.grid_view_outlined, '课程'),
       (Icons.leaderboard_outlined, '进度'),
       (Icons.person_outline_rounded, '我的'),

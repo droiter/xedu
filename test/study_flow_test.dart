@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:xedu/core/constants.dart';
 import 'package:xedu/core/utils.dart';
 import 'package:xedu/state/providers.dart';
 
@@ -8,10 +9,11 @@ import 'fixtures.dart';
 
 void main() {
   late ProviderContainer container;
+  late SharedPreferences prefs;
 
   setUp(() async {
     SharedPreferences.setMockInitialValues({});
-    final prefs = await SharedPreferences.getInstance();
+    prefs = await SharedPreferences.getInstance();
     container = ProviderContainer(
       overrides: [prefsProvider.overrideWithValue(prefs)],
     );
@@ -87,16 +89,34 @@ void main() {
       expect(study.quizBestOf(course.id, lesson.id), 100);
     });
 
-    test('退出登录后学习状态被清空', () async {
+    test('退出登录后看的是游客档，账号自己那份留在本机', () async {
       await container.read(authControllerProvider.notifier)
           .register('小明', 'x@x.com', '1234');
+      final uid = container.read(authControllerProvider).user!.id;
       final course = sampleCourse();
-      final study = container.read(studyControllerProvider.notifier);
-      study.enroll(course.id);
+      container.read(studyControllerProvider.notifier).enroll(course.id);
       expect(container.read(studyControllerProvider).courses, isNotEmpty);
 
       await container.read(authControllerProvider.notifier).logout();
+      expect(container.read(studyControllerProvider).courses, isEmpty,
+          reason: '游客档里还没报过课');
+      expect(prefs.getString(studyKeyFor(uid)), isNotNull,
+          reason: '账号那份进度还在本机，重新登录还能看到');
+    });
+
+    test('没登录也能报课做题，进度记在游客档；注册后各算各的', () async {
+      final course = sampleCourse();
+      container.read(studyControllerProvider.notifier).enroll(course.id);
+      expect(container.read(studyControllerProvider).courses.containsKey(course.id), isTrue);
+      expect(prefs.getString(studyKeyFor(kGuestUid)), isNotNull);
+
+      // 注册一个账号：账号这一档是新的，游客档的进度不跟过来。
+      await container.read(authControllerProvider.notifier)
+          .register('小明', 'x@x.com', '1234');
       expect(container.read(studyControllerProvider).courses, isEmpty);
+
+      container.read(studyControllerProvider.notifier).enroll(course.id);
+      expect(container.read(studyControllerProvider).courses.containsKey(course.id), isTrue);
     });
   });
 }

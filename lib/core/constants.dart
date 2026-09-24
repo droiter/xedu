@@ -23,17 +23,20 @@ String patternStatsKeyFor(String uid) => 'xedu_pattern_$uid';
 /// 「看视频」视频库：分类 + 视频。全机共用一份（家长加片，孩子看）。
 const String kVideoLibraryKey = 'xedu_video_lib';
 
-// 底部选项卡下标
+// 底部选项卡下标。
+// 原来「看视频」那一格已经撤掉：看视频搬到了单独的 xVideo 应用，xEdu 里不再有入口。
 const int kQuizTab = 0;
 const int kQaTab = 1;
-const int kVideoTab = 2;
-const int kCourseTab = 3;
-const int kProgressTab = 4;
-const int kProfileTab = 5;
+const int kCourseTab = 2;
+const int kProgressTab = 3;
+const int kProfileTab = 4;
 
-/// 当前开放的选项卡：看图找规律 / 看图问答 / 看视频 / 我的；
+/// 当前开放的选项卡：看图找规律 / 看图问答 / 我的；
 /// 课程与进度只见其形、点不进去。
-const Set<int> kOpenTabs = {kQuizTab, kQaTab, kVideoTab, kProfileTab};
+const Set<int> kOpenTabs = {kQuizTab, kQaTab, kProfileTab};
+
+/// 没登录时的「游客」档：不用账号也能用，学习进度先记在这一档下。
+const String kGuestUid = 'guest';
 
 /// 「看图问答」的朗读语速（倍速，1.0 为原速）。
 const String kQaSpeechRateKey = 'xedu_qa_speech_rate';

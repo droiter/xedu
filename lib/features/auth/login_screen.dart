@@ -39,6 +39,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         ? await auth.register(_name.text, _email.text, _password.text)
         : await auth.login(_email.text, _password.text);
     if (!mounted) return;
+    if (err == null) {
+      // 登录页是从「我的」推上来的，登完退回原处（主界面自己会跟着换一档数据）。
+      Navigator.of(context).pop();
+      return;
+    }
     setState(() {
       _busy = false;
       _error = err;
@@ -50,6 +55,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final scheme = Theme.of(context).colorScheme;
 
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.close_rounded),
+          tooltip: '返回',
+          onPressed: () => Navigator.of(context).maybePop(),
+        ),
+      ),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -138,6 +152,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             }),
                     child: Text(_registerMode ? '已有账号？去登录' : '还没有账号？立即注册'),
                   ),
+                  const SizedBox(height: 6),
+                  Text('不注册也能用 xEdu；注册之后，做题记录就跟着账号走。',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 12.5, color: scheme.onSurfaceVariant)),
                 ],
               ),
             ),

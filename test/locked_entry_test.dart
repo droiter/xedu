@@ -8,10 +8,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:xedu/app.dart';
 import 'package:xedu/core/constants.dart';
 import 'package:xedu/data/models.dart';
-import 'package:xedu/features/course/course_detail_screen.dart';
 import 'package:xedu/features/home/home_screen.dart';
 import 'package:xedu/features/pattern_quiz/pattern_age_select_screen.dart';
-import 'package:xedu/shared/widgets/course_card.dart';
+import 'package:xedu/features/pattern_quiz/pattern_quiz_screen.dart';
 import 'package:xedu/shared/widgets/glow_border.dart';
 import 'package:xedu/state/catalog.dart';
 import 'package:xedu/state/providers.dart';
@@ -40,7 +39,7 @@ Future<void> _pumpShell(WidgetTester tester,
     ],
     child: const XeduApp(),
   ));
-  // 首页有入场动画，统一用显式 pump 推进（别用 pumpAndSettle）。
+  // 统一用显式 pump 推进（别用 pumpAndSettle）。
   await tester.pump();
   await tester.pump(const Duration(milliseconds: 600));
 }
@@ -50,7 +49,7 @@ Future<void> _pumpShell(WidgetTester tester,
 int? _currentTab(WidgetTester tester) =>
     tester.widget<IndexedStack>(find.byType(IndexedStack).first).index;
 
-/// 某一格选项卡里的光辉 —— 现在一格都不该有（光辉只留给首页那张入口卡）。
+/// 某一格选项卡里的光辉 —— 一格都不该有（底部选项卡从来就不转光辉）。
 Finder _tabGlow(int i) => find.descendant(
       of: find.byKey(ValueKey('tab-$i')),
       matching: find.byType(GlowBorder),
@@ -64,41 +63,48 @@ Color _tabColor(WidgetTester tester, int i) => tester
     .color!;
 
 void main() {
+  testWidgets('一进 App 就停在「看图找规律」，原来那页首页不再出现', (tester) async {
+    await _pumpShell(tester);
+
+    // 首页（问候语 / 搜索栏 / 精选 / 继续学习 / 为你推荐）整个不再建出来。
+    expect(find.byType(HomeScreen), findsNothing);
+    expect(find.text('搜索想学的课程'), findsNothing);
+
+    // 直接就是「看图找规律」的年龄选择页，「看图找规律」那格是选中状态。
+    expect(_currentTab(tester), kQuizTab);
+    expect(find.byType(PatternAgeSelectScreen), findsOneWidget);
+    expect(find.text('选择宝贝的年龄'), findsOneWidget);
+    expect(find.text('开始闯关'), findsOneWidget);
+  });
+
   testWidgets('课程 / 进度选项卡仍然点不进去', (tester) async {
     await _pumpShell(tester);
-    expect(find.byType(HomeScreen), findsOneWidget);
 
-    // 底部五个选项卡都在，课程和进度看得见但点不动。
+    // 底部五格都在，课程和进度看得见但点不动；「看视频」那格已经撤掉。
     expect(find.text('看图找规律'), findsWidgets);
-    expect(find.text('看视频'), findsWidgets);
+    expect(find.text('看图问答'), findsWidgets);
+    expect(find.text('看视频'), findsNothing);
     expect(find.text('课程'), findsOneWidget);
     expect(find.text('进度'), findsOneWidget);
     expect(find.text('我的'), findsWidgets);
 
-    // 点置灰的课程卡片不进入课程详情。
-    final title = tester.widget<CourseCard>(find.byType(CourseCard).first);
-    await tester.tap(find.text(title.course.title).first);
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 400));
-    expect(find.byType(CourseDetailScreen), findsNothing);
-
-    // 点「课程」选项卡也不换页，首页还在。
+    // 点「课程」选项卡不换页，还停在年龄选择页。
     expect(_currentTab(tester), kQuizTab);
     await tester.tap(find.byIcon(Icons.grid_view_outlined), warnIfMissed: false);
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
     expect(_currentTab(tester), kQuizTab);
-    expect(find.text('搜索想学的课程'), findsOneWidget);
+    expect(find.text('选择宝贝的年龄'), findsOneWidget);
   });
 
-  testWidgets('「看视频」和「我的」选项卡可以进入', (tester) async {
+  testWidgets('「看图问答」和「我的」选项卡可以进入', (tester) async {
     await _pumpShell(tester);
     expect(_currentTab(tester), kQuizTab);
 
-    await tester.tap(find.byIcon(Icons.ondemand_video_rounded));
+    await tester.tap(find.byIcon(Icons.question_answer_rounded));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
-    expect(_currentTab(tester), kVideoTab);
+    expect(_currentTab(tester), kQaTab);
 
     await tester.tap(find.byIcon(Icons.person_outline_rounded));
     await tester.pump();
@@ -113,62 +119,59 @@ void main() {
     await _pumpShell(tester, size: const Size(360, 640));
 
     expect(tester.takeException(), isNull);
-    for (final label in ['看图找规律', '看视频', '课程', '进度', '我的']) {
+    for (final label in ['看图找规律', '看图问答', '课程', '进度', '我的']) {
       expect(find.text(label), findsWidgets, reason: '少了「$label」这格');
     }
-    // 最长的那个标签（首页入口卡 + 选项卡各一个）都不能被压成省略号。
+    // 最长的那个标签不能被压成省略号。
     for (final e in find.text('看图找规律').evaluate()) {
       final p = e.renderObject! as RenderParagraph;
       expect(p.didExceedMaxLines, isFalse);
     }
   });
 
-  testWidgets('「看图找规律」入口有光辉且可以进入', (tester) async {
+  testWidgets('停在「看图找规律」这一页就能直接开一局', (tester) async {
     await _pumpShell(tester);
 
-    // 就首页那张入口卡一圈光辉 —— 底部选项卡不再常驻转光（见下一条）。
-    expect(find.byType(GlowBorder), findsOneWidget);
-    // 这一处是转圈的流光（答案辉光才是不转的「闪一下」）。
-    expect(tester.widget<GlowBorder>(find.byType(GlowBorder)).spin, isTrue);
+    // 默认那格（看图找规律）是高亮的主色，另一格不是。
+    expect(_tabColor(tester, kQuizTab), isNot(_tabColor(tester, kQaTab)));
 
-    // 首页那张入口卡（底部选项卡那格点了不跳转）。
-    // Ink 只负责画渐变、不参与命中测试，真正接手势的是它外面的 InkWell。
-    await tester.tap(find.widgetWithText(Ink, '看图找规律'), warnIfMissed: false);
+    // 不用先路过任何首页，年龄选择页上直接就能开始闯关。
+    await tester.tap(find.text('开始闯关'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 600));
 
-    expect(find.byType(PatternAgeSelectScreen), findsOneWidget);
+    expect(find.byType(PatternQuizScreen), findsOneWidget);
   });
 
   testWidgets('选项卡只靠高亮表示当前分类，一格都不转光辉', (tester) async {
     await _pumpShell(tester);
 
     // 一上来没有任何一格有光辉。
-    for (var i = 0; i < 6; i++) {
+    for (var i = 0; i < 5; i++) {
       expect(_tabGlow(i), findsNothing, reason: '第 $i 格不该有光辉');
     }
 
     // 当前（看图找规律）那格是主色，别的格子不是。
     final selectedColor = _tabColor(tester, kQuizTab);
-    final otherColor = _tabColor(tester, kVideoTab);
+    final otherColor = _tabColor(tester, kQaTab);
     expect(selectedColor, isNot(otherColor));
 
-    await tester.tap(find.byIcon(Icons.ondemand_video_rounded));
+    await tester.tap(find.byIcon(Icons.question_answer_rounded));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
 
-    // 高亮跟着走到「看视频」，切过去那一下也不闪光。
-    expect(_tabColor(tester, kVideoTab), selectedColor);
+    // 高亮跟着走到「看图问答」，切过去那一下也不闪光。
+    expect(_tabColor(tester, kQaTab), selectedColor);
     expect(_tabColor(tester, kQuizTab), otherColor);
-    for (var i = 0; i < 6; i++) {
+    for (var i = 0; i < 5; i++) {
       expect(_tabGlow(i), findsNothing, reason: '切到第 $i 格时闪光了');
     }
 
     // 过一会儿也没有「迟到的」光辉。
     await tester.pump(const Duration(milliseconds: 1400));
-    for (var i = 0; i < 6; i++) {
+    for (var i = 0; i < 5; i++) {
       expect(_tabGlow(i), findsNothing, reason: '第 $i 格冒出了光辉');
     }
-    expect(_tabColor(tester, kVideoTab), selectedColor);
+    expect(_tabColor(tester, kQaTab), selectedColor);
   });
 }

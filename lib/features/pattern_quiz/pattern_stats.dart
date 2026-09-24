@@ -81,12 +81,13 @@ class PatternStats {
       };
 }
 
-/// 做题统计控制器：按登录账号持久化，切换用户时自动加载 / 清空。
+/// 做题统计控制器：按登录账号持久化，切换用户时自动加载 / 清空；
+/// 没登录就记在游客档里。
 class PatternStatsController extends Notifier<PatternStats> {
   @override
   PatternStats build() {
-    final uid = ref.watch(authControllerProvider.select((s) => s.user?.id));
-    if (uid == null) return const PatternStats();
+    final uid = ref.watch(authControllerProvider.select((s) => s.user?.id)) ??
+        kGuestUid;
     final raw = ref.watch(prefsProvider).getString(patternStatsKeyFor(uid));
     if (raw == null || raw.isEmpty) return const PatternStats();
     try {
@@ -96,12 +97,11 @@ class PatternStatsController extends Notifier<PatternStats> {
     }
   }
 
-  String? get _uid => ref.read(authControllerProvider).user?.id;
+  String get _uid => ref.read(authControllerProvider).user?.id ?? kGuestUid;
 
   /// 记录一次作答：[wrong] 为这次答错的次数（0 表示一次答对）。
   void record({required String qid, required int wrong}) {
     final uid = _uid;
-    if (uid == null) return;
     final prev = state.byQuestion[qid] ?? const QuestionStat();
     final next = PatternStats(
       byQuestion: {...state.byQuestion, qid: prev.plusAttempt(wrong: wrong)},
@@ -109,11 +109,9 @@ class PatternStatsController extends Notifier<PatternStats> {
     _persist(uid, next);
   }
 
-  /// 清空当前账号的做题记录。
+  /// 清空当前账号（或游客档）的做题记录。
   void clear() {
-    final uid = _uid;
-    if (uid == null) return;
-    _persist(uid, const PatternStats());
+    _persist(_uid, const PatternStats());
   }
 
   void _persist(String uid, PatternStats next) {

@@ -679,7 +679,8 @@ void main() {
     });
   });
 
-  group('「看视频」选项卡', () {
+  // 底部那格「看视频」选项卡已经撤掉（看视频搬到 xVideo），这里的界面代码先留着。
+  group('「看视频」视频库界面', () {
     testWidgets('没有视频时给引导，点按钮回「我的」', (tester) async {
       var jumped = false;
       await tester.pumpWidget(await _host(
