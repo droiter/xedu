@@ -26,3 +26,8 @@ ios/.symlinks/
 # Misc
 .DS_Store
 *.log
+
+# 脚本（scripts/gen_*.py 会生成语音/音效，make_icon.py 的对照图也一样）
+__pycache__/
+*.pyc
+/scripts/out/

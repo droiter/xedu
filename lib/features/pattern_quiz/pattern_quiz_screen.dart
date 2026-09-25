@@ -43,6 +43,14 @@ class _PatternQuizScreenState extends ConsumerState<PatternQuizScreen>
     with SingleTickerProviderStateMixin, BackGuard<PatternQuizScreen> {
   static const int _optionCount = 4; // 1 个正确 + 3 个干扰项
   static const int _wrongSlots = _optionCount - 1;
+
+  /// 题面四格与选项格共用的格子高度（再乘图片放大倍数）。
+  ///
+  /// 格子里每一张图都拿格子的 min(宽, 高) 当绘制方框，所以这两行必须是**一样大
+  /// 一样间距**的格子：以前题面行高 118、选项行高 104，横屏那种「高度吃紧」的
+  /// 屏幕上方框就跟着差 14%，长短 / 厚薄题在选项里比题面整整大一号，孩子拿题面
+  /// 当尺子量就会选错档。两行都是四个格子、同样的间距，方框自然处处相等。
+  static const double _cellHeight = 118;
   static const Duration _celebrateFor = Duration(milliseconds: 950);
 
   static const List<String> _praises = [
@@ -349,33 +357,29 @@ class _PatternQuizScreenState extends ConsumerState<PatternQuizScreen>
     });
   }
 
-  /// 一行放下三样：题号进度、本题 id、难度星；窄屏上 id 会自动缩一点。
+  /// 一行放下三样：题号进度、本题 id、难度星。
+  ///
+  /// 中间的 id 徽标按**整行**居中：左侧进度块比右侧星更宽，两边只留一样的
+  /// 空地才会把 id 挤偏，所以先量出更宽的那一侧，两边各留那么宽。
+  /// id 本身放不下时按 [FittedBox] 缩一点，不会顶到进度块和星上。
   Widget _headRow(BuildContext context, PatternQuestion q, double f) {
     final scheme = Theme.of(context).colorScheme;
 
-    return Row(
+    final pill = Container(
+      padding: EdgeInsets.symmetric(horizontal: 10 * f, vertical: 4 * f),
+      decoration: BoxDecoration(
+        color: scheme.primaryContainer,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text('第 ${_qi + 1} / $_total 题',
+          style: TextStyle(
+              fontSize: 12.5 * f,
+              fontWeight: FontWeight.w700,
+              color: scheme.onPrimaryContainer)),
+    );
+    final stars = Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 10 * f, vertical: 4 * f),
-          decoration: BoxDecoration(
-            color: scheme.primaryContainer,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Text('第 ${_qi + 1} / $_total 题',
-              style: TextStyle(
-                  fontSize: 12.5 * f,
-                  fontWeight: FontWeight.w700,
-                  color: scheme.onPrimaryContainer)),
-        ),
-        SizedBox(width: 8 * f),
-        Expanded(
-          child: FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: Alignment.centerLeft,
-            child: _idBadge(context, q),
-          ),
-        ),
-        SizedBox(width: 8 * f),
         for (var i = 0; i < 3; i++)
           Icon(
             q.difficulty > i
@@ -388,6 +392,42 @@ class _PatternQuizScreenState extends ConsumerState<PatternQuizScreen>
           ),
       ],
     );
+
+    final pillWidth = _textWidth(
+            context, '第 ${_qi + 1} / $_total 题',
+            TextStyle(fontSize: 12.5 * f, fontWeight: FontWeight.w700)) +
+        20 * f;
+    final starsWidth = 3 * 18 * f;
+    final side = max(pillWidth, starsWidth) + 6 * f;
+
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Row(
+          children: [pill, const Spacer(), stars],
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: side),
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: _idBadge(context, q),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// 量一段单行文字在屏幕上的宽度（跟着系统字号缩放走）。
+  double _textWidth(BuildContext context, String text, TextStyle style) {
+    final painter = TextPainter(
+      text: TextSpan(text: text, style: style),
+      textDirection: TextDirection.ltr,
+      textScaler: MediaQuery.textScalerOf(context),
+      maxLines: 1,
+    )..layout();
+    final width = painter.width;
+    painter.dispose();
+    return width;
   }
 
   /// 规律提示：**答错一次之前不显示**，做错后才亮出来帮孩子找规律。
@@ -498,7 +538,7 @@ class _PatternQuizScreenState extends ConsumerState<PatternQuizScreen>
   Widget _slotRow(BuildContext context, double f) {
     final q = _order[_qi];
     return SizedBox(
-      height: 118 * f,
+      height: _cellHeight * f,
       // Clip.none：让答对的炫光可以飞出格子范围。
       child: Stack(
         clipBehavior: Clip.none,
@@ -594,13 +634,16 @@ class _PatternQuizScreenState extends ConsumerState<PatternQuizScreen>
   // ---------- 备选答案 ----------
   Widget _optionRow(BuildContext context, double pf, double f) {
     return SizedBox(
-      height: 104 * pf,
+      // 和题面四格用同一个格子高度、同样的间距：每一张图都按格子的 min(宽, 高)
+      // 当绘制方框，两行格子不一样大的话，同一个档位在题面和选项里画出来就不一样
+      // 长 —— 长短 / 厚薄这类题要拿题面当尺子比大小，基准必须完全一致。
+      height: _cellHeight * pf,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           for (var i = 0; i < _options.length; i++) ...[
             Expanded(child: _option(context, i, f)),
-            if (i != _options.length - 1) SizedBox(width: 8 * f),
+            if (i != _options.length - 1) SizedBox(width: 8 * pf),
           ],
         ],
       ),

@@ -282,9 +282,10 @@ void main() {
       final phone = await probe(tester, const Size(360, 640));
       final tablet = await probe(tester, const Size(800, 1280));
 
-      // 手机版式不动：四格 118 高、选项 104 高（里面还各去掉 1.6 的描边）
+      // 手机版式不动：题面四格、选项格都是 118 高（里面还各去掉 1.6 的描边）
+      // —— 两行格子一样大，长短 / 厚薄题才有同一把尺子。
       expect(phone.$1, closeTo(118, 4));
-      expect(phone.$2, closeTo(104, 4));
+      expect(phone.$2, closeTo(118, 4));
       expect(phone.$3, 0, reason: '手机上要滚动才看得到选项');
 
       expect(tablet.$1, greaterThan(phone.$1 * 1.5), reason: '平板上四格图没变大');
