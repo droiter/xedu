@@ -273,12 +273,69 @@ void main() {
       }
     });
 
+    test('时针 / 皮球旋转题只挖最后一格：可见的三格要连着走出两步一样大的步子', () {
+      // 挖中间那格时孩子看到的两步长短不一 —— 2:00、?、1:00、12:30 看着像先走一
+      // 小时、再走半小时，规律就摸不出来了（9–10 岁的这两道这么被报过）。
+      // 四格是等步长，只有挖最后一格剩下的两步才一样大，才「看三格就能确定」。
+      final stepQs = [
+        for (final q in kPatternQuestions)
+          if (typeOf(q) == PatternType.turn ||
+              typeOf(q) == PatternType.clock)
+            q,
+      ];
+      expect(stepQs, hasLength(14), reason: '步子题多了 / 少了就来看一眼');
+      for (final q in stepQs) {
+        expect(q.blankables, [3],
+            reason: '${q.id} 挖中间格，可见的两步不一样大');
+      }
+    });
+
+    test('不再有「三个一循环、4 格里只走一遍」的题', () {
+      // 4 格里塞一个三格循环，孩子只看到一轮，没法确认「下一个又回到头」；
+      // 这类题（红黄绿循环 / 圆方三角+颜色 / 箭头上下右上…）整批换成了
+      // 两两一组（4 格走两轮）或一眼能读出来的递变题。
+      // 判定：某个通道 4 格是 x,y,z,x 且 x/y/z 两两不同（颜色、档位、图形任一）。
+      bool cycleOnce(List<int> seq) =>
+          seq.length == 4 &&
+          seq[0] == seq[3] &&
+          seq[0] != seq[1] &&
+          seq[1] != seq[2] &&
+          seq[0] != seq[2];
+      final bad = <String>[];
+      for (final q in kPatternQuestions) {
+        final it = q.items;
+        if (it.length != 4) continue;
+        final byBase = cycleOnce([for (final p in it) p.base]);
+        final byLevel = cycleOnce([for (final p in it) p.level]);
+        final byId = it[0].id == it[3].id && it[1].id != it[2].id;
+        if (byBase || byLevel || byId) bad.add(q.id);
+      }
+      expect(bad, isEmpty, reason: '这些题 4 格里规律只走一遍，孩子没法归纳：$bad');
+    });
+
+    test('「每次多减」的数列：三格里两次落差要一眼分得出', () {
+      // 20、19、17 的两个差是 1 和 2 —— 差得太少、三个数看着差不多大，
+      // 「一次比一次减得多」根本看不出来；两个差拉开（5 和 10）才看三格就能确定。
+      final subs = [
+        for (final q in kPatternQuestions)
+          if (q.title.contains('每次多减')) q,
+      ];
+      expect(subs, hasLength(2), reason: '这类题多了 / 少了就来看一眼');
+      for (final q in subs) {
+        expect(q.blankables, [3], reason: q.id);
+        final v = [for (final p in q.items) p.n];
+        expect(v[0] - v[1], greaterThanOrEqualTo(3), reason: '${q.id} 步子太小：$v');
+        expect((v[1] - v[2]) - (v[0] - v[1]), greaterThanOrEqualTo(3),
+            reason: '${q.id} 两个差挨得太近：$v');
+      }
+    });
+
     test('「小狗离树」的远近题：画的是小狗离树，序列方向和题面说的一致', () {
       // 按题面筛（「小猫、小狗一个隔一个」那种只是提到小狗，不是远近题）。
       final dist =
           [for (final q in kPatternQuestions) if (q.title.contains('离树')) q];
-      // 五档各一道：2–3 岁找一样、3–4 岁升序、学前远近各一、7–8 岁升序、9–10 岁两向。
-      expect(dist, hasLength(7), reason: '远近题多了 / 少了就来看一眼');
+      // 六档：2–3 岁找一样、3–4 岁远近各一、学前远近各一、7–8 岁升序、9–10 岁两向。
+      expect(dist, hasLength(8), reason: '远近题多了 / 少了就来看一眼');
       for (final q in dist) {
         for (final p in [...q.items, ...q.distractors]) {
           expect(p.kind, PicKind.dogTree, reason: '${q.id} 里还有旧的小球图');
