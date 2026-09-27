@@ -1,4 +1,21 @@
+import 'package:flutter_test/flutter_test.dart';
 import 'package:xedu/data/models.dart';
+import 'package:xedu/features/pattern_quiz/quiz_reward_fx.dart';
+
+/// 累计答错超过两次之后，每次答错都要「播报 + 黑屏」，这整段窗口里点什么都没反应。
+///
+/// 播报在测试环境里放不出声（播放器根本不回调），要等它那 2 秒超时过去黑屏才浮出来，
+/// 所以先找一小会儿；没挨罚的普通答错找不到就直接返回。
+Future<void> settleBlackout(WidgetTester tester) async {
+  for (var i = 0; i < 5 && find.byType(BlackoutLayer).evaluate().isEmpty; i++) {
+    await tester.pump(const Duration(milliseconds: 700));
+  }
+  for (var i = 0;
+      i < 20 && find.byType(BlackoutLayer).evaluate().isNotEmpty;
+      i++) {
+    await tester.pump(const Duration(milliseconds: 700));
+  }
+}
 
 /// 构造一份两节课、带随堂测验的最小课程 JSON。
 Map<String, dynamic> sampleCourseJson() => {

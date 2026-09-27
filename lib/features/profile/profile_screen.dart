@@ -6,6 +6,8 @@ import '../../core/theme.dart';
 import '../../data/models.dart';
 import '../../state/providers.dart';
 import '../auth/login_screen.dart';
+import '../pattern_quiz/quiz_reward.dart';
+import '../pattern_quiz/quiz_reward_settings.dart';
 import '../qa_quiz/qa_rate_chips.dart';
 import '../qa_quiz/qa_speech.dart';
 import '../video/video_manage_screen.dart';
@@ -29,6 +31,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final lib = ref.watch(videoLibraryProvider);
     final rate = ref.watch(qaSpeechRateProvider);
     final readAloud = ref.watch(qaReadAloudProvider);
+    final reward = ref.watch(quizRewardProvider);
     final scheme = Theme.of(context).colorScheme;
 
     if (!_remindLoaded) {
@@ -103,6 +106,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 const Padding(
                   padding: EdgeInsets.fromLTRB(16, 0, 16, 14),
                   child: QaRateChips(),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.gavel_rounded),
+                  title: const Text('做题奖惩'),
+                  subtitle: Text('答错黑屏 ${reward.firstBlackoutSeconds} 秒起 / '
+                      '${reward.maxBlackoutSeconds} 秒封顶 · '
+                      '一次答对最少看 ${reward.rewardMinSeconds} 秒'),
+                  trailing: const Icon(Icons.chevron_right_rounded),
+                  onTap: () => showQuizRewardSettings(context),
                 ),
                 ListTile(
                   leading: const Icon(Icons.info_outline_rounded),

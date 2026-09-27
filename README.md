@@ -94,6 +94,7 @@ flutter build apk --release
 | 随堂测验 | 单选即时反馈 + 答案解析 + 最高分记录 |
 | 看图找规律 | 首页入口：4 格规律图挖空一格的题库闯关。每局随机 10 题；答对自动进入下一题（音效 + 震动 + 炫光），答错重排并替换干扰项可重试，通关撒花 |
 | 答题中退出拦截 | 一局没做完就按返回键，会弹出一道一位数乘法验证；答对才放行，答错或 10 秒超时都留在答题页 |
+| 做题奖惩 | 累计答错超过 2 次后，每次答错先播报「打错了，黑屏」再整屏黑 X 秒（每错一次多 1 秒，最多 Y 秒）；「一次答对」（第一下就选对）播报「答对了，奖励看视频」，从「我的视频」随机抽一个放一段（第一次整片看完，之后每次少 A 秒，最少 B 秒）。X/Y/A/B 在「我的 → 偏好设置 → 做题奖惩」里改，缺省 3 / 5 / 30 / 30；计数全机累计，可在同一处清零 |
 | 学习进度 | 连续天数 / 今日与累计时长 / 完成课时 / 在学课程 |
 | 个人中心 | 深色模式、提醒开关、关于、退出登录 |
 | 自适应 | 手机（≤699dp 单列列表）与平板（≥700dp 宫格 / 分栏）两套布局 |
@@ -133,6 +134,7 @@ scripts/gen_quiz_sounds.py      # 重新生成上面的音效
 | 账号 | 保存在 SharedPreferences（`xedu_users` / `xedu_session`） |
 | 学习进度 | 按用户保存在 SharedPreferences（`xedu_study_<uid>`） |
 | 视频库 | 全机共用一份，保存在 SharedPreferences（`xedu_video_lib`） |
+| 做题奖惩 | 四个配置（X / Y / A / B）与累计计数全机共用一份，保存在 SharedPreferences（`xedu_quiz_reward`） |
 | 本机视频文件 | 复制到 App 私有目录 `xedu_videos/`（卸载才清除，不会被系统当缓存清掉） |
 
 视频课时为在线示例视频；断网时课时页会显示兜底占位。
@@ -176,6 +178,11 @@ scripts/gen_quiz_sounds.py      # 重新生成上面的音效
 答错轻音提示并重排备选。成绩按**一次答对**的题数计算，通关页有撒花与星级动画。
 音效播放失败会自动静音降级，不影响答题。
 
+奖惩语音：答错超限播的「打错了，黑屏」与一次答对播的「答对了，奖励看视频」
+是 `assets/audio/punish_black.mp3` / `reward_video.mp3`，由
+`scripts/gen_reward_voice.py` 合成（edge-tts，音色与「看图问答」的朗读同一份），
+播不出来同样静音降级 —— 黑屏和奖励照常发生。
+
 **主要扩展点**
 - `lib/state/auth.dart`：把假认证换成真实登录接口
 - `lib/state/catalog.dart`：把 `courses.json` 换成后端课程列表 API
@@ -194,6 +201,8 @@ flutter test
 - `app_smoke_test.dart`：引导 → 登录 → 注册 → 进入主界面的冒烟测试
 - `pattern_quiz_bank_test.dart`：规律题库数据一致性（4 格 / 干扰项 / id 唯一 / 合并题库）
 - `pattern_quiz_widget_test.dart`：元素渲染 + 年龄多选与答题流程
+- `reward_rule_test.dart` / `quiz_reward_test.dart`：奖惩算式（黑屏 X→Y、奖励 A→B）与配置 / 计数落盘
+- `quiz_reward_widget_test.dart`：答错到第三次才黑屏且期间点不动、一次答对才给奖励、奖励播放页到点自动退出、设置框存取
 
 ## 七、Roadmap 建议
 

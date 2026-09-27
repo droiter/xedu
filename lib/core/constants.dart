@@ -44,6 +44,10 @@ const String kQaSpeechRateKey = 'xedu_qa_speech_rate';
 /// 「看图问答」是否把题目和文字答案读出来（缺省读）。
 const String kQaReadAloudKey = 'xedu_qa_read_aloud';
 
+/// 做题奖惩：X / Y（答错黑屏）与 A / B（答对奖励看视频）四个配置 + 累计计数，
+/// 全机一份，存成一段 JSON（见 `features/pattern_quiz/quiz_reward.dart`）。
+const String kQuizRewardKey = 'xedu_quiz_reward';
+
 // 课程封面渐变调色板（seed 取模得到稳定配色）
 const List<List<Color>> kCoverPalette = [
   [Color(0xFF4F6BFF), Color(0xFF9A5CFF)], // 靛紫

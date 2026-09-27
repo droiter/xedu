@@ -11,14 +11,21 @@ import 'package:xedu/features/pattern_quiz/pattern_quiz_screen.dart';
 import 'package:xedu/features/pattern_quiz/pic_view.dart';
 import 'package:xedu/state/providers.dart';
 
+import 'fixtures.dart';
+
 Widget _host(Widget child) => MaterialApp(home: Scaffold(body: child));
 
 /// 答题页会读写 Riverpod（记录做题统计），所以要套一层 ProviderScope 并注入
 /// 内存版 SharedPreferences。
+///
+/// `UniqueKey` 是必要的：连着 pumpWidget 同一个 ProviderScope 时框架会把旧的
+/// Element（连同里面的容器）留下来接着用，上一局攒的做题奖惩计数就会被带进下一局
+/// —— 换了新 key 才是名副其实的「重新启动一次」。
 Future<Widget> _quizHost(Widget child) async {
   SharedPreferences.setMockInitialValues({});
   final prefs = await SharedPreferences.getInstance();
   return ProviderScope(
+    key: UniqueKey(),
     overrides: [prefsProvider.overrideWithValue(prefs)],
     child: MaterialApp(home: child),
   );
@@ -155,12 +162,16 @@ void main() {
     }
 
     /// 轮流点 A/B/C/D，直到把当前这题答对（答错会重排，所以循环几次）。
+    ///
+    /// 答错超过两次之后每错一次都要黑屏（那段窗口点不动），所以点完再等黑屏走完。
     Future<void> answerUntilRight(WidgetTester tester) async {
       const letters = ['A', 'B', 'C', 'D'];
       for (var i = 0; i < 40; i++) {
         if (find.textContaining('马上').evaluate().isNotEmpty) return;
         await tester.tap(find.text(letters[i % letters.length]));
         await tester.pump(const Duration(milliseconds: 700));
+        if (find.textContaining('马上').evaluate().isNotEmpty) return;
+        await settleBlackout(tester);
       }
       fail('连续 40 次都没答对，题目或重排逻辑有问题');
     }

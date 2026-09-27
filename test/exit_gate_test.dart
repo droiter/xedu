@@ -7,6 +7,8 @@ import 'package:xedu/features/pattern_quiz/pattern_quiz_models.dart';
 import 'package:xedu/features/pattern_quiz/pattern_quiz_screen.dart';
 import 'package:xedu/state/providers.dart';
 
+import 'fixtures.dart';
+
 /// 首页放一个入口按钮，答题页从它 push 上来，这样才能验证「返回」真的回到了首页。
 class _Launcher extends StatelessWidget {
   const _Launcher({required this.ages});
@@ -81,12 +83,16 @@ Future<void> _submit(WidgetTester tester, String value) async {
 }
 
 /// 轮流点 A/B/C/D，直到把当前这题答对。用来把一局做完。
+///
+/// 答错超过两次之后每错一次都要黑屏（那段窗口点不动），所以点完再等黑屏走完。
 Future<void> _answerUntilRight(WidgetTester tester) async {
   const letters = ['A', 'B', 'C', 'D'];
   for (var i = 0; i < 40; i++) {
     if (find.textContaining('马上').evaluate().isNotEmpty) return;
     await tester.tap(find.text(letters[i % letters.length]));
     await tester.pump(const Duration(milliseconds: 700));
+    if (find.textContaining('马上').evaluate().isNotEmpty) return;
+    await settleBlackout(tester);
   }
   fail('连续 40 次都没答对，题目或重排逻辑有问题');
 }

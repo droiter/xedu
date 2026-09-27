@@ -7,12 +7,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../shared/back_guard.dart';
 import '../../shared/quiz_layout.dart';
+import '../../shared/reward_rule.dart';
 import '../../shared/widgets/glow_border.dart';
+import '../../state/providers.dart';
 import '../pattern_quiz/celebration.dart';
 import '../pattern_quiz/exit_gate.dart';
 import '../pattern_quiz/pattern_quiz_models.dart';
 import '../pattern_quiz/pic_view.dart';
+import '../pattern_quiz/quiz_reward.dart';
+import '../pattern_quiz/quiz_reward_fx.dart';
 import '../pattern_quiz/quiz_sfx.dart';
+import '../video/video_player_screen.dart';
 import 'qa_bank.dart';
 import 'qa_karaoke_text.dart';
 import 'qa_models.dart';
@@ -27,6 +32,10 @@ import 'qa_speech.dart';
 /// - **答对**：音效 + 震动，稍作停留自动进入下一题；
 /// - **答错**：选项红闪一下，四个选项随即重新打乱位置（答错的那个还在，可以再点），
 ///   跟「看图找规律」的处理一致。成绩按「一次答对」算；
+/// - **奖惩**（见 [QuizRewardState]）：累计答错超过 2 次之后，每次答错先播报
+///   「打错了，黑屏」再整屏黑 X 秒（每错一次多 1 秒，涨到 Y 秒封顶）；
+///   「一次答对」（第一下就选对）则播报「答对了，奖励看视频」，
+///   从「我的视频」里随机抽一个放一段（第一次整片看完，之后每次少 A 秒，不低于 B 秒）；
 /// - **没做完就想返回**：先过家长验证（见 [showExitGate]）。
 ///
 /// 题面文字**同时**是朗读文字和屏幕文字，三者必须一致语音高亮才对得上，
@@ -70,6 +79,9 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen>
   Timer? _nextTimer;
   Timer? _retryTimer;
 
+  /// 黑屏的收尾计时器。离开页面要撤掉，别让它黑完再叫醒一个已经没了的页面。
+  Timer? _punishTimer;
+
   // 当前回合
   bool _resolved = false;
   int _missedThis = 0;
@@ -85,6 +97,12 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen>
   int _firstTryRight = 0;
   int _wrongTotal = 0;
   bool _finished = false;
+
+  /// 本题是不是「一次答对」—— 是的话答对之后有视频奖励。
+  bool _rewardDue = false;
+
+  /// 正在黑屏（答错超限的惩罚），期间整屏盖黑、点不了也退不出去。
+  bool _blackout = false;
 
   /// 通过家长验证后置真，放行这一次返回。
   bool _exiting = false;
@@ -125,10 +143,12 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen>
   void dispose() {
     _nextTimer?.cancel();
     _retryTimer?.cancel();
+    _punishTimer?.cancel();
     _cueTimer?.cancel();
     QaSpeech.instance.completed.removeListener(_onSegmentDone);
     QaSpeech.instance.stop();
     QuizSfx.instance.dispose();
+    RewardVoice.instance.dispose();
     super.dispose();
   }
 
@@ -153,6 +173,7 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen>
     _dropCue();
     _resolved = false;
     _missedThis = 0;
+    _rewardDue = false;
     _busy = false;
     _wrongPos = -1;
     _optOrder = [for (var i = 0; i < _q.options.length; i++) i];
@@ -225,6 +246,7 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen>
       setState(() {
         _resolved = true;
         _praise = _praises[_rng.nextInt(_praises.length)];
+        _rewardDue = _missedThis == 0; // 只有一次答对才有视频奖励
         if (_missedThis == 0) _firstTryRight++;
       });
       QuizSfx.instance.playRight();
@@ -234,7 +256,7 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen>
           _isLast
               ? _celebrateFor + const Duration(milliseconds: 350)
               : _celebrateFor,
-          _next);
+          _leaveForNext);
     } else {
       _wrongTotal++;
       _missedThis++;
@@ -245,7 +267,13 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen>
       _busy = true;
       setState(() => _wrongPos = pos);
       _retryTimer?.cancel();
-      _retryTimer = Timer(const Duration(milliseconds: 650), () {
+      _retryTimer = Timer(const Duration(milliseconds: 650), () async {
+        if (!mounted) return;
+        // 累计答错超过两次之后，每次答错都要挨一回黑屏
+        final notifier = ref.read(quizRewardProvider.notifier);
+        final punishSeconds = await notifier.registerWrong();
+        if (!mounted) return;
+        if (punishSeconds != null) await _blackoutFor(punishSeconds);
         if (!mounted) return;
         setState(() {
           _optOrder = [..._optOrder]..shuffle(_rng);
@@ -254,6 +282,54 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen>
         });
       });
     }
+  }
+
+  /// 本次答对之后的收尾：该奖励就先看视频，看完（或没得看）再进下一题。
+  Future<void> _leaveForNext() async {
+    if (!mounted) return;
+    if (_rewardDue) await _rewardVideo();
+    if (!mounted) return;
+    _next();
+  }
+
+  /// 奖励看视频：随机抽「我的视频」里的一个，限时看完再回来接着做题。
+  ///
+  /// 视频库空着就什么也不做 —— 播报了却拿不出片子更糟。
+  Future<void> _rewardVideo() async {
+    final videos = rewardVideosOf(ref.read(videoLibraryProvider));
+    if (videos.isEmpty) return;
+    final video = videos[_rng.nextInt(videos.length)];
+    final reward = ref.read(quizRewardProvider);
+    final index =
+        await ref.read(quizRewardProvider.notifier).registerReward();
+    if (!mounted) return;
+
+    await RewardVoice.instance.sayReward();
+    if (!mounted) return;
+    await Navigator.of(context).push(MaterialPageRoute(
+      builder: (_) => VideoPlayerScreen(
+        video: video,
+        reward: RewardWatchLimit(
+          index: index,
+          stepSeconds: reward.rewardStepSeconds,
+          minSeconds: reward.rewardMinSeconds,
+        ),
+      ),
+    ));
+  }
+
+  /// 答错超限的惩罚：先播报「打错了，黑屏」，再整屏黑 [seconds] 秒。
+  Future<void> _blackoutFor(int seconds) async {
+    await RewardVoice.instance.sayPunish();
+    if (!mounted) return;
+    setState(() => _blackout = true);
+    final done = Completer<void>();
+    _punishTimer?.cancel();
+    _punishTimer = Timer(Duration(seconds: seconds), () {
+      if (mounted) setState(() => _blackout = false);
+      if (!done.isCompleted) done.complete();
+    });
+    await done.future;
   }
 
   void _next() {
@@ -293,28 +369,35 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen>
   Widget build(BuildContext context) {
     final readAloud = ref.watch(qaReadAloudProvider);
     return PopScope(
-      canPop: _finished || _exiting,
+      // 黑屏期间哪儿也别去。
+      canPop: (_finished || _exiting) && !_blackout,
       onPopInvokedWithResult: (didPop, _) {
         if (didPop) return;
         // 合上平板再打开时系统会补一个返回键过来，那一下不算孩子按的。
         if (!isRealBack()) return;
         _guardExit();
       },
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text('看图问答 · $_agesLabel'),
-          actions: [
-            IconButton(
-              tooltip: '重新开始',
-              icon: const Icon(Icons.refresh_rounded),
-              onPressed: () => setState(_restart),
+      child: Stack(
+        children: [
+          Scaffold(
+            appBar: AppBar(
+              title: Text('看图问答 · $_agesLabel'),
+              actions: [
+                IconButton(
+                  tooltip: '重新开始',
+                  icon: const Icon(Icons.refresh_rounded),
+                  onPressed: () => setState(_restart),
+                ),
+              ],
             ),
-          ],
-        ),
-        body: SafeArea(
-            child: _finished
-                ? _resultView(context)
-                : _gameView(context, readAloud)),
+            body: SafeArea(
+                child: _finished
+                    ? _resultView(context)
+                    : _gameView(context, readAloud)),
+          ),
+          // 惩罚黑屏盖在整页之上，连标题栏一起盖掉。
+          if (_blackout) const Positioned.fill(child: BlackoutLayer()),
+        ],
       ),
     );
   }

@@ -15,6 +15,8 @@ import 'package:xedu/features/qa_quiz/qa_speech.dart';
 import 'package:xedu/shared/widgets/glow_border.dart';
 import 'package:xedu/state/providers.dart';
 
+import 'fixtures.dart';
+
 /// 全量题库（直接读磁盘，绕开 rootBundle）。
 final QaBank _full = QaBank.parse(
   File('assets/data/qa_questions.json').readAsStringSync(),
@@ -352,10 +354,12 @@ void main() {
           q.options.firstWhere((o) => o.text != rightText).text;
 
       // 每次答错都重排一次：正确选项待过的格子不止一个，才叫「重排」。
+      // 错到第三次开始每次都要黑屏，那段窗口点不动，点完先把黑屏等过去。
       final spots = <Offset>{};
       for (var i = 0; i < 8; i++) {
         await tester.tap(find.text(wrongText));
         await tester.pump(const Duration(milliseconds: 700));
+        await settleBlackout(tester);
         spots.add(tester.getRect(find.text(rightText)).topLeft);
       }
       expect(spots.length, greaterThan(1), reason: '答错后选项没重排');

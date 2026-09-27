@@ -1,18 +1,27 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../shared/reward_rule.dart';
 import '../../state/providers.dart';
 
 /// 视频播放页。
 ///
 /// 这里**不做任何返回拦截**：按返回键随时退回到上一页，
 /// 不弹家长验证，也不受播放进度影响。放完则自动退回视频列表。
+///
+/// 带 [reward] 时是「答对奖励」的播放：只给孩子看 [RewardWatchLimit] 算出来的
+/// 那一段（第一次是整片），到点自动退出、回去接着做题。计时按**真实时间**走，
+/// 拖进度条也拖不出更多时间。
 class VideoPlayerScreen extends StatefulWidget {
-  const VideoPlayerScreen({super.key, required this.video});
+  const VideoPlayerScreen({super.key, required this.video, this.reward});
 
   final VideoItem video;
+
+  /// 奖励模式；null 就是普通的整片播放。
+  final RewardWatchLimit? reward;
 
   @override
   State<VideoPlayerScreen> createState() => _VideoPlayerScreenState();
@@ -25,10 +34,23 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   /// 已经因为播完退回去过了，别再退第二次。
   bool _leftAfterEnd = false;
 
+  /// 奖励限时到点退出的计时器，以及控制条上的倒计时。
+  Timer? _limitTimer;
+  Timer? _tickTimer;
+  int _leftSeconds = 0;
+
   @override
   void initState() {
     super.initState();
     _init();
+  }
+
+  @override
+  void dispose() {
+    _limitTimer?.cancel();
+    _tickTimer?.cancel();
+    _controller?.dispose();
+    super.dispose();
   }
 
   Future<void> _init() async {
@@ -41,6 +63,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
       await controller.initialize();
       if (!mounted) return;
       setState(() {});
+      _startRewardClock(controller.value.duration);
       // 挂在播放器上而不是写在 build 里：build 期间动导航栈会直接断言失败。
       controller.addListener(_onPlaybackChanged);
       await controller.play();
@@ -50,6 +73,28 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
           ? '这个视频文件打不开了\n可能已被删除，请重新添加'
           : '视频暂时无法播放\n请检查网络后重试');
     }
+  }
+
+  /// 奖励模式：起一个到点就走的计时器。第一次（整片看完）不设限。
+  void _startRewardClock(Duration full) {
+    final reward = widget.reward;
+    if (reward == null || reward.isFull) return;
+    final limit = reward.limitFor(full);
+    _leftSeconds = limit.inSeconds;
+    _limitTimer = Timer(limit, _leaveByRewardLimit);
+    _tickTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (!mounted || _leftSeconds <= 0) return;
+      setState(() => _leftSeconds--);
+    });
+  }
+
+  /// 奖励时间到，收走画面回到答题页。
+  void _leaveByRewardLimit() {
+    final c = _controller;
+    if (c == null || !mounted || _leftAfterEnd) return;
+    c.pause();
+    _leftAfterEnd = true;
+    Navigator.of(context).maybePop();
   }
 
   /// 重试前先把失败的播放器丢掉，避免两份实例同时占着解码器。
@@ -83,12 +128,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
     if (c == null || !c.value.isInitialized || c.value.isPlaying) return;
     if (c.value.isCompleted) c.seekTo(Duration.zero);
     c.play();
-  }
-
-  @override
-  void dispose() {
-    _controller?.dispose();
-    super.dispose();
   }
 
   @override
@@ -206,8 +245,15 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                 Padding(
                   padding: const EdgeInsets.only(right: 14),
                   child: Text(
-                    widget.video.isLocal ? '本机视频' : '网络视频',
-                    style: const TextStyle(color: Colors.white38, fontSize: 12),
+                    _cornerLabel,
+                    style: TextStyle(
+                        color: widget.reward == null
+                            ? Colors.white38
+                            : Colors.amberAccent,
+                        fontSize: 12,
+                        fontWeight: widget.reward == null
+                            ? FontWeight.w400
+                            : FontWeight.w700),
                   ),
                 ),
               ],
@@ -223,6 +269,14 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
         ),
       ),
     );
+  }
+
+  /// 控制条右上角那句话：奖励模式报「还剩几秒」，普通播放报来源。
+  String get _cornerLabel {
+    final reward = widget.reward;
+    if (reward == null) return widget.video.isLocal ? '本机视频' : '网络视频';
+    if (reward.isFull) return '奖励 · 整片看完';
+    return '奖励 · 还剩 $_leftSeconds 秒';
   }
 
   double _sliderValue(VideoPlayerValue v) {
