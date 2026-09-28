@@ -11,6 +11,7 @@ import '../../state/providers.dart';
 import '../../state/video_progress.dart';
 import '../video/reward_playlist.dart';
 import '../video/video_player_screen.dart';
+import 'anti_guess.dart';
 import 'celebration.dart';
 import 'exit_gate.dart';
 import 'pattern_quiz_bank.dart';
@@ -267,9 +268,14 @@ class _PatternQuizScreenState extends ConsumerState<PatternQuizScreen>
         if (!mounted) return;
         if (punishSeconds != null) await _blackoutFor(punishSeconds);
         if (!mounted) return;
+        // 防猜答案开着：正确答案落到孩子刚点的那一格（再点同一格就对）。
+        final antiGuess = ref.read(quizAntiGuessProvider);
+        final tapped = _picked;
         setState(() {
-          _options = _shuffleDisplay(
-              _makeWrongs(keepShown: _rng.nextInt(_wrongSlots)));
+          final wrongs = _makeWrongs(keepShown: _rng.nextInt(_wrongSlots));
+          _options = antiGuess
+              ? withAnswerAt(wrongs, _correct, tapped)
+              : _shuffleDisplay(wrongs);
           _picked = -1;
           _busy = false;
         });

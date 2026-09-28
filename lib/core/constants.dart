@@ -48,6 +48,9 @@ const String kQaReadAloudKey = 'xedu_qa_read_aloud';
 /// 全机一份，存成一段 JSON（见 `features/pattern_quiz/quiz_reward.dart`）。
 const String kQuizRewardKey = 'xedu_quiz_reward';
 
+/// 防猜答案：孩子答错后，把正确答案挪到他刚点的那一格（缺省开）。
+const String kQuizAntiGuessKey = 'xedu_quiz_anti_guess';
+
 /// 奖励看视频看到哪儿了：视频 id → 已看秒数，全机一份，存成一段 JSON
 /// （见 `state/video_progress.dart`）。片子放完就从这个表里删掉。
 const String kVideoProgressKey = 'xedu_video_progress';

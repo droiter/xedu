@@ -6,6 +6,7 @@ import '../../core/theme.dart';
 import '../../data/models.dart';
 import '../../state/providers.dart';
 import '../auth/login_screen.dart';
+import '../pattern_quiz/anti_guess.dart';
 import '../pattern_quiz/quiz_reward.dart';
 import '../pattern_quiz/quiz_reward_settings.dart';
 import '../qa_quiz/qa_rate_chips.dart';
@@ -32,6 +33,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final rate = ref.watch(qaSpeechRateProvider);
     final readAloud = ref.watch(qaReadAloudProvider);
     final reward = ref.watch(quizRewardProvider);
+    final antiGuess = ref.watch(quizAntiGuessProvider);
     final scheme = Theme.of(context).colorScheme;
 
     if (!_remindLoaded) {
@@ -115,6 +117,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       '一次答对最少看 ${reward.rewardMinSeconds} 秒'),
                   trailing: const Icon(Icons.chevron_right_rounded),
                   onTap: () => showQuizRewardSettings(context),
+                ),
+                SwitchListTile(
+                  secondary: const Icon(Icons.touch_app_outlined),
+                  title: const Text('防猜答案'),
+                  subtitle: const Text('答错后答案挪到刚点的那个格子'),
+                  value: antiGuess,
+                  onChanged: (v) =>
+                      ref.read(quizAntiGuessProvider.notifier).set(v),
                 ),
                 ListTile(
                   leading: const Icon(Icons.info_outline_rounded),

@@ -82,19 +82,25 @@ Future<void> _submit(WidgetTester tester, String value) async {
   await tester.pump();
 }
 
-/// 轮流点 A/B/C/D，直到把当前这题答对。用来把一局做完。
+/// 把当前这题做对，用来把一局做完。
+///
+/// **每轮点两下同一格**：防猜答案（缺省开）会把正确答案挪到刚点的那一格，
+/// 第二下必中；关掉时就是随机重排，多点几轮总能蒙中。
 ///
 /// 答错超过两次之后每错一次都要黑屏（那段窗口点不动），所以点完再等黑屏走完。
 Future<void> _answerUntilRight(WidgetTester tester) async {
-  const letters = ['A', 'B', 'C', 'D'];
+  bool right() => find.textContaining('马上').evaluate().isNotEmpty;
   for (var i = 0; i < 40; i++) {
-    if (find.textContaining('马上').evaluate().isNotEmpty) return;
-    await tester.tap(find.text(letters[i % letters.length]));
-    await tester.pump(const Duration(milliseconds: 700));
-    if (find.textContaining('马上').evaluate().isNotEmpty) return;
-    await settleBlackout(tester);
+    for (var k = 0; k < 2; k++) {
+      if (right()) return;
+      await tester.tap(find.text('A'));
+      await tester.pump(const Duration(milliseconds: 700));
+      if (right()) return;
+      await settleBlackout(tester);
+      await tester.pump();
+    }
   }
-  fail('连续 40 次都没答对，题目或重排逻辑有问题');
+  fail('连续 40 轮都没答对，题目或重排逻辑有问题');
 }
 
 void main() {

@@ -163,17 +163,24 @@ void main() {
 
     /// 轮流点 A/B/C/D，直到把当前这题答对（答错会重排，所以循环几次）。
     ///
+    /// **每轮点两下同一格**：防猜答案（缺省开）会把正确答案挪到刚点的那一格，
+    /// 第二下必中；关掉时就是随机重排，多点几轮总能蒙中。
+    /// （一格格换着点 A→B→C→D 在防猜答案下永远撞不上 —— 答案一直跟着手指走。）
+    ///
     /// 答错超过两次之后每错一次都要黑屏（那段窗口点不动），所以点完再等黑屏走完。
     Future<void> answerUntilRight(WidgetTester tester) async {
-      const letters = ['A', 'B', 'C', 'D'];
+      bool right() => find.textContaining('马上').evaluate().isNotEmpty;
       for (var i = 0; i < 40; i++) {
-        if (find.textContaining('马上').evaluate().isNotEmpty) return;
-        await tester.tap(find.text(letters[i % letters.length]));
-        await tester.pump(const Duration(milliseconds: 700));
-        if (find.textContaining('马上').evaluate().isNotEmpty) return;
-        await settleBlackout(tester);
+        for (var k = 0; k < 2; k++) {
+          if (right()) return;
+          await tester.tap(find.text('A'));
+          await tester.pump(const Duration(milliseconds: 700));
+          if (right()) return;
+          await settleBlackout(tester);
+          await tester.pump();
+        }
       }
-      fail('连续 40 次都没答对，题目或重排逻辑有问题');
+      fail('连续 40 轮都没答对，题目或重排逻辑有问题');
     }
 
     testWidgets('答对后不用点按钮，自动进入下一题', (tester) async {
@@ -380,6 +387,41 @@ void main() {
 
       expect(find.text('第 1 / ${PatternQuizScreen.sessionSize} 题'),
           findsOneWidget);
+    });
+
+    testWidgets('防猜答案：答错后正确答案挪到刚点的那一格，再点同一格就对', (tester) async {
+      useTabletView(tester);
+      await tester.pumpWidget(await _quizHost(
+          PatternQuizScreen(ages: {PatternAgeGroup.preschool})));
+      await tester.pump();
+
+      /// 题号那一行（「第 N / M 题」）—— 变了才说明翻到下一题了。
+      String label() => tester
+          .widget<Text>(find.textContaining(RegExp(r'第 \d+ / \d+ 题')))
+          .data!;
+      bool finished() => find.text('再玩一局').evaluate().isNotEmpty;
+
+      // 连做三道题，每道都「先点 A（点错）→ 再点 A（同一格）」。
+      // 老写法（答错后四个格子随机重排）第二下只有 1/4 的概率蒙中，连做三道几乎必红。
+      var checked = 0;
+      for (var i = 0; i < 12 && checked < 3 && !finished(); i++) {
+        final before = label();
+        await tester.tap(find.text('A'));
+        await tester.pump(const Duration(milliseconds: 700));
+        await settleBlackout(tester);
+        await tester.pump(const Duration(milliseconds: 100));
+        if (finished() || label() != before) continue; // 这一下就答对了
+
+        // 刚点错了：按防猜答案，A 格里现在就是正确答案
+        await tester.tap(find.text('A'));
+        await tester.pump(const Duration(milliseconds: 1200));
+        await settleBlackout(tester);
+        expect(finished() || label() != before, isTrue,
+            reason: '再点同一格没答对 —— 答案没挪到孩子刚点的那一格');
+        checked++;
+      }
+      expect(checked, greaterThanOrEqualTo(2),
+          reason: '没凑够「点错再点同一格」的样本，测不出这条规则');
     });
   });
 }

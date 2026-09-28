@@ -10,6 +10,7 @@ import '../../shared/quiz_layout.dart';
 import '../../shared/widgets/glow_border.dart';
 import '../../state/providers.dart';
 import '../../state/video_progress.dart';
+import '../pattern_quiz/anti_guess.dart';
 import '../pattern_quiz/celebration.dart';
 import '../pattern_quiz/exit_gate.dart';
 import '../pattern_quiz/pattern_quiz_models.dart';
@@ -278,8 +279,19 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen>
         if (!mounted) return;
         if (punishSeconds != null) await _blackoutFor(punishSeconds);
         if (!mounted) return;
+        // 防猜答案开着：正确答案落到孩子刚点的那一格（再点同一格就对）。
+        final antiGuess = ref.read(quizAntiGuessProvider);
         setState(() {
-          _optOrder = [..._optOrder]..shuffle(_rng);
+          final shuffled = [..._optOrder]..shuffle(_rng);
+          _optOrder = antiGuess
+              ? withAnswerAt(
+                  [
+                    for (final oi in shuffled)
+                      if (oi != _q.answer) oi,
+                  ],
+                  _q.answer,
+                  pos)
+              : shuffled;
           _wrongPos = -1;
           _busy = false;
         });

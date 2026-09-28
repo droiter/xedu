@@ -366,6 +366,75 @@ void main() {
       expect(find.text(wrongText), findsOneWidget, reason: '答错的选项没了');
     });
 
+    /// 文字所在的格子 —— 用格子里的字母徽标定位，不受文字长短影响。
+    String slotOf(WidgetTester tester, String text) {
+      final r = tester.getRect(find.text(text));
+      var best = '';
+      var bestGap = double.infinity;
+      for (final letter in ['A', 'B', 'C', 'D']) {
+        final gap = (tester.getRect(find.text(letter)).center - r.center).distance;
+        if (gap < bestGap) {
+          bestGap = gap;
+          best = letter;
+        }
+      }
+      return best;
+    }
+
+    testWidgets('防猜答案：答错后正确答案挪到刚点的那一格', (tester) async {
+      final q = _q('baby', 'dog');
+      await tester.pumpWidget(await _host(
+        QaQuizScreen(ages: {q.age}, bank: _single(q)),
+        size: _tablet,
+      ));
+      await tester.pump();
+
+      final rightText = q.options[q.answer].text;
+      final wrongText = q.options.firstWhere((o) => o.text != rightText).text;
+
+      // 连点同一个错选项三次：每次红闪结束后，正确答案都该正好落在刚点的格子里。
+      for (var i = 0; i < 3; i++) {
+        final tapped = slotOf(tester, wrongText);
+        await tester.tap(find.text(wrongText));
+        await tester.pump(const Duration(milliseconds: 700));
+        await settleBlackout(tester);
+        await tester.pump(const Duration(milliseconds: 100));
+        expect(slotOf(tester, rightText), tapped,
+            reason: '第 ${i + 1} 次答错后，正确答案没挪到刚点的那一格');
+      }
+
+      // 那一格里现在放着正确答案，点下去就该答对
+      await tester.tap(find.text(rightText));
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(find.textContaining('马上看成绩'), findsOneWidget);
+    });
+
+    testWidgets('关掉防猜答案：答错后还是随机重排', (tester) async {
+      final q = _q('baby', 'dog');
+      await tester.pumpWidget(await _host(
+        QaQuizScreen(ages: {q.age}, bank: _single(q)),
+        size: _tablet,
+        initialPrefs: const {kQuizAntiGuessKey: false},
+      ));
+      await tester.pump();
+
+      final rightText = q.options[q.answer].text;
+      final wrongText = q.options.firstWhere((o) => o.text != rightText).text;
+
+      // 关掉之后正确答案是随机落格：连错六次全落在刚点的格子上的概率是 (1/4)^6。
+      var elsewhere = 0;
+      for (var i = 0; i < 6; i++) {
+        final tapped = slotOf(tester, wrongText);
+        await tester.tap(find.text(wrongText));
+        await tester.pump(const Duration(milliseconds: 700));
+        await settleBlackout(tester);
+        await tester.pump(const Duration(milliseconds: 100));
+        if (slotOf(tester, rightText) != tapped) elsewhere++;
+      }
+      expect(elsewhere, greaterThan(0),
+          reason: '关掉之后正确答案还总落在刚点的格子上 —— 开关没生效');
+    });
+
     testWidgets('一次答对得满分', (tester) async {
       final q = _q('baby', 'dog');
       await tester.pumpWidget(await _host(
