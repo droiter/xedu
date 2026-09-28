@@ -1,47 +1,77 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:video_player/video_player.dart';
 
-import '../../shared/reward_rule.dart';
 import '../../state/providers.dart';
+import '../../state/video_library.dart';
+import '../../state/video_progress.dart';
+import 'reward_playlist.dart';
 
 /// 视频播放页。
 ///
 /// 这里**不做任何返回拦截**：按返回键随时退回到上一页，
 /// 不弹家长验证，也不受播放进度影响。放完则自动退回视频列表。
 ///
-/// 带 [reward] 时是「答对奖励」的播放：只给孩子看 [RewardWatchLimit] 算出来的
-/// 那一段（第一次是整片），到点自动退出、回去接着做题。计时按**真实时间**走，
-/// 拖进度条也拖不出更多时间。
-class VideoPlayerScreen extends StatefulWidget {
+/// 带 [reward] 时是「答对奖励」的播放：[RewardPlayback.videos] 里的片子一片接
+/// 一片地放，每片都从上次停下的地方续播（见 [VideoProgress]）；这一局的额度按
+/// [RewardWatchLimit] 算（第一次整片、之后每次少 A 秒、不低于 B 秒），额度到点
+/// 或者片子全放完就回去接着做题。计时按**真实时间**走，拖进度条也拖不出更多时间。
+class VideoPlayerScreen extends ConsumerStatefulWidget {
   const VideoPlayerScreen({super.key, required this.video, this.reward});
 
+  /// 普通播放放的就是它；奖励播放时应当等于 `reward.videos.first`。
   final VideoItem video;
 
   /// 奖励模式；null 就是普通的整片播放。
-  final RewardWatchLimit? reward;
+  final RewardPlayback? reward;
 
   @override
-  State<VideoPlayerScreen> createState() => _VideoPlayerScreenState();
+  ConsumerState<VideoPlayerScreen> createState() => _VideoPlayerScreenState();
 }
 
-class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
+class _VideoPlayerScreenState extends ConsumerState<VideoPlayerScreen> {
   VideoPlayerController? _controller;
   String? _error;
 
   /// 已经因为播完退回去过了，别再退第二次。
   bool _leftAfterEnd = false;
 
-  /// 奖励限时到点退出的计时器，以及控制条上的倒计时。
+  /// 这一局要放的片子（普通播放就一个）和当前放到第几个。
+  late List<VideoItem> _queue;
+  int _cursor = 0;
+
+  /// 当前这片是不是已经放完了（放完就不必再记「停在哪」）。
+  bool _currentEnded = false;
+
+  /// 奖励这一局的总额度和剩余秒数：一个计时器管到底，中途换片子不重置。
   Timer? _limitTimer;
   Timer? _tickTimer;
   int _leftSeconds = 0;
+  bool _budgetStarted = false;
+
+  /// 上一秒存过的位置，位置真的动了才写盘。
+  int _savedSeconds = -1;
+
+  final Random _rng = Random();
+
+  VideoItem get _current => _queue[_cursor];
+
+  bool get _isReward => widget.reward != null;
+
+  /// 剩这么点额度就别再开下一片了（开起来也来不及放）。
+  static const int _chainTailSeconds = 1;
 
   @override
   void initState() {
     super.initState();
+    final reward = widget.reward;
+    _queue = reward == null || reward.videos.isEmpty
+        ? [widget.video]
+        : List.of(reward.videos);
     _init();
   }
 
@@ -54,16 +84,22 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   }
 
   Future<void> _init() async {
-    final item = widget.video;
+    final item = _current;
     final controller = item.isLocal
         ? VideoPlayerController.file(File(item.source))
         : VideoPlayerController.networkUrl(Uri.parse(item.source));
     _controller = controller;
+    _currentEnded = false;
     try {
       await controller.initialize();
-      if (!mounted) return;
+      if (!mounted || _leftAfterEnd) return;
+      await _resumeFrom(controller);
+      if (!mounted || _leftAfterEnd) return;
       setState(() {});
-      _startRewardClock(controller.value.duration);
+      if (!_budgetStarted) {
+        _budgetStarted = true;
+        _startRewardClock(controller.value.duration);
+      }
       // 挂在播放器上而不是写在 build 里：build 期间动导航栈会直接断言失败。
       controller.addListener(_onPlaybackChanged);
       await controller.play();
@@ -75,26 +111,55 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
     }
   }
 
-  /// 奖励模式：起一个到点就走的计时器。第一次（整片看完）不设限。
+  /// 奖励模式：接着上次停的地方放。只剩个尾巴（[kResumeTailSeconds] 以内）
+  /// 就当没看过，从头放 —— 免得一进来就闪一下「放完」。
+  Future<void> _resumeFrom(VideoPlayerController c) async {
+    if (!_isReward) return;
+    final saved = ref.read(videoProgressProvider).resumeSeconds(_current.id);
+    if (saved <= 0) return;
+    final full = c.value.duration.inSeconds;
+    if (full > 0 && saved >= full - kResumeTailSeconds) return;
+    await c.seekTo(Duration(seconds: saved));
+  }
+
+  /// 奖励模式的时钟：整局只起一次（第一次 [isFull] 就是「整片」，额度即片长）。
   void _startRewardClock(Duration full) {
     final reward = widget.reward;
-    if (reward == null || reward.isFull) return;
-    final limit = reward.limitFor(full);
+    if (reward == null) return;
+    final limit = reward.limit.limitFor(full);
+    if (limit.inSeconds <= 0) return;
     _leftSeconds = limit.inSeconds;
     _limitTimer = Timer(limit, _leaveByRewardLimit);
     _tickTimer = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (!mounted || _leftSeconds <= 0) return;
-      setState(() => _leftSeconds--);
+      if (!mounted) return;
+      if (_leftSeconds > 0) setState(() => _leftSeconds--);
+      _saveProgress();
     });
   }
 
   /// 奖励时间到，收走画面回到答题页。
   void _leaveByRewardLimit() {
-    final c = _controller;
-    if (c == null || !mounted || _leftAfterEnd) return;
-    c.pause();
+    if (!mounted || _leftAfterEnd) return;
     _leftAfterEnd = true;
+    _saveProgress();
+    _controller?.pause();
     Navigator.of(context).maybePop();
+  }
+
+  /// 记下当前这片放到第几秒了（奖励模式才有意义）。
+  ///
+  /// 普通播放不看这张表，放完的片子也已经从表里删掉了，所以这两种情况都不写。
+  /// 每秒跟着倒计时存一次：孩子随时按返回都能接着上次的地方看，
+  /// 掉电 / 强杀最多也就丢一秒。
+  void _saveProgress() {
+    if (!_isReward || _currentEnded) return;
+    final c = _controller;
+    if (c == null || !c.value.isInitialized) return;
+    final at = c.value.position.inSeconds;
+    if (at <= 0 || at == _savedSeconds) return;
+    _savedSeconds = at;
+    final id = _current.id;
+    unawaited(ref.read(videoProgressProvider.notifier).save(id, at));
   }
 
   /// 重试前先把失败的播放器丢掉，避免两份实例同时占着解码器。
@@ -108,15 +173,67 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
     await _init();
   }
 
-  /// 放完就退回视频列表。
+  /// 这一片放完了：奖励模式接着放下一个，普通播放直接退回列表。
   void _onPlaybackChanged() {
     final c = _controller;
-    if (c == null || !mounted || _leftAfterEnd) return;
+    if (c == null || !mounted || _leftAfterEnd || _currentEnded) return;
     if (!c.value.isCompleted) return;
-    // 先按住声音再退，不然退出去的瞬间还响着。
+    _currentEnded = true;
+    // 先按住声音再走，不然退出去的瞬间还响着。
     c.pause();
-    _leftAfterEnd = true;
-    Navigator.of(context).maybePop();
+    if (!_isReward) {
+      _leftAfterEnd = true;
+      Navigator.of(context).maybePop();
+      return;
+    }
+    unawaited(_onRewardClipFinished());
+  }
+
+  /// 奖励模式：这一片整片看完了 —— 记一笔，还有额度就接着放下一个。
+  Future<void> _onRewardClipFinished() async {
+    final finished = _current.id;
+    await ref.read(videoProgressProvider.notifier).markFinished(finished);
+    if (!mounted || _leftAfterEnd) return;
+    if (_leftSeconds <= _chainTailSeconds) {
+      _leftAfterEnd = true;
+      Navigator.of(context).maybePop();
+      return;
+    }
+    await _playNext(finished);
+  }
+
+  /// 换下一片：队列走到头了就重新排一局（全都看完过一轮则清空记录重头轮）。
+  Future<void> _playNext(String justFinished) async {
+    final old = _controller;
+    _controller = null;
+    _cursor++;
+    if (_cursor >= _queue.length) {
+      final plan = planRewardPlaylist(
+        library: ref.read(videoLibraryProvider),
+        progress: ref.read(videoProgressProvider),
+        avoid: justFinished,
+        rng: _rng,
+      );
+      if (!mounted || _leftAfterEnd) return;
+      if (plan.restarted) {
+        await ref.read(videoProgressProvider.notifier).clearAll();
+        if (!mounted || _leftAfterEnd) return;
+      }
+      if (plan.videos.isEmpty) {
+        _leftAfterEnd = true;
+        Navigator.of(context).maybePop();
+        return;
+      }
+      setState(() {
+        _queue = plan.videos;
+        _cursor = 0;
+      });
+    }
+    await old?.dispose();
+    if (!mounted || _leftAfterEnd) return;
+    setState(() => _error = null);
+    _savedSeconds = -1;
+    await _init();
   }
 
   /// 点画面只用来「接着播」。
@@ -140,7 +257,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
         foregroundColor: Colors.white,
         elevation: 0,
         title: Text(
-          widget.video.title,
+          _current.title,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: const TextStyle(fontSize: 16.5, fontWeight: FontWeight.w700),
@@ -196,7 +313,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
             valueListenable: c,
             builder: (context, value, _) => value.isPlaying
                 ? const SizedBox.shrink()
-                // 正中这个圆钮是「指示」，不是按钮：不吃点击，
+                // 正中那个圆钮是「指示」，不是按钮：不吃点击，
                 // 点它和点画面别处一样，都交给下面那层 GestureDetector。
                 : IgnorePointer(
                     child: Center(
@@ -247,13 +364,11 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                   child: Text(
                     _cornerLabel,
                     style: TextStyle(
-                        color: widget.reward == null
-                            ? Colors.white38
-                            : Colors.amberAccent,
+                        color: _isReward ? Colors.amberAccent : Colors.white38,
                         fontSize: 12,
-                        fontWeight: widget.reward == null
-                            ? FontWeight.w400
-                            : FontWeight.w700),
+                        fontWeight: _isReward
+                            ? FontWeight.w700
+                            : FontWeight.w400),
                   ),
                 ),
               ],
@@ -273,9 +388,9 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
 
   /// 控制条右上角那句话：奖励模式报「还剩几秒」，普通播放报来源。
   String get _cornerLabel {
-    final reward = widget.reward;
-    if (reward == null) return widget.video.isLocal ? '本机视频' : '网络视频';
-    if (reward.isFull) return '奖励 · 整片看完';
+    if (!_isReward) return widget.video.isLocal ? '本机视频' : '网络视频';
+    // 第一次奖励、还在放第一片：这一局就是「整片看完」。
+    if (widget.reward!.index <= 1 && _cursor == 0) return '奖励 · 整片看完';
     return '奖励 · 还剩 $_leftSeconds 秒';
   }
 

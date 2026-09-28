@@ -13,9 +13,10 @@ import 'package:xedu/features/pattern_quiz/quiz_reward_settings.dart';
 import 'package:xedu/features/qa_quiz/qa_bank.dart';
 import 'package:xedu/features/qa_quiz/qa_models.dart';
 import 'package:xedu/features/qa_quiz/qa_quiz_screen.dart';
+import 'package:xedu/features/video/reward_playlist.dart';
 import 'package:xedu/features/video/video_player_screen.dart';
-import 'package:xedu/shared/reward_rule.dart';
 import 'package:xedu/state/providers.dart';
+import 'package:xedu/state/video_progress.dart';
 
 import 'fixtures.dart';
 
@@ -41,19 +42,57 @@ String _libraryJson() => jsonEncode({
         {
           'id': 'vc1',
           'name': '动画片',
+          'videos': [_videoJson('v1', '小猪佩奇 第 1 集')],
+        },
+      ],
+    });
+
+/// 两个片子的视频库（接着放下一片 / 轮完一轮的用例要）。
+String _libraryJson2() => jsonEncode({
+      'categories': [
+        {
+          'id': 'vc1',
+          'name': '动画片',
           'videos': [
-            {
-              'id': 'v1',
-              'title': '小猪佩奇 第 1 集',
-              'source': 'https://example.com/p1.mp4',
-              'kind': 'link',
-            },
+            _videoJson('v1', '小猪佩奇 第 1 集'),
+            _videoJson('v2', '小猪佩奇 第 2 集'),
           ],
         },
       ],
     });
 
+Map<String, dynamic> _videoJson(String id, String title) => {
+      'id': id,
+      'title': title,
+      'source': 'https://example.com/$id.mp4',
+      'kind': 'link',
+    };
+
 typedef _Host = (Widget, SharedPreferences);
+
+
+const VideoItem _v1 = VideoItem(
+  id: 'v1',
+  title: '小猪佩奇 第 1 集',
+  source: 'https://example.com/p1.mp4',
+  kind: VideoKind.link,
+);
+
+const VideoItem _v2 = VideoItem(
+  id: 'v2',
+  title: '小猪佩奇 第 2 集',
+  source: 'https://example.com/p2.mp4',
+  kind: VideoKind.link,
+);
+
+RewardPlayback _playback(List<VideoItem> videos,
+        {int index = 1, int stepSeconds = 30, int minSeconds = 30}) =>
+    RewardPlayback(
+      videos: videos,
+      index: index,
+      stepSeconds: stepSeconds,
+      minSeconds: minSeconds,
+    );
 
 Future<_Host> _qaHost(QaQuestion q,
     {Map<String, Object> prefs = const {}, Size size = _tablet}) async {
@@ -74,7 +113,7 @@ Future<_Host> _qaHost(QaQuestion q,
 Map<String, dynamic> _onDisk(SharedPreferences prefs) =>
     jsonDecode(prefs.getString(kQuizRewardKey)!) as Map<String, dynamic>;
 
-/// 等到黑屏浮出来（测试里语音放不出声，得先等它那 2 秒超时过去）。
+/// 等到黑屏浮出来（红闪 650ms + 记一笔答错之后才轮到黑屏）。
 Future<bool> _waitBlackout(WidgetTester tester) async {
   for (var i = 0; i < 8 && find.byType(BlackoutLayer).evaluate().isEmpty; i++) {
     await tester.pump(const Duration(milliseconds: 700));
@@ -88,11 +127,26 @@ Future<void> _tap(WidgetTester tester, String text, {bool missed = false}) async
   await tester.pump(const Duration(milliseconds: 700));
 }
 
+/// 一直泵到 [done] 成立为止（最多 [maxMs] 毫秒虚拟时间）。
+Future<void> _pumpUntil(WidgetTester tester, bool Function() done,
+    {int maxMs = 15000}) async {
+  var elapsed = 0;
+  while (elapsed < maxMs && !done()) {
+    await tester.pump(const Duration(milliseconds: 200));
+    elapsed += 200;
+  }
+}
+
 /// 答对之后等「鼓励条 → 播报 → 推播放页」这一串走完。
+///
+/// 播报在测试环境里放不出声，得等它那几秒上限过去；这里泵到播放页浮出来
+/// （没奖励的用例就是泵到成绩页）为止，再留一点路由转场的时间。
 Future<void> _pumpReward(WidgetTester tester) async {
-  await tester.pump(const Duration(seconds: 2)); // 鼓励条 + 自动翻页
-  await tester.pump(const Duration(seconds: 3)); // 播报（放不出声，等超时）
-  await tester.pump(const Duration(milliseconds: 500)); // 路由转场
+  await _pumpUntil(tester, () {
+    return find.byType(VideoPlayerScreen).evaluate().isNotEmpty ||
+        find.text('再玩一局').evaluate().isNotEmpty;
+  });
+  await tester.pump(const Duration(milliseconds: 400)); // 路由转场
 }
 
 void main() {
@@ -192,9 +246,13 @@ void main() {
   group('奖励播放页限时', () {
     testWidgets('按次数算出的额度到点自动退出，角标报剩余秒数', (tester) async {
       final fake = _installFakePlayer(total: const Duration(minutes: 2));
-      await tester.pumpWidget(await _rewardHost(
-        const RewardWatchLimit(index: 2, stepSeconds: 30, minSeconds: 30),
-      ));
+      await tester.pumpWidget((await _rewardHost(_playback(
+        [_v1],
+        index: 2,
+        stepSeconds: 30,
+        minSeconds: 30,
+      )))
+          .$1);
       await tester.pump();
 
       await tester.tap(find.text('开播'));
@@ -221,6 +279,188 @@ void main() {
       expect(find.byType(VideoPlayerScreen), findsNothing, reason: '到点没退出');
       // 退出去之前先把画面停住，别让声音跟着退场继续响
       expect(fake.isPlaying, isFalse);
+
+      await tester.pumpWidget(const SizedBox());
+    });
+  });
+
+  group('续播与接着放', () {
+    testWidgets('上次没放完：这次从上次停的地方接着放，位置随后落盘', (tester) async {
+      final fake = _installFakePlayer(total: const Duration(minutes: 2));
+      final (widget, store) = await _rewardHost(
+        _playback([_v1, _v2]),
+        prefs: {
+          kVideoProgressKey: jsonEncode({
+            'pos': {'v1': 40},
+            'done': <String>[],
+          }),
+        },
+      );
+      await tester.pumpWidget(widget);
+      await tester.tap(find.text('开播'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+      fake.ready();
+      await tester.pump(const Duration(milliseconds: 400));
+
+      expect(fake.calls.contains('seek'), isTrue, reason: '没有接着上次的地方放');
+      expect(fake.position, const Duration(seconds: 40));
+
+      // 看一会儿，位置要跟着存下来（下次奖励接着这儿放）
+      await tester.pump(const Duration(seconds: 3));
+      final onDisk = jsonDecode(store.getString(kVideoProgressKey)!);
+      expect(VideoProgress.fromJson(onDisk).resumeSeconds('v1'), greaterThan(0));
+
+      await tester.pumpWidget(const SizedBox());
+    });
+
+    testWidgets('只剩个尾巴就从头上放，不接着那两秒', (tester) async {
+      final fake = _installFakePlayer(total: const Duration(seconds: 60));
+      await tester.pumpWidget((await _rewardHost(
+        _playback([_v1, _v2]),
+        prefs: {
+          kVideoProgressKey: jsonEncode({
+            'pos': {'v1': 59},
+            'done': <String>[],
+          }),
+        },
+      ))
+          .$1);
+      await tester.tap(find.text('开播'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+      fake.ready();
+      await tester.pump(const Duration(milliseconds: 400));
+
+      expect(fake.calls.contains('seek'), isFalse, reason: '还剩一秒不该接着放');
+
+      await tester.pumpWidget(const SizedBox());
+    });
+
+    testWidgets('一片放完还有额度：接着放下一片，放完的记成「已看完」', (tester) async {
+      final fake = _installFakePlayer(total: const Duration(minutes: 2));
+      final (widget, store) = await _rewardHost(_playback([_v1, _v2]));
+      await tester.pumpWidget(widget);
+      await tester.tap(find.text('开播'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+      fake.ready();
+      await tester.pump(const Duration(milliseconds: 400));
+      expect(find.text('小猪佩奇 第 1 集'), findsOneWidget);
+
+      fake.finish(); // 第 1 集放完了
+      await _pumpUntil(tester,
+          () => find.text('小猪佩奇 第 2 集').evaluate().isNotEmpty);
+      fake.ready(); // 第 2 集的画面也准备好
+
+      expect(find.text('小猪佩奇 第 2 集'), findsOneWidget, reason: '没接着放下一片');
+      final onDisk = jsonDecode(store.getString(kVideoProgressKey)!);
+      expect(VideoProgress.fromJson(onDisk).watchedToEnd('v1'), isTrue,
+          reason: '放完的那片该记成「已看完」');
+
+      await tester.pumpWidget(const SizedBox());
+    });
+
+    testWidgets('队列走到头（都看完过一轮）：清空记录重排，仍接着放', (tester) async {
+      final fake = _installFakePlayer(total: const Duration(minutes: 2));
+      // v2 已经看完过，所以这一局只排了 v1；v1 放完队列就走到头了
+      final (widget, store) = await _rewardHost(
+        _playback([_v1], index: 1),
+        prefs: {
+          kVideoLibraryKey: _libraryJson2(),
+          kVideoProgressKey: jsonEncode({
+            'pos': <String, int>{},
+            'done': ['v2'],
+          }),
+        },
+      );
+      await tester.pumpWidget(widget);
+      await tester.tap(find.text('开播'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+      fake.ready();
+      await tester.pump(const Duration(milliseconds: 400));
+
+      fake.finish();
+      await tester.pump(const Duration(milliseconds: 400));
+      fake.ready();
+      await tester.pump(const Duration(milliseconds: 400));
+
+      final onDisk = jsonDecode(store.getString(kVideoProgressKey)!);
+      expect(VideoProgress.fromJson(onDisk).watchedToEnd('v2'), isFalse,
+          reason: '全都看完过一轮了，记录该清空重来');
+      expect(find.byType(VideoPlayerScreen), findsOneWidget,
+          reason: '清空重排之后该接着放，不是退出去');
+      // 记录清空后 v1 / v2 又都回到候选里，重排出来是哪一个都行
+      expect(find.textContaining('小猪佩奇'), findsOneWidget);
+
+      await tester.pumpWidget(const SizedBox());
+    });
+  });
+
+  group('奖惩播报', () {
+    testWidgets('答错超限会播「答错了，黑屏」，前两次不播', (tester) async {
+      final said = <String>[];
+      RewardVoice.debugOnAnnounce = said.add;
+      addTearDown(() => RewardVoice.debugOnAnnounce = null);
+
+      final q = _q('baby', 'dog');
+      final (widget, _) = await _qaHost(q);
+      await tester.pumpWidget(widget);
+      await tester.pump();
+
+      final wrong =
+          q.options.firstWhere((o) => o.text != q.options[q.answer].text).text;
+
+      await _tap(tester, wrong);
+      await _tap(tester, wrong);
+      expect(said, isEmpty, reason: '还没到次数就播报了');
+
+      // 第三次起：每次答错都播「答错了，黑屏」
+      await _tap(tester, wrong);
+      expect(await _waitBlackout(tester), isTrue);
+      expect(said, [RewardVoice.punishAsset], reason: '答错超限没播报');
+      await settleBlackout(tester);
+
+      await tester.pumpWidget(const SizedBox());
+    });
+
+    testWidgets('一次答对会播「一次答对，奖励看视频」', (tester) async {
+      final said = <String>[];
+      RewardVoice.debugOnAnnounce = said.add;
+      addTearDown(() => RewardVoice.debugOnAnnounce = null);
+
+      final q = _q('baby', 'dog');
+      final (widget, _) =
+          await _qaHost(q, prefs: {kVideoLibraryKey: _libraryJson()});
+      await tester.pumpWidget(widget);
+      await tester.pump();
+
+      await _tap(tester, q.options[q.answer].text);
+      await _pumpReward(tester);
+
+      expect(said, [RewardVoice.rewardAsset], reason: '一次答对没播报');
+
+      await tester.pumpWidget(const SizedBox());
+    });
+
+    testWidgets('「我的视频」空着也照样播报奖励（只是没片子放）', (tester) async {
+      final said = <String>[];
+      RewardVoice.debugOnAnnounce = said.add;
+      addTearDown(() => RewardVoice.debugOnAnnounce = null);
+
+      final q = _q('baby', 'dog');
+      final (widget, store) = await _qaHost(q);
+      await tester.pumpWidget(widget);
+      await tester.pump();
+
+      await _tap(tester, q.options[q.answer].text);
+      await _pumpReward(tester);
+
+      expect(find.byType(VideoPlayerScreen), findsNothing);
+      expect(said, [RewardVoice.rewardAsset], reason: '没片子就不播报了');
+      expect(store.getString(kQuizRewardKey), isNull,
+          reason: '没看着片子不该记奖励次数');
 
       await tester.pumpWidget(const SizedBox());
     });
@@ -364,6 +604,12 @@ class _FakePlayer extends VideoPlayerPlatform {
         duration: total,
         size: const Size(1280, 720),
       ));
+
+  /// 整片放完，对应真机上那个 `completed` 事件。
+  void finish() {
+    position = total;
+    _events!.add(VideoEvent(eventType: VideoEventType.completed));
+  }
 }
 
 _FakePlayer _installFakePlayer({Duration total = const Duration(seconds: 30)}) {
@@ -375,10 +621,14 @@ _FakePlayer _installFakePlayer({Duration total = const Duration(seconds: 30)}) {
 }
 
 /// 一个按钮把奖励播放页推上来（奖励模式得从别的页面推，退回去才有地方退）。
-Future<Widget> _rewardHost(RewardWatchLimit limit) async {
-  SharedPreferences.setMockInitialValues({});
+///
+/// 盘上的初值要连着 [prefs] 一起给进来 —— `setMockInitialValues` 会把实例换掉，
+/// 在外面先造的那个 store 就不是同一份了。
+Future<_Host> _rewardHost(RewardPlayback playback,
+    {Map<String, Object> prefs = const {}}) async {
+  SharedPreferences.setMockInitialValues(prefs);
   final store = await SharedPreferences.getInstance();
-  return ProviderScope(
+  final widget = ProviderScope(
     overrides: [prefsProvider.overrideWithValue(store)],
     child: MaterialApp(
       home: Builder(
@@ -387,13 +637,8 @@ Future<Widget> _rewardHost(RewardWatchLimit limit) async {
             child: TextButton(
               onPressed: () => Navigator.of(context).push(MaterialPageRoute(
                 builder: (_) => VideoPlayerScreen(
-                  video: const VideoItem(
-                    id: 'v1',
-                    title: '小猪佩奇 第 1 集',
-                    source: 'https://example.com/p1.mp4',
-                    kind: VideoKind.link,
-                  ),
-                  reward: limit,
+                  video: playback.videos.first,
+                  reward: playback,
                 ),
               )),
               child: const Text('开播'),
@@ -403,6 +648,7 @@ Future<Widget> _rewardHost(RewardWatchLimit limit) async {
       ),
     ),
   );
+  return (widget, store);
 }
 
 /// 一个按钮把「做题奖惩」设置框弹出来。

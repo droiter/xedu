@@ -48,6 +48,10 @@ const String kQaReadAloudKey = 'xedu_qa_read_aloud';
 /// 全机一份，存成一段 JSON（见 `features/pattern_quiz/quiz_reward.dart`）。
 const String kQuizRewardKey = 'xedu_quiz_reward';
 
+/// 奖励看视频看到哪儿了：视频 id → 已看秒数，全机一份，存成一段 JSON
+/// （见 `state/video_progress.dart`）。片子放完就从这个表里删掉。
+const String kVideoProgressKey = 'xedu_video_progress';
+
 // 课程封面渐变调色板（seed 取模得到稳定配色）
 const List<List<Color>> kCoverPalette = [
   [Color(0xFF4F6BFF), Color(0xFF9A5CFF)], // 靛紫

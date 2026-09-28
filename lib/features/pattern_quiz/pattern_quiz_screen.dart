@@ -7,8 +7,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../shared/back_guard.dart';
 import '../../shared/quiz_layout.dart';
-import '../../shared/reward_rule.dart';
 import '../../state/providers.dart';
+import '../../state/video_progress.dart';
+import '../video/reward_playlist.dart';
 import '../video/video_player_screen.dart';
 import 'celebration.dart';
 import 'exit_gate.dart';
@@ -30,10 +31,11 @@ import 'quiz_sfx.dart';
 /// - **答对**：音效 + 震动 + 炫光爆发，稍作停留后自动进入下一题；
 /// - **答错**：轻音提示并重打乱备选、替换部分干扰项，可以再试，直到答对为止。
 ///   成绩按「一次答对」的题数计算；
-/// - **奖惩**（见 [QuizRewardState]）：累计答错超过 2 次之后，每次答错先播报
-///   「打错了，黑屏」再整屏黑 X 秒（每错一次多 1 秒，涨到 Y 秒封顶）；
-///   「一次答对」（第一下就选对）则播报「答对了，奖励看视频」，
-///   从「我的视频」里随机抽一个放一段（第一次整片看完，之后每次少 A 秒，不低于 B 秒）；
+/// - **奖惩**（见 [QuizRewardState]）：累计答错超过 2 次之后，每次答错播报
+///   「答错了，黑屏」并整屏黑 X 秒（每错一次多 1 秒，涨到 Y 秒封顶）；
+///   「一次答对」（第一下就选对）则播报「一次答对，奖励看视频」，接着放一段
+///   「我的视频」（没放完的下次续播，第一次整片看完、之后每次少 A 秒、
+///   不低于 B 秒，放完还有额度就换一个接着放）；
 /// - **没做完就想返回**：拦下来，先答对一道一位数乘法才放行（见 [showExitGate]）。
 class PatternQuizScreen extends ConsumerStatefulWidget {
   const PatternQuizScreen({super.key, required this.ages});
@@ -132,6 +134,7 @@ class _PatternQuizScreenState extends ConsumerState<PatternQuizScreen>
   void initState() {
     super.initState();
     QuizSfx.instance.preload();
+    RewardVoice.instance.preload();
     _restart();
   }
 
@@ -282,13 +285,20 @@ class _PatternQuizScreenState extends ConsumerState<PatternQuizScreen>
     _next();
   }
 
-  /// 奖励看视频：随机抽「我的视频」里的一个，限时看完再回来接着做题。
+  /// 奖励看视频：从「我的视频」里排出这一局的顺序，限时看完再回来接着做题。
   ///
-  /// 视频库空着就什么也不做 —— 播报了却拿不出片子更糟。
+  /// 播报**先喊再说**：视频库空着也照样喊「奖励看视频」（孩子听得出自己一次答对了），
+  /// 只是没片子可放。没片子时也不记奖励次数 —— 这一局本来就没看着。
   Future<void> _rewardVideo() async {
-    final videos = rewardVideosOf(ref.read(videoLibraryProvider));
-    if (videos.isEmpty) return;
-    final video = videos[_rng.nextInt(videos.length)];
+    final plan = planRewardPlaylist(
+      library: ref.read(videoLibraryProvider),
+      progress: ref.read(videoProgressProvider),
+      rng: _rng,
+    );
+    if (plan.videos.isEmpty) {
+      await RewardVoice.instance.sayReward();
+      return;
+    }
     final reward = ref.read(quizRewardProvider);
     final index =
         await ref.read(quizRewardProvider.notifier).registerReward();
@@ -296,10 +306,16 @@ class _PatternQuizScreenState extends ConsumerState<PatternQuizScreen>
 
     await RewardVoice.instance.sayReward();
     if (!mounted) return;
+    // 全都看完过一轮了：把「看完」的记录清空，这次就是从头再轮一轮。
+    if (plan.restarted) {
+      await ref.read(videoProgressProvider.notifier).clearAll();
+      if (!mounted) return;
+    }
     await Navigator.of(context).push(MaterialPageRoute(
       builder: (_) => VideoPlayerScreen(
-        video: video,
-        reward: RewardWatchLimit(
+        video: plan.videos.first,
+        reward: RewardPlayback(
+          videos: plan.videos,
           index: index,
           stepSeconds: reward.rewardStepSeconds,
           minSeconds: reward.rewardMinSeconds,
@@ -308,9 +324,12 @@ class _PatternQuizScreenState extends ConsumerState<PatternQuizScreen>
     ));
   }
 
-  /// 答错超限的惩罚：先播报「打错了，黑屏」，再整屏黑 [seconds] 秒。
+  /// 答错超限的惩罚：播报「答错了，黑屏」并整屏黑 [seconds] 秒。
+  ///
+  /// 播报不等它念完 —— 黑屏立刻盖上，语音跟着黑屏一起走；等语音反而会把
+  /// 答题页晾在「设备放不出声」这种坑里（见 `RewardVoice`）。
   Future<void> _blackoutFor(int seconds) async {
-    await RewardVoice.instance.sayPunish();
+    unawaited(RewardVoice.instance.sayPunish());
     if (!mounted) return;
     setState(() => _blackout = true);
     final done = Completer<void>();

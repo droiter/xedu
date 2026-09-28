@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """生成「做题奖惩」的两句提示语音。
 
-  - `assets/audio/punish_black.mp3`  答错超限后播报：「打错了，黑屏」
-  - `assets/audio/reward_video.mp3`  一次答对后播报：「答对了，奖励看视频」
+  - `assets/audio/punish_black.mp3`  答错超限后播报：「答错了，黑屏」
+  - `assets/audio/reward_video.mp3`  一次答对后播报：「一次答对，奖励看视频」
 
 音色与「看图问答」的朗读一致（见 `scripts/gen_qa_voice.py`），
 但**不需要逐词时间轴** —— 这两句只在奖惩时整段播一遍，没有跟读高亮。
@@ -32,8 +32,8 @@ RETRIES = 3
 
 # 文件主名 -> 要念的文字
 CLIPS = {
-    "punish_black": "打错了，黑屏。",
-    "reward_video": "答对了，奖励看视频。",
+    "punish_black": "答错了，黑屏。",
+    "reward_video": "一次答对，奖励看视频。",
 }
 
 
