@@ -121,6 +121,12 @@ Future<bool> _waitBlackout(WidgetTester tester) async {
   return find.byType(BlackoutLayer).evaluate().isNotEmpty;
 }
 
+/// 黑屏中间那个秒数。
+String _countdown(WidgetTester tester) => tester
+    .widget<Text>(find.descendant(
+        of: find.byType(BlackoutLayer), matching: find.byType(Text)))
+    .data!;
+
 /// 点一下选项（[tapText] 给的是屏幕上的文字）。
 Future<void> _tap(WidgetTester tester, String text, {bool missed = false}) async {
   await tester.tap(find.text(text), warnIfMissed: !missed);
@@ -184,6 +190,43 @@ void main() {
       await _tap(tester, right);
       await tester.pump(const Duration(seconds: 2));
       expect(find.text('再玩一局'), findsOneWidget);
+    });
+
+    testWidgets('黑屏中间倒着数秒，数完自己散开', (tester) async {
+      final q = _q('baby', 'dog');
+      // 第一次黑 4 秒（X = 4，Y = 10 封顶），好一秒一秒地数。
+      final (widget, _) = await _qaHost(q, prefs: {
+        kQuizRewardKey: jsonEncode({'x': 4, 'y': 10, 'a': 30, 'b': 30}),
+      });
+      await tester.pumpWidget(widget);
+      await tester.pump();
+
+      final wrong =
+          q.options.firstWhere((o) => o.text != q.options[q.answer].text).text;
+      await _tap(tester, wrong);
+      await _tap(tester, wrong);
+      await _tap(tester, wrong);
+
+      // 黑屏一浮出来就该是满秒 —— 不是已经数掉了一截的。
+      var shown = false;
+      for (var i = 0; i < 40 && !shown; i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+        shown = find.byType(BlackoutLayer).evaluate().isNotEmpty;
+      }
+      expect(shown, isTrue, reason: '第三次答错没黑屏');
+      expect(_countdown(tester), '4', reason: '黑屏没从满秒开始数');
+
+      // 一秒一秒往下走（每次多泵 100ms，别卡在整秒的边界上）。
+      for (final want in ['3', '2', '1']) {
+        await tester.pump(const Duration(milliseconds: 1100));
+        expect(_countdown(tester), want, reason: '倒计时该数到 $want');
+      }
+
+      // 数完就该散开，别一直盖着
+      await tester.pump(const Duration(milliseconds: 1100));
+      expect(find.byType(BlackoutLayer), findsNothing, reason: '数完了黑屏还盖着');
+      await settleBlackout(tester);
+      expect(find.byType(BlackoutLayer), findsNothing);
     });
   });
 

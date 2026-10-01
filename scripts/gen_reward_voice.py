@@ -27,7 +27,11 @@ ROOT = Path(__file__).resolve().parent.parent
 OUT_DIR = ROOT / "assets" / "audio"
 
 VOICE = "zh-CN-XiaoxiaoNeural"
-RATE = "+0%"
+
+# 语速**烤进音频**，不走运行时的变速：奖惩播报要的是一句又短又脆的提醒，
+# 跟「看图问答」那道家长可调的朗读语速是两回事（孩子把语速调到最慢，奖惩
+# 播报也不该跟着慢下来）。+40% 就是朗读语速最快的那一档，听着干脆又不糊。
+RATE = "+40%"
 RETRIES = 3
 
 # 文件主名 -> 要念的文字

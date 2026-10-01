@@ -12,6 +12,10 @@ import 'package:flutter/material.dart';
 ///
 /// 任何环节出错（设备静音、解码失败等）都只当这一句没念，下一次照样再试；
 /// 播不出来也照样黑屏 / 奖励，绝不把答题带崩。
+///
+/// 语速**烤在音频里**（生成脚本按 +40% 合成，就是朗读语速最快的那一档），
+/// 播的时候不碰 `setPlaybackRate`：这两句是催促性的短提醒，家长把朗读语速调到
+/// 最慢也不该拖着它一起慢下来，而且老设备上运行时变速本来就不生效。
 class RewardVoice {
   RewardVoice._();
 
@@ -21,8 +25,14 @@ class RewardVoice {
   static const rewardAsset = 'audio/reward_video.mp3';
 
   /// 两句各自的时长（生成脚本产出，用来定「等它念完」的上限）。
-  static const _punish = _Clip(punishAsset, Duration(milliseconds: 2260));
-  static const _reward = _Clip(rewardAsset, Duration(milliseconds: 2930));
+  ///
+  /// 摆在外面是给测试跟真音频对表用的：换了音频而这里没跟着改，上限就不准了
+  /// （短了会把话掐掉，长了就白等）。
+  static const punishLength = Duration(milliseconds: 2090);
+  static const rewardLength = Duration(milliseconds: 2120);
+
+  static const _punish = _Clip(punishAsset, punishLength);
+  static const _reward = _Clip(rewardAsset, rewardLength);
 
   /// 等一句念完时额外给的时间：真机起播要花几百毫秒，别卡着片长掐。
   static const _slack = Duration(seconds: 4);
@@ -183,16 +193,83 @@ class _Clip {
   final Duration length;
 }
 
-/// 答错超限后的黑屏：整屏纯黑、吃住所有点击，孩子只能等着。
+/// 答错超限后的黑屏：整屏纯黑、吃住所有点击，中间一个圈连着秒数一起倒着走 ——
+/// 孩子看得见还差几秒，不至于以为死机了（家长也好判断这次罚了多久）。
 ///
 /// 盖在整个 [Scaffold] 之上（连标题栏一起），所以黑屏期间连返回键都摸不到。
-class BlackoutLayer extends StatelessWidget {
-  const BlackoutLayer({super.key});
+class BlackoutLayer extends StatefulWidget {
+  const BlackoutLayer({super.key, required this.seconds});
+
+  /// 这一次黑几秒，倒计时就从它开始。
+  final int seconds;
 
   @override
-  Widget build(BuildContext context) => const ModalBarrier(
-        dismissible: false,
-        color: Colors.black,
-        semanticsLabel: '答错了，屏幕黑一会儿',
+  State<BlackoutLayer> createState() => _BlackoutLayerState();
+}
+
+class _BlackoutLayerState extends State<BlackoutLayer>
+    with SingleTickerProviderStateMixin {
+  /// 倒计时的钟。黑屏多长由答题页那头的计时器说了算，这里只管把这段时间画出来。
+  late final AnimationController _clock;
+
+  @override
+  void initState() {
+    super.initState();
+    _clock = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: widget.seconds),
+    )..forward();
+  }
+
+  @override
+  void dispose() {
+    _clock.dispose();
+    super.dispose();
+  }
+
+  /// 还剩几秒。往上取整：刚盖上时是满秒，走完那一瞬间也不会露出 0。
+  int get _left => (widget.seconds * (1 - _clock.value))
+      .ceil()
+      .clamp(1, widget.seconds);
+
+  @override
+  Widget build(BuildContext context) => Stack(
+        children: [
+          const ModalBarrier(
+            dismissible: false,
+            color: Colors.black,
+            semanticsLabel: '答错了，屏幕黑一会儿',
+          ),
+          Center(
+            child: AnimatedBuilder(
+              animation: _clock,
+              builder: (context, _) => Stack(
+                alignment: Alignment.center,
+                children: [
+                  // 圈按剩余比例缩：不识数的孩子看圈也知道快到头了。
+                  SizedBox(
+                    width: 136,
+                    height: 136,
+                    child: CircularProgressIndicator(
+                      value: 1 - _clock.value,
+                      strokeWidth: 6,
+                      strokeCap: StrokeCap.round,
+                      color: Colors.white70,
+                      backgroundColor: Colors.white12,
+                    ),
+                  ),
+                  Text(
+                    '$_left',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 64,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       );
 }

@@ -107,6 +107,9 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen>
   /// 正在黑屏（答错超限的惩罚），期间整屏盖黑、点不了也退不出去。
   bool _blackout = false;
 
+  /// 这一回黑几秒 —— 黑屏中间那个倒计时按它走。
+  int _blackoutSeconds = 0;
+
   /// 通过家长验证后置真，放行这一次返回。
   bool _exiting = false;
 
@@ -353,7 +356,10 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen>
   Future<void> _blackoutFor(int seconds) async {
     unawaited(RewardVoice.instance.sayPunish());
     if (!mounted) return;
-    setState(() => _blackout = true);
+    setState(() {
+      _blackout = true;
+      _blackoutSeconds = seconds;
+    });
     final done = Completer<void>();
     _punishTimer?.cancel();
     _punishTimer = Timer(Duration(seconds: seconds), () {
@@ -427,7 +433,8 @@ class _QaQuizScreenState extends ConsumerState<QaQuizScreen>
                     : _gameView(context, readAloud)),
           ),
           // 惩罚黑屏盖在整页之上，连标题栏一起盖掉。
-          if (_blackout) const Positioned.fill(child: BlackoutLayer()),
+          if (_blackout)
+            Positioned.fill(child: BlackoutLayer(seconds: _blackoutSeconds)),
         ],
       ),
     );
